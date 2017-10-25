@@ -1,0 +1,544 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+calmclientandserver
+</name>
+</assembly>
+<members>
+<member name="E:captainalm.calmclientandserver.client.ServerConnect">
+	<summary>
+ Raised when a connection is successful.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerDisconnect">
+	<summary>
+ Raised when disconnected by the server.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerMessage">
+	<summary>
+ Raised a message is received.
+ </summary>
+	<param name="message">The packet received.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.errEncounter">
+	<summary>
+ Raised everytime an error occurs.
+ </summary>
+	<param name="ex">The exception that occured.</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.flush">
+	<summary>
+ Flushes this instance of client (Cleaning).
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.Name">
+	<summary>
+ Gets or Sets the name of the client.
+ </summary>
+	<value>the name of the client.</value>
+	<returns>the name of the client.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.isConnected">
+	<summary>
+ Returns the current connection state (True if connected).
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.CloseDelay">
+	<summary>
+ Gets or Sets the delay to recieve messages before the client is disconnected.
+ </summary>
+	<value>the delay to recieve messages before the client is disconnected.</value>
+	<returns>the delay to recieve messages before the client is disconnected.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.ClientRefreshDelay">
+	<summary>
+ Gets or Sets the delay to refresh the local client list.
+ </summary>
+	<value>the delay to refresh the local client list.</value>
+	<returns>the delay to refresh the local client list.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.#ctor">
+	<summary>
+ Creates a new instance of client.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.SendBufferSize">
+	<summary>
+ The number of bytes to send.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.ReceiveBufferSize">
+	<summary>
+ The number of bytes to receive.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.NoDelay">
+	<summary>
+ Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,System.String,captainalm.calmclientandserver.EncryptionMethod)">
+	<summary>
+ Connect to a server.
+ </summary>
+	<param name="Clientname">The name of the client.</param>
+	<param name="ipaddress">The IP address of the server.</param>
+	<param name="port">The port of the server.</param>
+	<param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
+	<param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.UpdateClientData">
+	<summary>
+ Forces the client list to update.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.connected_clients">
+	<summary>
+ The currently connected clients on the server.
+ </summary>
+	<value>The currently connected clients on the server.</value>
+	<returns>The currently connected clients on the server.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.CheckServer(System.String,System.Int32)">
+	<summary>
+ Check if a server is up.
+ </summary>
+	<param name="ipadress">The server IP address.</param>
+	<param name="port">The server port.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.Disconnect">
+	<summary>
+ Disconnect from the server.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.kill_threads">
+	<summary>
+ Kill the operating threads if they are still alive.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.Send(captainalm.calmclientandserver.packet)">
+	<summary>
+ Sends a message the server.
+ </summary>
+	<param name="message">The packet to send.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.client">
+	<summary>
+ Provide a client class.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.intutils">
+	<summary>
+ Utilities Module {Access Internal}
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.string2packet(System.String)">
+	<summary>
+ Converts a string to a packet.
+ </summary>
+	<param name="str">The string to convert.</param>
+	<returns>The converted packet.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.packet2string(captainalm.calmclientandserver.packet)">
+	<summary>
+ Converts a packet to a string.
+ </summary>
+	<param name="str">The packet to convert.</param>
+	<returns>The converted string.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.convertobjecttostring(System.Object)">
+	<summary>
+ Converts an object to a string.
+ </summary>
+	<param name="obj">The object to convert.</param>
+	<returns>The converted object.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.convertstringtoobject(System.String)">
+	<summary>
+ Converts a string to an object.
+ </summary>
+	<param name="str">The string to convert.</param>
+	<returns>The converted string.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.ConvertFromAscii(System.Byte[])">
+	<summary>
+ Converts a set of bytes to a string.
+ </summary>
+	<param name="bytes">The byte array to convert.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.utils.Convert2Ascii(System.String)">
+	<summary>
+ Converts a string to a set of bytes.
+ </summary>
+	<param name="str">The string to convert.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.utils">
+	<summary>
+ Utilities Module {Access public}
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.intmsg">
+	<summary>
+ Internal Msg {Internal Access Only}
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:captainalm.calmclientandserver.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor">
+	<summary>
+ Creates a new invalid packet.
+ </summary>
+	<remarks>(Useful for ping packets)</remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,System.String)">
+	<summary>
+ Creates a new valid packet with basic data and no encryption [string data].
+ </summary>
+	<param name="refnumber">Reference Number.</param>
+	<param name="sender">The Sender Name.</param>
+	<param name="receivers">The Name(s) of the Receivers.</param>
+	<param name="header">The Header Data.</param>
+	<param name="data">The Data to Send [String].</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,captainalm.calmclientandserver.encapsulation)">
+	<summary>
+ Creates a new valid packet with basic data and no encryption [encapsulated data].
+ </summary>
+	<param name="refnumber">Reference Number.</param>
+	<param name="sender">The Sender Name.</param>
+	<param name="receivers">The Name(s) of the Receivers.</param>
+	<param name="header">The Header Data.</param>
+	<param name="data">The Data to Send [Encapsulation].</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,System.String,System.String,captainalm.calmclientandserver.EncryptionMethod)">
+	<summary>
+ Creates a new valid packet with basic data and encryption [string data].
+ </summary>
+	<param name="refnumber">Reference Number.</param>
+	<param name="sender">The Sender Name.</param>
+	<param name="receivers">The Name(s) of the Receivers.</param>
+	<param name="header">The Header Data.</param>
+	<param name="data">The Data to Send [String].</param>
+	<param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
+	<param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,captainalm.calmclientandserver.encapsulation,System.String,captainalm.calmclientandserver.EncryptionMethod)">
+	<summary>
+ Creates a new valid packet with basic data and encryption [encapsulated data].
+ </summary>
+	<param name="refnumber">Reference Number.</param>
+	<param name="sender">The Sender Name.</param>
+	<param name="receivers">The Name(s) of the Receivers.</param>
+	<param name="header">The Header Data.</param>
+	<param name="data">The Data to Send [Encapsulation].</param>
+	<param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
+	<param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.#ctor(captainalm.calmclientandserver.packet)">
+	<summary>
+ Creates a packet from another packet.
+ </summary>
+	<param name="packet">The packet to duplicate.</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.isvalidpacket">
+	<summary>
+ Returns if the packet is valid.
+ </summary>
+	<value>Returns if the packet is valid.</value>
+	<returns>Returns if the packet is valid.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.sender">
+	<summary>
+ Returns the sender's name.
+ </summary>
+	<value>Returns the sender's name.</value>
+	<returns>Returns the sender's name.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.receivers">
+	<summary>
+ Returns the names of the receivers.
+ </summary>
+	<value>Returns the names of the receivers.</value>
+	<returns>Returns the names of the receivers.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.header">
+	<summary>
+ Gets the header of the packet.
+ </summary>
+	<value>Gets the header of the packet.</value>
+	<returns>Gets the header of the packet.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.encryptmethod">
+	<summary>
+ Returns the encryption method.
+ </summary>
+	<value>Returns the encryption method.</value>
+	<returns>Returns the encryption method.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.referencenumber">
+	<summary>
+ Returns the packet's reference number.
+ </summary>
+	<value>Returns the packet's reference number.</value>
+	<returns>Returns the packet's reference number.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.data">
+	<summary>
+ Returns the data of the packet [string form].
+ </summary>
+	<value>Returns the data of the packet [string form].</value>
+	<returns>Returns the data of the packet [string form].</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.packet.hasobject">
+	<summary>
+ Returns if the packet contains an object.
+ </summary>
+	<value>Returns if the packet contains an object.</value>
+	<returns>Returns if the packet contains an object.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.stringdata(System.String)">
+	<summary>
+ Returns the data held by the packet as a string.
+ </summary>
+	<param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.packet.objectdata(System.String)">
+	<summary>
+ Returns the data held by the packet as an object.
+ </summary>
+	<param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.packet">
+	<summary>
+ The packet class.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.EncryptionMethod">
+	<summary>
+ Packet Encryption Method.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientMessage">
+	<summary>
+ Raised everytime data is received.
+ </summary>
+	<param name="Data">Packet received.</param>
+	<param name="clientname">The name of sender.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.errEncounter">
+	<summary>
+ Raised when an error occurs.
+ </summary>
+	<param name="ex">The exception occured.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientConnect">
+	<summary>
+ Raised everytime a client connected.
+ </summary>
+	<param name="clientname">The client connected ID.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientDisconnect">
+	<summary>
+ Raised everytime a client disconnected.
+ </summary>
+	<param name="clientname">The disconnected client name.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ConnectionClosed">
+	<summary>
+ Raised when the Server Stops.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.#ctor">
+	<summary>
+ Creates a new default instance of the server class.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.#ctor(System.Net.IPAddress,System.Int32)">
+	<summary>
+ Creates a new instance of the server class with the specified IP address and port (optional).
+ </summary>
+	<param name="ipaddress">The IP address to bind to.</param>
+	<param name="port">The port to bind to (Optional) [Default: 100].</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.flush">
+	<summary>
+ Flushes this instance of server (Cleaning).
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.ip">
+	<summary>
+ Get the IP address of the server.
+ </summary>
+	<value>IP address of the server.</value>
+	<returns>IP address of the server.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.Port">
+	<summary>
+ Gets the port the server listens on.
+ </summary>
+	<value>the port the server listens on.</value>
+	<returns>the port the server listens on.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.CloseDelay">
+	<summary>
+ Gets or Sets the delay to recieve messages before the client is disconnected.
+ </summary>
+	<value>the delay to recieve messages before the client is disconnected.</value>
+	<returns>the delay to recieve messages before the client is disconnected.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.SendBufferSize">
+	<summary>
+ The number of bytes to send.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.ReceiveBufferSize">
+	<summary>
+ The number of bytes to receive.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.NoDelay">
+	<summary>
+ Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.connected_clients">
+	<summary>
+ Gets the currently connected clients.
+ </summary>
+	<value>the currently connected clients.</value>
+	<returns>the currently connected clients.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.isListening">
+	<summary>
+ Returns if the server is listening.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.GetClient(System.String)">
+	<summary>
+ Gets a client by name.
+ </summary>
+	<param name="name">The Client's Name to Find.</param>
+	<returns>The Client's Name or Nothing.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.RemoveClient(System.String)">
+	<summary>
+ Removes a client from the server.
+ </summary>
+	<param name="name">The client to remove.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.Start(System.String,captainalm.calmclientandserver.EncryptionMethod)">
+	<summary>
+ Starts the server.
+ </summary>
+	<param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
+	<param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.Stop">
+	<summary>
+ Stops listening to connections and stops the server.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.kill_threads">
+	<summary>
+ Kill the operating threads if they are still alive.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.broadcast(captainalm.calmclientandserver.packet)">
+	<summary>
+ Sends data to all of the connected clients.
+ </summary>
+	<param name="packet">The packet to send.</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.Disconnect(System.String)">
+	<summary>
+ Disconnect a specific user.
+ </summary>
+	<param name="clientName">The client name to disconnect.</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.Send(System.String,captainalm.calmclientandserver.packet)">
+	<summary>
+ Sends a message to a client.
+ </summary>
+	<param name="clientName">The client's name.</param>
+	<param name="message">The packet to send.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.server">
+	<summary>
+ Provides a server class.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.clientobj">
+	<summary>
+ Internal Client Object (Used By Server for Client Communication) {Internal Access Only}
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.encapsulation.#ctor">
+	<summary>
+ Creates a new Encapsulation Instance with a New Empty Object.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.encapsulation.#ctor(System.Object)">
+	<summary>
+ Creates a new Encapsulation Instance with the passed object.
+ </summary>
+	<param name="obj">The passed object to encapsulate.</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.encapsulation.data">
+	<summary>
+ Returns the data of the encapsulation object.
+ </summary>
+	<value>The data of the encapsulation object.</value>
+	<returns>The data of the encapsulation object.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.encapsulation.get_object">
+	<summary>
+ Gets the object held by the encapsulation object.
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.encapsulation">
+	<summary>
+ Object Encapsulation Class.
+ </summary>
+	<remarks></remarks>
+</member>
+</members>
+</doc>
