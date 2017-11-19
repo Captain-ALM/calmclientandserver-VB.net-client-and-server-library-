@@ -6,3 +6,4 @@ C:\Users\Alfred\documents\visual studio 2013\Projects\calmclientandserver\calmcl
 C:\Users\Alfred\documents\visual studio 2013\Projects\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.pdb
 C:\Users\Alfred\Documents\Visual Studio 2013\Projects\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.dll
 C:\Users\Alfred\Documents\Visual Studio 2013\Projects\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.dll
+C:\Users\Alfred\Documents\Visual Studio 2013\Projects\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.vbprojResolveAssemblyReference.cache

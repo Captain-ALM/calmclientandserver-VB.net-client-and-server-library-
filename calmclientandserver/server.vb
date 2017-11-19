@@ -86,9 +86,16 @@ Public Class server
     ''' <param name="port">The port to bind to (Optional) [Default: 100].</param>
     ''' <remarks></remarks>
     Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal port As Integer = 100)
-        On Error Resume Next
-        _ip = ipaddress
-        _port = port
+        Try
+            _ip = ipaddress
+        Catch ex As Exception
+            _ip = System.Net.IPAddress.None
+        End Try
+        Try
+            _port = port
+        Catch ex As Exception
+            _port = 100
+        End Try
         tcpListener = New TcpListener(_ip, _port)
     End Sub
     ''' <summary>

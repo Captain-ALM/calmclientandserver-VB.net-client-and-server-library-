@@ -7,5 +7,3 @@ Merge MSG and packet classes (so packet can return bytes and consume bytes)
 Mugfixes + Code Cleanup
 
 Fix the system header security issue
-
-Fix the encryption/decryption block using synclock
