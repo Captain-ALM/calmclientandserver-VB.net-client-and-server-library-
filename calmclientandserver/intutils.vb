@@ -17,30 +17,36 @@ Friend Module intutils
 
     Private rng As RNGCryptoServiceProvider = New RNGCryptoServiceProvider()
 
+    Private synclockencrypt As New Object()
+
+    Private synclockdecrypt As New Object()
+
     Public Function DecryptString(ciphertext As String, passphrase As String) As String
         Try
-            Dim expr_11 As String() = ciphertext.Split(":".ToCharArray(), 3)
-            Dim iv As Byte() = Convert.FromBase64String(expr_11(0))
-            Dim salt As Byte() = Convert.FromBase64String(expr_11(1))
-            Dim arg_35_0 As Byte() = Convert.FromBase64String(expr_11(2))
-            Dim key As Byte() = DeriveKeyFromPassphrase(passphrase, salt)
-            Dim bytes As Byte() = DoCryptoOperation(arg_35_0, key, iv, False)
-            Return Encoding.UTF8.GetString(bytes)
+            SyncLock synclockdecrypt
+                Dim expr_11 As String() = ciphertext.Split(":".ToCharArray(), 3)
+                Dim iv As Byte() = Convert.FromBase64String(expr_11(0))
+                Dim salt As Byte() = Convert.FromBase64String(expr_11(1))
+                Dim arg_35_0 As Byte() = Convert.FromBase64String(expr_11(2))
+                Dim key As Byte() = DeriveKeyFromPassphrase(passphrase, salt)
+                Dim bytes As Byte() = DoCryptoOperation(arg_35_0, key, iv, False)
+                Return Encoding.UTF8.GetString(bytes)
+            End SyncLock
         Catch ex As Exception
-
         End Try
         Return ""
     End Function
 
     Public Function EncryptString(plaintext As String, passphrase As String) As String
         Try
-            Dim array As Byte() = GenerateRandomBytes(SaltLength)
-            Dim array2 As Byte() = GenerateRandomBytes(16)
-            Dim key As Byte() = DeriveKeyFromPassphrase(passphrase, array)
-            Dim inArray As Byte() = DoCryptoOperation(Encoding.UTF8.GetBytes(plaintext), key, array2, True)
-            Return String.Format("{0}:{1}:{2}", Convert.ToBase64String(array2), Convert.ToBase64String(array), Convert.ToBase64String(inArray))
+            SyncLock synclockencrypt
+                Dim array As Byte() = GenerateRandomBytes(SaltLength)
+                Dim array2 As Byte() = GenerateRandomBytes(16)
+                Dim key As Byte() = DeriveKeyFromPassphrase(passphrase, array)
+                Dim inArray As Byte() = DoCryptoOperation(Encoding.UTF8.GetBytes(plaintext), key, array2, True)
+                Return String.Format("{0}:{1}:{2}", Convert.ToBase64String(array2), Convert.ToBase64String(array), Convert.ToBase64String(inArray))
+            End SyncLock
         Catch ex As Exception
-
         End Try
         Return ""
     End Function
