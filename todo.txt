@@ -4,6 +4,4 @@ Add proper return values from functions (Instead of booleans)
 
 Merge MSG and packet classes (so packet can return bytes and consume bytes)
 
-Mugfixes + Code Cleanup
-
-Fix the system header security issue
+Bugfixes + Code Cleanup

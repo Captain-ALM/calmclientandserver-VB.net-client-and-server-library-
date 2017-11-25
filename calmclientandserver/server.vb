@@ -365,6 +365,9 @@ Public Class server
         Dim result As Boolean = False
         Try
             GetClient(clientName).Disconnect(False)
+            Dim Handler As clientobj = GetClient(clientName)
+            clients.Remove(Handler)
+            serverData.Remove(clientName)
             result = True
         Catch ex As Exception
             result = False

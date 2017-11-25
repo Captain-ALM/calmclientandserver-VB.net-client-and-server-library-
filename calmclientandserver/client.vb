@@ -271,6 +271,7 @@ Public Class client
                 tcpClientNetStream = tcpClient.GetStream()
                 tcpClientNetStream.Write(Convert2Ascii(thisClient), 0, thisClient.Length)
                 tcpClientNetStream.Flush()
+                Thread.Sleep(100) 'allow some time for the name to be sent
                 connected = True
                 RaiseEvent ServerConnect()
             End If
@@ -410,7 +411,7 @@ Public Class client
         SyncLock lockSend
             synclockchecks = True
             Try
-                If Not tcpClient.Connected Then
+                If Not connected OrElse Not tcpClient.Connected Then
                     result = False
                 Else
                     Dim bytes As Byte() = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(message))))
