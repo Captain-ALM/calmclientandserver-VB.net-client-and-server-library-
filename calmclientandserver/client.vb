@@ -437,20 +437,20 @@ Public Class client
                     RaiseEvent ServerDisconnect()
                 ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx + 1)
+                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Add(cilname)
                     Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
                     Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
                 ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx + 1)
+                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Remove(cilname)
                     Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
                     Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
                 ElseIf message.header.ToLower.StartsWith("system:clients") Then
                     clientData = DirectCast(message.objectdata(password), List(Of String))
                 ElseIf message.header.ToLower.StartsWith("system:name") Then
-                    thisClient = DirectCast(message.objectdata(password), String)
+                    thisClient = message.stringdata(password)
                 End If
             Else
                 RaiseEvent ServerMessage(message)
