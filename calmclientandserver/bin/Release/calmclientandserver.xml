@@ -95,7 +95,7 @@ calmclientandserver
 	<param name="ipaddress">The IP address of the server.</param>
 	<param name="port">The port of the server.</param>
 	<param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-	<param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+	<param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.UpdateClientData">

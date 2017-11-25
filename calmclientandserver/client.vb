@@ -234,10 +234,10 @@ Public Class client
     ''' <param name="ipaddress">The IP address of the server.</param>
     ''' <param name="port">The port of the server.</param>
     ''' <param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-    ''' <param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+    ''' <param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional password2 As String = "", Optional encrypttype As EncryptionMethod = EncryptionMethod.none) As Boolean
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional password2 As String = "", Optional encrypttype2 As EncryptionMethod = EncryptionMethod.none) As Boolean
         Dim result As Boolean = False
         Try
             If connected Then
@@ -245,7 +245,7 @@ Public Class client
             Else
                 thisClient = Clientname
                 password = password2
-                encrypttype = encrypttype
+                encryptmethod = encrypttype2
                 _port = port
                 _ip = ipaddress
                 listenthread = New Thread(New ThreadStart(AddressOf Listen))
@@ -271,7 +271,7 @@ Public Class client
                 tcpClientNetStream = tcpClient.GetStream()
                 tcpClientNetStream.Write(Convert2Ascii(thisClient), 0, thisClient.Length)
                 tcpClientNetStream.Flush()
-                Thread.Sleep(100) 'allow some time for the name to be sent
+                'Thread.Sleep(100) 'allow some time for the name to be sent : no need for this
                 connected = True
                 RaiseEvent ServerConnect()
             End If
