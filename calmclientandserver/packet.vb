@@ -1,8 +1,13 @@
-﻿Imports System.IO
-Imports System.Runtime.Serialization.Formatters.Binary
-Imports System.Security
-Imports System.Security.Cryptography
-Imports System.Text
+﻿'Packet design padded by a /u004 character
+'refnum sender recievers header [payload]
+'each part seperated by a /u005 character
+'Payload design padded by a /u006 character
+'[payload_meta] data
+'each part seperated by a /u007 character
+'Playload_meta design padded by a /u008 character
+'isobject isencrypted encryptionmethod
+'each part seperated by a /u009 character
+'###Each piece of data is serialized###
 ''' <summary>
 ''' The packet class.
 ''' </summary>
@@ -378,6 +383,45 @@ Public Class packet
         Catch ex As Exception
         End Try
         Return Nothing
+    End Function
+
+    Public Function ToBytes() As Byte()
+        Dim payload_meta_barr((2 + 3 + 2) - 1) As Byte
+
+        payload_meta_barr(0) = 8
+        payload_meta_barr(1) = _isobj
+        payload_meta_barr(2) = 9
+        payload_meta_barr(3) = _isencrypted
+        payload_meta_barr(4) = 9
+        payload_meta_barr(5) = _encryptmethod
+        payload_meta_barr(6) = 8
+
+        Dim ascii_data As Byte() = utils.Convert2Ascii(convertobjecttostring(_data))
+        Dim payload_barr(2 + payload_meta_barr.Length + 1 + ascii_data.Length) As Byte
+
+        payload_barr(0) = 6
+        System.Buffer.BlockCopy(payload_meta_barr, 0, payload_barr, 1, payload_meta_barr.Length)
+        payload_barr(payload_meta_barr.Length + 1) = 7
+        System.Buffer.BlockCopy(ascii_data, 0, payload_barr, 2 + payload_meta_barr.Length, ascii_data.Length)
+        payload_barr(payload_barr.Length - 1) = 6
+
+        Dim ascii_refnum As Byte() = utils.Convert2Ascii(_refnumber)
+        Dim ascii_sender As Byte() = utils.Convert2Ascii(convertobjecttostring(_sender))
+        Dim ascii_recievers As Byte() = utils.Convert2Ascii(convertobjecttostring(_receivers))
+        Dim ascii_header As Byte() = utils.Convert2Ascii(convertobjecttostring(_header))
+        Dim barrret(2 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1 + payload_barr.Length) As Byte
+
+        barrret(0) = 4
+        System.Buffer.BlockCopy(ascii_refnum, 0, barrret, 1, ascii_refnum.Length)
+        payload_barr(ascii_refnum.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_sender, 0, barrret, ascii_refnum.Length + 2, ascii_sender.Length)
+        payload_barr(ascii_refnum.Length + 1 + ascii_sender.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_recievers, 0, barrret, ascii_refnum.Length + 2 + ascii_sender.Length + 3, ascii_recievers.Length)
+        payload_barr(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1) = 5
+
+        barrret(barrret.Length - 1) = 4
+
+        Return barrret
     End Function
 End Class
 ''' <summary>

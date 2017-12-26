@@ -278,16 +278,20 @@ Public Class client
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
         End Try
-        While tcpClient.Connected And connected
-            Try
-                Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-                tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)
-                DecryptBytes(bytes)
-            Catch ex As Exception
-                Exit While
-            End Try
-            Thread.Sleep(150)
-        End While
+        Try
+            While connected AndAlso tcpClient.Connected
+                Try
+                    Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+                    tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)
+                    DecryptBytes(bytes)
+                Catch ex As Exception
+                    Exit While
+                End Try
+                Thread.Sleep(150)
+            End While
+        Catch ex As Exception
+            RaiseEvent errEncounter(ex)
+        End Try
         Disconnect()
     End Sub
 
@@ -306,11 +310,11 @@ Public Class client
 
     Private Sub updatedata()
         While connected
+            Thread.Sleep(_clientrefreshdelay)
             If tcpClient.Connected Then
                 Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
                 Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
             End If
-            Thread.Sleep(_clientrefreshdelay)
         End While
         Thread.CurrentThread.Abort()
     End Sub
