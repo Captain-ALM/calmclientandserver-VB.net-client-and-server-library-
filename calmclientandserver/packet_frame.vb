@@ -78,6 +78,55 @@ Friend Structure packet_frame_part
         data = dat
     End Sub
 
+    Public Sub New(ByVal dat As Byte())
+        Dim packetdat(dat.Length - 3) As Byte
+        System.Buffer.BlockCopy(dat, 1, packetdat, 0, dat.Length - 2)
+
+        Dim c_byte As Byte = 1
+        Dim c_index As Integer = 0
+        Dim dat_arr_lst As New List(Of Byte)
+
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        refnum = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        partnum = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        totalparts = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        Dim pldat(packetdat.Length - c_index - 1) As Byte
+        Buffer.BlockCopy(packetdat, c_index, pldat, 0, packetdat.Length - c_index)
+        data = pldat
+    End Sub
+
     Public Function ToBytes() As Byte()
         Dim ascii_refnum As Byte() = utils.Convert2Ascii(refnum)
         Dim ascii_partnum As Byte() = utils.Convert2Ascii(partnum)
@@ -116,5 +165,55 @@ Friend Structure packet_frame_part
         byte_arr(byte_arr.Length - 1) = 2
 
         Return byte_arr
+    End Operator
+
+    Public Shared Narrowing Operator CType(ByVal dat As Byte()) As packet_frame_part
+        Dim packetdat(dat.Length - 3) As Byte
+        System.Buffer.BlockCopy(dat, 1, packetdat, 0, dat.Length - 2)
+
+        Dim c_byte As Byte = 1
+        Dim c_index As Integer = 0
+        Dim dat_arr_lst As New List(Of Byte)
+
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim refnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim partnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        While ((Not c_byte = 3) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 3 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim totalpnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_byte = 1
+        c_index += 1
+        Dim pldat(packetdat.Length - c_index - 1) As Byte
+        Buffer.BlockCopy(packetdat, c_index, pldat, 0, packetdat.Length - c_index)
+
+        Return New packet_frame_part(refnum, partnum, totalpnum, pldat)
     End Operator
 End Structure

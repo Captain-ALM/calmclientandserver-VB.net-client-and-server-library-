@@ -436,7 +436,7 @@ Public Class packet
         Dim packetdat(data.Length - 3) As Byte
         System.Buffer.BlockCopy(data, 1, packetdat, 0, data.Length - 2)
 
-        Dim c_byte As Byte = 0
+        Dim c_byte As Byte = 1
         Dim c_index As Integer = 0
         Dim dat_arr_lst As New List(Of Byte)
 
@@ -450,6 +450,7 @@ Public Class packet
         Dim refnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
+        c_byte = 1
         c_index += 1
         While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
             c_byte = packetdat(c_index)
@@ -461,6 +462,7 @@ Public Class packet
         Dim sender As String = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
         dat_arr_lst.Clear()
 
+        c_byte = 1
         c_index += 1
         While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
             c_byte = packetdat(c_index)
@@ -472,6 +474,7 @@ Public Class packet
         Dim recievers As List(Of String) = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
         dat_arr_lst.Clear()
 
+        c_byte = 1
         c_index += 1
         While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
             c_byte = packetdat(c_index)
@@ -489,7 +492,7 @@ Public Class packet
         Dim payloaddat(payload.Length - 3) As Byte
         Buffer.BlockCopy(payload, 1, payloaddat, 0, payload.Length - 2)
 
-        c_byte = 0
+        c_byte = 1
 
         Dim isobj As Boolean = payloaddat(1)
         Dim isencry As Boolean = payloaddat(3)
