@@ -104,6 +104,14 @@ Friend Module intutils
         Next
         Return ChoppedBytes
     End Function
+
+    Public Function validate_port(ByVal p As Integer) As Integer
+        If p >= 0 And p <= 65535 Then
+            Return p
+        Else
+            Return 100
+        End If
+    End Function
 End Module
 ''' <summary>
 ''' Utilities Module {Access public}

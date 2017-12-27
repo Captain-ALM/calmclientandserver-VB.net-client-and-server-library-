@@ -94,11 +94,11 @@ Public Class server
             _ip = System.Net.IPAddress.None
         End Try
         Try
-            _port = port
+            _port = validate_port(port)
         Catch ex As Exception
             _port = 100
         End Try
-        tcpListener = New TcpListener(_ip, _port)
+        tcpListener = New TcpListener(_ip, validate_port(_port))
     End Sub
     ''' <summary>
     ''' Flushes this instance of server (Cleaning).
@@ -312,12 +312,40 @@ Public Class server
     ''' <param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    <Obsolete("Use encryptionparameter to provide encryption")>
     Public Function Start(Optional password2 As String = "", Optional encrypttype As EncryptionMethod = EncryptionMethod.none) As Boolean
         Dim result As Boolean = False
         Try
             listening = True
             password = password2
             encryptmethod = encrypttype
+            listenthread = New Thread(New ThreadStart(AddressOf Listen))
+            listenthread.IsBackground = True
+            listenthread.Start()
+            result = True
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+    ''' <summary>
+    ''' Starts the server.
+    ''' </summary>
+    '''<param name="encrypt_p">The encryption parameter</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing) As Boolean
+        Dim result As Boolean = False
+        Try
+            listening = True
+            If Not IsNothing(encrypt_p) Then
+                encryptmethod = encrypt_p.encrypt_method
+                password = encrypt_p.password
+            Else
+                encryptmethod = EncryptionMethod.none
+                password = ""
+            End If
             listenthread = New Thread(New ThreadStart(AddressOf Listen))
             listenthread.IsBackground = True
             listenthread.Start()
@@ -482,7 +510,7 @@ Public Class server
             clientnolst.Add(client)
             If message.header.ToLower.StartsWith("system") Then
                 If message.stringdata(password).ToLower = "clients" Then
-                    Send(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), password, encryptmethod))
+                    Send(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
@@ -508,7 +536,7 @@ Public Class server
                         End If
                     End If
                 ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
-                    Send(client, New packet(0, "0", clientnolst, "system:name", client, password, encryptmethod))
+                    Send(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
                     Disconnect(client)
                 ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then

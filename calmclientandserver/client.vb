@@ -139,7 +139,7 @@ Public Class client
             If Not (arex) Then
                 clientData.Remove(thisClient)
                 clientData.Add(value)
-                Dim retyt As String = Send(New packet(0, thisClient, New List(Of String), "system", "client:" & value, password, encryptmethod))
+                Dim retyt As String = Send(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
                 If retyt.ToLower = "success" Then
                     thisClient = value
                 End If
@@ -262,6 +262,7 @@ Public Class client
     ''' <param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    <Obsolete("Use encryptionparameter to provide encryption")>
     Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional password2 As String = "", Optional encrypttype2 As EncryptionMethod = EncryptionMethod.none) As Boolean
         Dim result As Boolean = False
         Try
@@ -271,7 +272,7 @@ Public Class client
                 thisClient = Clientname
                 password = password2
                 encryptmethod = encrypttype2
-                _port = port
+                _port = validate_port(port)
                 _ip = ipaddress
                 listenthread = New Thread(New ThreadStart(AddressOf Listen))
                 listenthread.IsBackground = True
@@ -281,6 +282,46 @@ Public Class client
                 updatethread.Start()
                 result = True
             End If
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Connect to a server.
+    ''' </summary>
+    ''' <param name="Clientname">The name of the client.</param>
+    ''' <param name="ipaddress">The IP address of the server.</param>
+    ''' <param name="port">The port of the server.</param>
+    '''<param name="encrypt_p">The Encryption Parameter</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing) As Boolean
+        Dim result As Boolean = False
+        Try
+            If connected Then
+                result = True
+            Else
+                thisClient = Clientname
+                If Not IsNothing(encrypt_p) Then
+                    encryptmethod = encrypt_p.encrypt_method
+                    password = encrypt_p.password
+                Else
+                    encryptmethod = EncryptionMethod.none
+                    password = ""
+                End If
+                    _port = validate_port(port)
+                    _ip = ipaddress
+                    listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                    listenthread.IsBackground = True
+                    listenthread.Start()
+                    updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                    updatethread.IsBackground = True
+                    updatethread.Start()
+                    result = True
+                End If
         Catch ex As Exception
             result = False
             RaiseEvent errEncounter(ex)
@@ -381,8 +422,8 @@ Public Class client
         While connected
             Thread.Sleep(_clientrefreshdelay)
             If tcpClient.Connected Then
-                Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
-                Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
+                Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
             End If
         End While
         Thread.CurrentThread.Abort()
@@ -394,8 +435,8 @@ Public Class client
     Public Sub UpdateClientData()
         If connected Then
             If tcpClient.Connected Then
-                Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
-                Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
+                Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
             End If
         End If
     End Sub
@@ -419,7 +460,7 @@ Public Class client
     ''' <remarks></remarks>
     Public Shared Function CheckServer(ipadress As String, port As Integer) As Boolean
         Try
-            Dim tcpClientc As TcpClient = New TcpClient(ipadress, port)
+            Dim tcpClientc As TcpClient = New TcpClient(ipadress, validate_port(port))
             If tcpClientc.Connected Then
                 Dim optionValue As LingerOption = New LingerOption(False, 0)
                 tcpClientc.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, optionValue)
@@ -527,14 +568,14 @@ Public Class client
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Add(cilname)
-                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
-                    Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
+                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Remove(cilname)
-                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", password, encryptmethod))
-                    Send(New packet(0, thisClient, New List(Of String), "system", "client", password, encryptmethod))
+                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.header.ToLower.StartsWith("system:clients") Then
                     clientData = DirectCast(message.objectdata(password), List(Of String))
                 ElseIf message.header.ToLower.StartsWith("system:name") Then

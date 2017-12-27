@@ -58,7 +58,7 @@ Public Class packet
 
     'object construction
     ''' <summary>
-    ''' Creates a new valid packet with basic data and no encryption [encapsulated data].
+    ''' Creates a new valid packet with object data and no encryption [encapsulated data].
     ''' </summary>
     ''' <param name="refnumber">Reference Number.</param>
     ''' <param name="sender">The Sender Name.</param>
@@ -91,6 +91,7 @@ Public Class packet
     ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
     ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
     ''' <remarks></remarks>
+    <Obsolete("Use new method that uses Encryption Parameter")>
     Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As String, password As String, encryptmethod As EncryptionMethod)
         Try
             _refnumber = refnumber
@@ -128,9 +129,59 @@ Public Class packet
         End Try
     End Sub
 
+    'string construction with encryption
+    ''' <summary>
+    ''' Creates a new valid packet with basic data and encryption [string data].
+    ''' </summary>
+    ''' <param name="refnumber">Reference Number.</param>
+    ''' <param name="sender">The Sender Name.</param>
+    ''' <param name="receivers">The Name(s) of the Receivers.</param>
+    ''' <param name="header">The Header Data.</param>
+    ''' <param name="data">The Data to Send [String].</param>
+    ''' <param name="encrypt_param">The encryption parameter to use.</param>
+    ''' <remarks></remarks>
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As String, encrypt_param As EncryptionParameter)
+        Try
+            _refnumber = refnumber
+            _ispacketvalid = True
+            _sender = sender
+            _receivers = receivers
+            _header = header
+            _data = data
+            _isobj = False
+            _encryptmethod = EncryptionMethod.none
+            _isencrypted = False
+            If encrypt_param.encrypt_method > 0 And encrypt_param.encrypt_method < 4 Then
+                _encryptmethod = encrypt_param.encrypt_method
+                _isencrypted = True
+            End If
+            If _isencrypted Then
+                If encrypt_param.encrypt_method = EncryptionMethod.unicode Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    For i As Integer = 0 To oldstring.Length - 1 Step 1
+                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
+                    Next
+                ElseIf encrypt_param.encrypt_method = EncryptionMethod.ase Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    _data = EncryptString(oldstring, encrypt_param.password)
+                ElseIf encrypt_param.encrypt_method = EncryptionMethod.unicodease Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    Dim oldstring2 As String = EncryptString(oldstring, encrypt_param.password)
+                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
+                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
+                    Next
+                End If
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
     'object construction with encryption
     ''' <summary>
-    ''' Creates a new valid packet with basic data and encryption [encapsulated data].
+    ''' Creates a new valid packet with object data and encryption [encapsulated data].
     ''' </summary>
     ''' <param name="refnumber">Reference Number.</param>
     ''' <param name="sender">The Sender Name.</param>
@@ -140,6 +191,7 @@ Public Class packet
     ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
     ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
     ''' <remarks></remarks>
+    <Obsolete("Use new method that uses Encryption Parameter")>
     Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation, password As String, encryptmethod As EncryptionMethod)
         Try
             _refnumber = refnumber
@@ -168,6 +220,56 @@ Public Class packet
                     Dim oldstring As String = _data
                     _data = ""
                     Dim oldstring2 As String = EncryptString(oldstring, password)
+                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
+                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
+                    Next
+                End If
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    'object construction with encryption
+    ''' <summary>
+    ''' Creates a new valid packet with object data and encryption [encapsulated data].
+    ''' </summary>
+    ''' <param name="refnumber">Reference Number.</param>
+    ''' <param name="sender">The Sender Name.</param>
+    ''' <param name="receivers">The Name(s) of the Receivers.</param>
+    ''' <param name="header">The Header Data.</param>
+    ''' <param name="data">The Data to Send [Encapsulation].</param>
+    ''' <param name="encry_param">The encryption parameter to use.</param>
+    ''' <remarks></remarks>
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation, encry_param As EncryptionParameter)
+        Try
+            _refnumber = refnumber
+            _ispacketvalid = True
+            _sender = sender
+            _receivers = receivers
+            _header = header
+            _data = data.data
+            _isobj = True
+            _encryptmethod = EncryptionMethod.none
+            _isencrypted = False
+            If encry_param.encrypt_method > 0 And encry_param.encrypt_method < 4 Then
+                _encryptmethod = encry_param.encrypt_method
+                _isencrypted = True
+            End If
+            If _isencrypted Then
+                If encry_param.encrypt_method = EncryptionMethod.unicode Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    For i As Integer = 0 To oldstring.Length - 1 Step 1
+                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
+                    Next
+                ElseIf encry_param.encrypt_method = EncryptionMethod.ase Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    _data = EncryptString(oldstring, encry_param.password)
+                ElseIf encry_param.encrypt_method = EncryptionMethod.unicodease Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    Dim oldstring2 As String = EncryptString(oldstring, encry_param.password)
                     For i As Integer = 0 To oldstring2.Length - 1 Step 1
                         _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
                     Next
@@ -570,3 +672,53 @@ Public Enum EncryptionMethod As Integer
     ase = 2
     unicodease = 3
 End Enum
+''' <summary>
+''' Encryption Holder Structure
+''' </summary>
+''' <remarks></remarks>
+<Serializable()>
+Public Structure EncryptionParameter
+    ''' <summary>
+    ''' The held Encryption Method
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public encrypt_method As EncryptionMethod
+    ''' <summary>
+    ''' The held Password
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public password As String
+    ''' <summary>
+    ''' Creates a new instance of encryptionparameter with no password
+    ''' </summary>
+    ''' <param name="em">Either none or unicode encryption methods.</param>
+    ''' <remarks></remarks>
+    Sub New(ByVal em As EncryptionMethod)
+        If em = EncryptionMethod.ase Or em = EncryptionMethod.unicodease Then
+            Throw New ArgumentException("You cannot create an Encryption parameter of ase or unicode ase without a password")
+        ElseIf em = EncryptionMethod.none Or em = EncryptionMethod.unicode Then
+            encrypt_method = em
+        Else
+            Throw New ArgumentException("The Enum value does not exist")
+        End If
+    End Sub
+    ''' <summary>
+    ''' Creates a new instance of encryptionparameter with no password
+    ''' </summary>
+    ''' <param name="em">Encryption Method.</param>
+    ''' <param name="pass">The password.</param>
+    ''' <remarks></remarks>
+    Sub New(ByVal em As EncryptionMethod, ByVal pass As String)
+        If (em = EncryptionMethod.ase Or em = EncryptionMethod.unicodease) And Not pass Is Nothing And Not pass = "" Then
+            encrypt_method = em
+            password = pass
+        ElseIf em = EncryptionMethod.ase Or em = EncryptionMethod.unicodease Then
+            Throw New ArgumentException("You must specify a valid password")
+        ElseIf em = EncryptionMethod.none Or em = EncryptionMethod.unicode Then
+            encrypt_method = em
+            password = pass
+        Else
+            Throw New ArgumentException("The Enum value does not exist")
+        End If
+    End Sub
+End Structure
