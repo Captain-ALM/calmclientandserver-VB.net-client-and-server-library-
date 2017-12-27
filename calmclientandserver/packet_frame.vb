@@ -61,6 +61,10 @@ Friend Structure packet_frame
     End Operator
 End Structure
 
+
+'packet_frame_part design padded by a /u002 character
+'refnum partnum totalparts data
+'each part seperated by a /u003 character
 Friend Structure packet_frame_part
     Dim data As Byte()
     Dim refnum As Integer
@@ -73,4 +77,44 @@ Friend Structure packet_frame_part
         totalparts = tp
         data = dat
     End Sub
+
+    Public Function ToBytes() As Byte()
+        Dim ascii_refnum As Byte() = utils.Convert2Ascii(refnum)
+        Dim ascii_partnum As Byte() = utils.Convert2Ascii(partnum)
+        Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(totalparts)
+
+        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + data.Length) As Byte
+
+        byte_arr(0) = 2
+        System.Buffer.BlockCopy(ascii_refnum, 0, byte_arr, 1, ascii_refnum.Length)
+        byte_arr(ascii_refnum.Length + 1) = 3
+        System.Buffer.BlockCopy(ascii_partnum, 0, byte_arr, 1 + ascii_refnum.Length + 1, ascii_partnum.Length)
+        byte_arr(ascii_refnum.Length + 1 + ascii_partnum.Length + 1) = 3
+        System.Buffer.BlockCopy(ascii_totalpnum, 0, byte_arr, 1 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1, ascii_totalpnum.Length)
+        byte_arr(ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1) = 3
+        System.Buffer.BlockCopy(data, 0, byte_arr, 1 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1, data.Length)
+        byte_arr(byte_arr.Length - 1) = 2
+
+        Return byte_arr
+    End Function
+
+    Public Shared Widening Operator CType(ByVal pfp As packet_frame_part) As Byte()
+        Dim ascii_refnum As Byte() = utils.Convert2Ascii(pfp.refnum)
+        Dim ascii_partnum As Byte() = utils.Convert2Ascii(pfp.partnum)
+        Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(pfp.totalparts)
+
+        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + pfp.data.Length) As Byte
+
+        byte_arr(0) = 2
+        System.Buffer.BlockCopy(ascii_refnum, 0, byte_arr, 1, ascii_refnum.Length)
+        byte_arr(ascii_refnum.Length + 1) = 3
+        System.Buffer.BlockCopy(ascii_partnum, 0, byte_arr, 1 + ascii_refnum.Length + 1, ascii_partnum.Length)
+        byte_arr(ascii_refnum.Length + 1 + ascii_partnum.Length + 1) = 3
+        System.Buffer.BlockCopy(ascii_totalpnum, 0, byte_arr, 1 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1, ascii_totalpnum.Length)
+        byte_arr(ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1) = 3
+        System.Buffer.BlockCopy(pfp.data, 0, byte_arr, 1 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1, pfp.data.Length)
+        byte_arr(byte_arr.Length - 1) = 2
+
+        Return byte_arr
+    End Operator
 End Structure
