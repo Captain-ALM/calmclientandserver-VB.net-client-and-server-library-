@@ -431,6 +431,130 @@ Public Class packet
 
         Return barrret
     End Function
+
+    Public Shared Narrowing Operator CType(ByVal data As Byte()) As packet
+        Dim packetdat(data.Length - 3) As Byte
+        System.Buffer.BlockCopy(data, 1, packetdat, 0, data.Length - 2)
+
+        Dim c_byte As Byte = 0
+        Dim c_index As Integer = 0
+        Dim dat_arr_lst As New List(Of Byte)
+
+        While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 5 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim refnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        dat_arr_lst.Clear()
+
+        c_index += 1
+        While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 5 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim sender As String = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        dat_arr_lst.Clear()
+
+        c_index += 1
+        While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 5 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim recievers As List(Of String) = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        dat_arr_lst.Clear()
+
+        c_index += 1
+        While ((Not c_byte = 5) Or (Not c_byte = 0)) And c_index < packetdat.Length
+            c_byte = packetdat(c_index)
+            If c_byte = 5 Then Exit While
+            dat_arr_lst.Add(c_byte)
+            c_index += 1
+        End While
+
+        Dim header As String = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        dat_arr_lst.Clear()
+
+        c_index += 1
+        Dim payload(packetdat.Length - c_index - 1) As Byte
+        Buffer.BlockCopy(packetdat, c_index, payload, 0, packetdat.Length - c_index)
+        Dim payloaddat(payload.Length - 3) As Byte
+        Buffer.BlockCopy(payload, 1, payloaddat, 0, payload.Length - 2)
+
+        c_byte = 0
+
+        Dim isobj As Boolean = payloaddat(1)
+        Dim isencry As Boolean = payloaddat(3)
+        Dim encrymeth As EncryptionMethod = payloaddat(5)
+
+        Dim data_arr(payloaddat.Length - 8 - 1) As Byte
+        Buffer.BlockCopy(payloaddat, 8, data_arr, 0, payloaddat.Length - 8)
+        Dim t_data As String = convertstringtoobject(utils.ConvertFromAscii(data_arr))
+
+        Dim p_t_ret As packet = New packet()
+        p_t_ret._ispacketvalid = True
+        p_t_ret._data = t_data
+        p_t_ret._encryptmethod = encrymeth
+        p_t_ret._header = header
+        p_t_ret._isencrypted = isencry
+        p_t_ret._isobj = isobj
+        p_t_ret._receivers = recievers
+        p_t_ret._refnumber = refnum
+        p_t_ret._sender = sender
+
+        Return p_t_ret
+    End Operator
+
+    Public Shared Widening Operator CType(ByVal packt As packet) As Byte()
+        Dim payload_meta_barr((2 + 3 + 2) - 1) As Byte
+
+        payload_meta_barr(0) = 8
+        payload_meta_barr(1) = packt._isobj
+        payload_meta_barr(2) = 9
+        payload_meta_barr(3) = packt._isencrypted
+        payload_meta_barr(4) = 9
+        payload_meta_barr(5) = packt._encryptmethod
+        payload_meta_barr(6) = 8
+
+        Dim ascii_data As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._data))
+
+        Dim payload_barr(2 + payload_meta_barr.Length + 1 + ascii_data.Length) As Byte
+
+        payload_barr(0) = 6
+        System.Buffer.BlockCopy(payload_meta_barr, 0, payload_barr, 1, payload_meta_barr.Length)
+        payload_barr(payload_meta_barr.Length + 1) = 7
+        System.Buffer.BlockCopy(ascii_data, 0, payload_barr, 2 + payload_meta_barr.Length, ascii_data.Length)
+        payload_barr(payload_barr.Length - 1) = 6
+
+        Dim ascii_refnum As Byte() = utils.Convert2Ascii(packt._refnumber)
+        Dim ascii_sender As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._sender))
+        Dim ascii_recievers As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._receivers))
+        Dim ascii_header As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._header))
+
+        Dim barrret(2 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1 + payload_barr.Length) As Byte
+
+        barrret(0) = 4
+        System.Buffer.BlockCopy(ascii_refnum, 0, barrret, 1, ascii_refnum.Length)
+        barrret(ascii_refnum.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_sender, 0, barrret, 1 + ascii_refnum.Length + 1, ascii_sender.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_recievers, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1, ascii_recievers.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_header, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1, ascii_header.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1) = 5
+        System.Buffer.BlockCopy(payload_barr, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1, payload_barr.Length)
+        barrret(barrret.Length - 1) = 4
+
+        Return barrret
+    End Operator
 End Class
 ''' <summary>
 ''' Packet Encryption Method.
