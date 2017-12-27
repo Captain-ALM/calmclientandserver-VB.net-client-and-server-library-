@@ -1,4 +1,7 @@
-﻿
+﻿''' <summary>
+''' Packet Frame {Internal Access Only}
+''' </summary>
+''' <remarks></remarks>
 Friend Structure packet_frame
     Dim data As Byte()
     Dim refnum As Integer
@@ -65,6 +68,10 @@ End Structure
 'packet_frame_part design padded by a /u002 character
 'refnum partnum totalparts data
 'each part seperated by a /u003 character
+''' <summary>
+''' Part of a Packet Frame {Internal Access Only}
+''' </summary>
+''' <remarks></remarks>
 Friend Structure packet_frame_part
     Dim data As Byte()
     Dim refnum As Integer

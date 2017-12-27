@@ -14,7 +14,9 @@ Friend Class clientobj
     Public name As String
     Private Connected As Boolean = False
     Private discon_invoked As Boolean = False 'was the disconnection invoked by the disconect func already?
-    Public Event DataReceived(ByVal cname As String, ByVal Msg As intmsg)
+    Private _packet_frame_part_dict As New Dictionary(Of Integer, packet_frame_part())
+
+    Public Event DataReceived(ByVal cname As String, ByVal Msg As packet_frame)
     Public Event errEncounter(ByVal ex As Exception)
     Public Event lostConnection(ByVal cientname As String)
     Private listenthread As Thread = Nothing
@@ -47,13 +49,61 @@ Friend Class clientobj
     Private Sub Listen()
             Try
                 networkStream = tcpClient.GetStream()
-                Do While tcpClient.Connected And Connected
+            Do While Connected AndAlso tcpClient.Connected
+                Try
+                    Dim GetBytes(tcpClient.ReceiveBufferSize) As Byte
+                    networkStream.Read(GetBytes, 0, tcpClient.ReceiveBufferSize)
+                    Dim Msg As packet_frame_part = Nothing
                     Try
-                        Dim GetBytes(tcpClient.ReceiveBufferSize) As Byte
-                        networkStream.Read(GetBytes, 0, tcpClient.ReceiveBufferSize)
-                    RaiseEvent DataReceived(name, New intmsg(GetBytes))
+                        Msg = GetBytes
                     Catch ex As Exception
-                        Exit Do
+                        Msg = Nothing
+                    End Try
+                    If Not Msg.data Is Nothing Then
+                        If Msg.partnum = Msg.totalparts And _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                            Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
+                            arr(Msg.partnum - 1) = Msg
+                            _packet_frame_part_dict(Msg.refnum) = arr
+                            Dim pf As packet_frame = Nothing
+                            Dim sc As Boolean = False
+                            Try
+                                pf = arr
+                                sc = True
+                            Catch ex As Exception
+                                pf = Nothing
+                                sc = False
+                            End Try
+                            If sc Then
+                                RaiseEvent DataReceived(name, pf)
+                            End If
+                            _packet_frame_part_dict.Remove(Msg.refnum)
+                        ElseIf _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                            Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
+                            arr(Msg.partnum - 1) = Msg
+                            _packet_frame_part_dict(Msg.refnum) = arr
+                        ElseIf Not _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                            Dim arr(Msg.totalparts - 1) As packet_frame_part
+                            arr(0) = Msg
+                            If arr.Length = 1 Then
+                                Dim pf As packet_frame = Nothing
+                                Dim sc As Boolean = False
+                                Try
+                                    pf = arr
+                                    sc = True
+                                Catch ex As Exception
+                                    pf = Nothing
+                                    sc = False
+                                End Try
+                                If sc Then
+                                    RaiseEvent DataReceived(name, pf)
+                                End If
+                            Else
+                                _packet_frame_part_dict.Add(Msg.refnum, arr)
+                            End If
+                        End If
+                    End If
+                Catch ex As Exception
+                    Exit Do
                 End Try
                 Thread.Sleep(150)
             Loop
@@ -82,5 +132,12 @@ Friend Class clientobj
         If Not tcpClient Is Nothing Then tcpClient.Close()
         If raise_event Then RaiseEvent lostConnection(name)
         discon_invoked = True
+    End Sub
+
+    Public Sub purge_msgs()
+        Try
+            _packet_frame_part_dict.Clear()
+        Catch ex As Exception
+        End Try
     End Sub
 End Class

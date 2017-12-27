@@ -45,6 +45,10 @@ Public Class client
     Private _ip As String = ""
 
     Private _port As Integer = 0
+
+    Private _packet_frame_part_dict As New Dictionary(Of Integer, packet_frame_part())
+
+    Private _packet_delay As Integer = 500
     ''' <summary>
     ''' Raised when a connection is successful.
     ''' </summary>
@@ -107,6 +111,10 @@ Public Class client
             _ip = ""
 
             _port = 0
+
+            _packet_delay = 500
+
+            _packet_frame_part_dict = New Dictionary(Of Integer, packet_frame_part())
         End If
     End Sub
 
@@ -175,6 +183,23 @@ Public Class client
         End Get
         Set(value As Integer)
             _clientrefreshdelay = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' Gets or Sets the delay between packet parts sent.
+    ''' </summary>
+    ''' <value>the delay between packet parts sent.</value>
+    ''' <returns>the delay between packet parts sent.</returns>
+    ''' <remarks></remarks>
+    Public Property MessageSendPacketDelay() As Integer
+        Get
+            Return _packet_delay
+        End Get
+        Set(value As Integer)
+            If Not value = Timeout.Infinite Then
+                _packet_delay = value
+            End If
         End Set
     End Property
 
@@ -297,14 +322,58 @@ Public Class client
 
     Private Sub DecryptBytes(ByVal Message() As Byte)
         Dim Disconnected As Boolean = True
-        For b = 0 To Message.Length - 1
-            Dim Msg As intmsg = intmsg.FromBytes(Message, b)
-            If Not Msg.Data Is Nothing Then
-                Dim packet As packet = string2packet(ConvertFromAscii(Msg.Data))
-                servermsgpr(packet)
-                Disconnected = False
+        'For b = 0 To Message.Length - 1
+        Dim Msg As packet_frame_part = Nothing
+        Try
+            Msg = Message
+        Catch ex As Exception
+            Msg = Nothing
+        End Try
+        If Not Msg.data Is Nothing Then
+            If Msg.partnum = Msg.totalparts And _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
+                arr(Msg.partnum - 1) = Msg
+                _packet_frame_part_dict(Msg.refnum) = arr
+                Dim pf As packet_frame = Nothing
+                Dim sc As Boolean = False
+                Try
+                    pf = arr
+                    sc = True
+                Catch ex As Exception
+                    pf = Nothing
+                    sc = False
+                End Try
+                If sc Then
+                    servermsgpr(pf.data)
+                End If
+                _packet_frame_part_dict.Remove(Msg.refnum)
+            ElseIf _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
+                arr(Msg.partnum - 1) = Msg
+                _packet_frame_part_dict(Msg.refnum) = arr
+            ElseIf Not _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
+                Dim arr(Msg.totalparts - 1) As packet_frame_part
+                arr(0) = Msg
+                If arr.Length = 1 Then
+                    Dim pf As packet_frame = Nothing
+                    Dim sc As Boolean = False
+                    Try
+                        pf = arr
+                        sc = True
+                    Catch ex As Exception
+                        pf = Nothing
+                        sc = False
+                    End Try
+                    If sc Then
+                        servermsgpr(pf.data)
+                    End If
+                Else
+                    _packet_frame_part_dict.Add(Msg.refnum, arr)
+                End If
             End If
-        Next b
+            Disconnected = False
+        End If
+        'Next b
         If Disconnected Then connected = False
     End Sub
 
@@ -405,6 +474,16 @@ Public Class client
         End If
     End Sub
     ''' <summary>
+    ''' Cleans accumalated packet_frames
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub flush_packet_frames()
+        Try
+            _packet_frame_part_dict.Clear()
+        Catch ex As Exception
+        End Try
+    End Sub
+    ''' <summary>
     ''' Sends a message the server.
     ''' </summary>
     ''' <param name="message">The packet to send.</param>
@@ -418,9 +497,14 @@ Public Class client
                 If Not connected OrElse Not tcpClient.Connected Then
                     result = False
                 Else
-                    Dim bytes As Byte() = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(message))))
-                    tcpClientNetStream.Write(bytes, 0, bytes.Length)
-                    tcpClientNetStream.Flush()
+                    Dim frame As New packet_frame(message)
+                    Dim f_p As packet_frame_part() = frame.ToParts(tcpClient.SendBufferSize)
+                    For i As Integer = 0 To f_p.Length - 1 Step 1
+                        Dim bytes As Byte() = f_p(i)
+                        tcpClientNetStream.Write(bytes, 0, bytes.Length)
+                        tcpClientNetStream.Flush()
+                        Thread.Sleep(_packet_delay)
+                    Next
                     result = True
                 End If
             Catch ex As Exception

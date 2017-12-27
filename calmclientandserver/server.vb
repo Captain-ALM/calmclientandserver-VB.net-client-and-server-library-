@@ -42,6 +42,8 @@ Public Class server
 
     Private synclockchecks As Boolean = False
 
+    Private _packet_delay As Integer = 500
+
     ''' <summary>
     ''' Raised everytime data is received.
     ''' </summary>
@@ -135,8 +137,26 @@ Public Class server
             synclockcheckl = False
 
             synclockchecks = False
+
+            _packet_delay = 500
         End If
     End Sub
+    ''' <summary>
+    ''' Gets or Sets the delay between packet parts sent.
+    ''' </summary>
+    ''' <value>the delay between packet parts sent.</value>
+    ''' <returns>the delay between packet parts sent.</returns>
+    ''' <remarks></remarks>
+    Public Property MessageSendPacketDelay() As Integer
+        Get
+            Return _packet_delay
+        End Get
+        Set(value As Integer)
+            If Not value = Timeout.Infinite Then
+                _packet_delay = value
+            End If
+        End Set
+    End Property
     ''' <summary>
     ''' Get the IP address of the server.
     ''' </summary>
@@ -345,16 +365,27 @@ Public Class server
     ''' <param name="packet">The packet to send.</param>
     ''' <remarks></remarks>
     Public Function broadcast(ByVal packet As packet) As Boolean
-        Try
-            Dim Data() As Byte = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(packet))))
-            For Each c As clientobj In clients
-                c.SendData(Data)
-            Next
-            Return True
-        Catch ex As Exception
-            RaiseEvent errEncounter(ex)
-            Return False
-        End Try
+        Dim result As Boolean = False
+        SyncLock lockSend
+            synclockchecks = True
+            Try
+                Dim frame As New packet_frame(packet)
+                Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
+                For i As Integer = 0 To f_p.Length - 1 Step 1
+                    Dim Data() As Byte = f_p(i)
+                    For Each c As clientobj In clients
+                        c.SendData(Data)
+                    Next
+                    Thread.Sleep(_packet_delay)
+                Next
+                result = True
+            Catch ex As Exception
+                result = False
+                RaiseEvent errEncounter(ex)
+            End Try
+            synclockchecks = False
+        End SyncLock
+        Return result
     End Function
     ''' <summary>
     ''' Disconnect a specific user.
@@ -393,8 +424,13 @@ Public Class server
                 ElseIf Not client.isConnected Then
                     result = False
                 Else
-                    Dim bytes As Byte() = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(message))))
-                    client.SendData(bytes)
+                    Dim frame As New packet_frame(message)
+                    Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
+                    For i As Integer = 0 To f_p.Length - 1 Step 1
+                        Dim Data() As Byte = f_p(i)
+                        client.SendData(Data)
+                        Thread.Sleep(_packet_delay)
+                    Next
                     result = True
                 End If
             Catch ex As Exception
@@ -485,24 +521,36 @@ Public Class server
         End SyncLock
     End Sub
 
-    Private Sub DecryptBytes(ByVal cname As String, ByVal Message As intmsg)
-        Dim Disconnecttf As Boolean = True
-        For b = 0 To Message.Data.Length - 1
-            Dim Msg As intmsg = intmsg.FromBytes(Message.Data, b)
-            If Not Msg.Data Is Nothing Then
-                'raise the data recived event
-                Dim packet As packet = string2packet(ConvertFromAscii(Msg.Data))
-                clientmsgpr(cname, packet)
-                Disconnecttf = False
-            End If
-            If b >= Message.Data.Length - 1 Then Exit For
+    ''' <summary>
+    ''' Cleans accumalated packet_frames
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub flush_packet_frames()
+        For Each cl As clientobj In clients
+            Try
+                cl.purge_msgs()
+            Catch ex As Exception
+            End Try
         Next
+    End Sub
+
+    Private Sub DecryptBytes(ByVal cname As String, ByVal Message As packet_frame)
+        Dim Disconnecttf As Boolean = True
+        'For b = 0 To Message.Data.Length - 1
+        Dim Msg As packet_frame = Message
+        If Not Msg.Data Is Nothing Then
+            'raise the data recived event
+            Dim packet As packet = Msg.data
+            clientmsgpr(cname, packet)
+            Disconnecttf = False
+        End If
+        'Next
         If Disconnecttf Then
             Disconnect(cname)
         End If
     End Sub
 
-    Private Sub DataReceivedHandler(ByVal cname As String, ByVal Msg As intmsg)
+    Private Sub DataReceivedHandler(ByVal cname As String, ByVal Msg As packet_frame)
         DecryptBytes(cname, Msg)
     End Sub
 

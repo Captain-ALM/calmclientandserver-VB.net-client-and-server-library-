@@ -2,6 +2,7 @@
 ''' Internal Msg {Internal Access Only}
 ''' </summary>
 ''' <remarks></remarks>
+<Obsolete("Superceded by packet_frame and packet_frame_part", False)>
 Friend Structure intmsg
     Dim Data() As Byte
     Public Sub New(ByVal DataByte() As Byte)
@@ -9,7 +10,7 @@ Friend Structure intmsg
     End Sub
     Public Shared Function GetBytes(ByVal c As intmsg) As Byte()
         Dim EncryptedString As String = "!" & c.Data.Length & "!"
-        Return JoinBytes(MainEncoding.getbytes(EncryptedString), c.Data)
+        Return JoinBytes(MainEncoding.GetBytes(EncryptedString), c.Data)
     End Function
     Public Shared Function FromBytes(ByVal bytes() As Byte, Optional ByRef Start As Integer = 0) As intmsg
         Try
