@@ -384,7 +384,11 @@ Public Class packet
         End Try
         Return Nothing
     End Function
-
+    ''' <summary>
+    ''' Returns the data in the packet as a converted byte array
+    ''' </summary>
+    ''' <returns>byte array</returns>
+    ''' <remarks></remarks>
     Public Function ToBytes() As Byte()
         Dim payload_meta_barr((2 + 3 + 2) - 1) As Byte
 
@@ -397,6 +401,7 @@ Public Class packet
         payload_meta_barr(6) = 8
 
         Dim ascii_data As Byte() = utils.Convert2Ascii(convertobjecttostring(_data))
+
         Dim payload_barr(2 + payload_meta_barr.Length + 1 + ascii_data.Length) As Byte
 
         payload_barr(0) = 6
@@ -409,16 +414,19 @@ Public Class packet
         Dim ascii_sender As Byte() = utils.Convert2Ascii(convertobjecttostring(_sender))
         Dim ascii_recievers As Byte() = utils.Convert2Ascii(convertobjecttostring(_receivers))
         Dim ascii_header As Byte() = utils.Convert2Ascii(convertobjecttostring(_header))
+
         Dim barrret(2 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1 + payload_barr.Length) As Byte
 
         barrret(0) = 4
         System.Buffer.BlockCopy(ascii_refnum, 0, barrret, 1, ascii_refnum.Length)
-        payload_barr(ascii_refnum.Length + 1) = 5
-        System.Buffer.BlockCopy(ascii_sender, 0, barrret, ascii_refnum.Length + 2, ascii_sender.Length)
-        payload_barr(ascii_refnum.Length + 1 + ascii_sender.Length + 1) = 5
-        System.Buffer.BlockCopy(ascii_recievers, 0, barrret, ascii_refnum.Length + 2 + ascii_sender.Length + 3, ascii_recievers.Length)
-        payload_barr(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1) = 5
-
+        barrret(ascii_refnum.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_sender, 0, barrret, 1 + ascii_refnum.Length + 1, ascii_sender.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_recievers, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1, ascii_recievers.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1) = 5
+        System.Buffer.BlockCopy(ascii_header, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1, ascii_header.Length)
+        barrret(ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1) = 5
+        System.Buffer.BlockCopy(payload_barr, 0, barrret, 1 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1, payload_barr.Length)
         barrret(barrret.Length - 1) = 4
 
         Return barrret
