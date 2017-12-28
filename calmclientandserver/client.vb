@@ -329,6 +329,19 @@ Public Class client
         Return result
     End Function
 
+    Private Function tcpcon() As Boolean
+        If Not tcpClient Is Nothing Then
+            Try
+                Dim c As Boolean = tcpClient.Connected
+                Return c
+            Catch ex As Exception
+                Return False
+            End Try
+        Else
+            Return False
+        End If
+    End Function
+
     Private Sub Listen()
         Try
             tcpClient.Connect(_ip, _port)
@@ -345,7 +358,7 @@ Public Class client
             RaiseEvent errEncounter(ex)
         End Try
         Try
-            While connected AndAlso tcpClient.Connected
+            While connected And tcpcon()
                 Try
                     Dim bytes(tcpClient.ReceiveBufferSize) As Byte
                     tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)

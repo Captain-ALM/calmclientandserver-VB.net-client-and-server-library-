@@ -46,10 +46,23 @@ Friend Class clientobj
         listenthread.Start()
     End Sub
 
+    Private Function tcpcon() As Boolean
+        If Not tcpClient Is Nothing Then
+            Try
+                Dim c As Boolean = tcpClient.Connected
+                Return c
+            Catch ex As Exception
+                Return False
+            End Try
+        Else
+            Return False
+        End If
+    End Function
+
     Private Sub Listen()
             Try
                 networkStream = tcpClient.GetStream()
-            Do While Connected AndAlso tcpClient.Connected
+            Do While Connected And tcpcon()
                 Try
                     Dim GetBytes(tcpClient.ReceiveBufferSize) As Byte
                     networkStream.Read(GetBytes, 0, tcpClient.ReceiveBufferSize)
@@ -101,6 +114,8 @@ Friend Class clientobj
                                 _packet_frame_part_dict.Add(Msg.refnum, arr)
                             End If
                         End If
+                    Else
+                        Connected = False
                     End If
                 Catch ex As Exception
                     Exit Do
