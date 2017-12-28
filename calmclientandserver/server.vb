@@ -42,7 +42,7 @@ Public Class server
 
     Private synclockchecks As Boolean = False
 
-    Private _packet_delay As Integer = 500
+    Private _packet_delay As Integer = 1000
 
     ''' <summary>
     ''' Raised everytime data is received.
@@ -138,7 +138,7 @@ Public Class server
 
             synclockchecks = False
 
-            _packet_delay = 500
+            _packet_delay = 1000
         End If
     End Sub
     ''' <summary>
@@ -400,9 +400,15 @@ Public Class server
                 Dim frame As New packet_frame(packet)
                 Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
                 For i As Integer = 0 To f_p.Length - 1 Step 1
-                    Dim Data() As Byte = f_p(i)
+                    Dim bytes() As Byte = f_p(i)
+                    Dim b_l As Integer = bytes.Length
+                    Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
+                    Dim data_byt(b_l_b.Length) As Byte
+                    data_byt(0) = 1
+                    data_byt = JoinBytes(data_byt, b_l_b)
+                    Dim bts As Byte() = JoinBytes(data_byt, bytes)
                     For Each c As clientobj In clients
-                        c.SendData(Data)
+                        c.SendData(bts)
                     Next
                     Thread.Sleep(_packet_delay)
                 Next
@@ -455,8 +461,14 @@ Public Class server
                     Dim frame As New packet_frame(message)
                     Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
                     For i As Integer = 0 To f_p.Length - 1 Step 1
-                        Dim Data() As Byte = f_p(i)
-                        client.SendData(Data)
+                        Dim bytes() As Byte = f_p(i)
+                        Dim b_l As Integer = bytes.Length
+                        Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
+                        Dim data_byt(b_l_b.Length) As Byte
+                        data_byt(0) = 1
+                        data_byt = JoinBytes(data_byt, b_l_b)
+                        Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                        client.SendData(bts)
                         Thread.Sleep(_packet_delay)
                     Next
                     result = True

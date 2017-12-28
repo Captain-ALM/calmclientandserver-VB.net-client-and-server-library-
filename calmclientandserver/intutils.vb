@@ -81,15 +81,8 @@ Friend Module intutils
 
     Public Function JoinBytes(ByVal Original() As Byte, ByVal JoinPart() As Byte) As Byte()
         Dim JoinedBytes(Original.Length + JoinPart.Length - 1) As Byte
-        Dim cnt As Integer = 0
-        For Each b As Byte In Original
-            JoinedBytes(cnt) = b
-            cnt += 1
-        Next
-        For Each b As Byte In JoinPart
-            JoinedBytes(cnt) = b
-            cnt += 1
-        Next
+        Buffer.BlockCopy(Original, 0, JoinedBytes, 0, Original.Length)
+        Buffer.BlockCopy(JoinPart, 0, JoinedBytes, Original.Length, JoinPart.Length)
         Return JoinedBytes
     End Function
     Public Function ChopBytes(ByVal Original() As Byte, ByVal Start As Integer, Optional ByVal Length As Integer = Nothing) As Byte()
@@ -97,11 +90,7 @@ Friend Module intutils
             Length = Original.Length - Start
         End If
         Dim ChoppedBytes(Length - 1) As Byte
-        Dim cnt As Integer = 0
-        For by = Start To Start + Length - 1
-            ChoppedBytes(cnt) = Original(by)
-            cnt += 1
-        Next
+        Buffer.BlockCopy(Original, Start, ChoppedBytes, 0, Length)
         Return ChoppedBytes
     End Function
 
