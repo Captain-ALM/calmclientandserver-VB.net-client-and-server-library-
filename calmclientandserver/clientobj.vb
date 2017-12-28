@@ -119,8 +119,8 @@ Friend Class clientobj
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
                             End If
-                        ElseIf c_byte = 0 And Not in_packet Then
-                            pr_bytes(Bytes)
+                        ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
+                            Connected = False
                         End If
                         c_index += 1
                     End While

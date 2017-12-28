@@ -415,8 +415,8 @@ Public Class client
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
                             End If
-                        ElseIf c_byte = 0 And Not in_packet Then
-                            DecryptBytes(bytes)
+                        ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
+                            connected = False
                         End If
                         c_index += 1
                     End While
@@ -614,7 +614,7 @@ Public Class client
                         Dim bytes As Byte() = f_p(i)
                         Dim b_l As Integer = bytes.Length
                         Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
-                        Dim data_byt(b_l_b.Length) As Byte
+                        Dim data_byt(0) As Byte
                         data_byt(0) = 1
                         data_byt = JoinBytes(data_byt, b_l_b)
                         Dim bts As Byte() = JoinBytes(data_byt, bytes)

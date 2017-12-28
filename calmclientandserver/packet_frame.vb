@@ -139,7 +139,7 @@ Friend Structure packet_frame_part
         Dim ascii_partnum As Byte() = utils.Convert2Ascii(partnum)
         Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(totalparts)
 
-        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + data.Length) As Byte
+        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + data.Length - 1) As Byte
 
         byte_arr(0) = 2
         System.Buffer.BlockCopy(ascii_refnum, 0, byte_arr, 1, ascii_refnum.Length)
@@ -159,7 +159,7 @@ Friend Structure packet_frame_part
         Dim ascii_partnum As Byte() = utils.Convert2Ascii(pfp.partnum)
         Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(pfp.totalparts)
 
-        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + pfp.data.Length) As Byte
+        Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + pfp.data.Length - 1) As Byte
 
         byte_arr(0) = 2
         System.Buffer.BlockCopy(ascii_refnum, 0, byte_arr, 1, ascii_refnum.Length)
