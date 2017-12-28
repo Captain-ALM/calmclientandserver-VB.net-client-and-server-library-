@@ -23,6 +23,7 @@ Friend Structure packet_frame
         For i As Integer = 1 To packetfps.Length - 1 Step 1
             ReDim Preserve dat((cindex - 1) + packetfps(i).data.Length)
             Buffer.BlockCopy(packetfps(i).data, 0, dat, cindex, packetfps(i).data.Length)
+            cindex += packetfps(i).data.Length
         Next
         refnum = refn
         data = dat
@@ -58,6 +59,7 @@ Friend Structure packet_frame
         For i As Integer = 1 To packetfps.Length - 1 Step 1
             ReDim Preserve dat((cindex - 1) + packetfps(i).data.Length)
             Buffer.BlockCopy(packetfps(i).data, 0, dat, cindex, packetfps(i).data.Length)
+            cindex += packetfps(i).data.Length
         Next
         Dim p_f As New packet_frame(refn, dat)
         Return p_f
