@@ -153,14 +153,14 @@ calmclientandserver
 	<summary>
  Returns the data held by the packet as a string.
  </summary>
-	<param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+	<param name="password">The password (If the data is encrypted with ase or unicodease).</param>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.packet.objectdata(System.String)">
 	<summary>
  Returns the data held by the packet as an object.
  </summary>
-	<param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+	<param name="password">The password (If the data is encrypted with ase or unicodease).</param>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.packet.ToBytes">

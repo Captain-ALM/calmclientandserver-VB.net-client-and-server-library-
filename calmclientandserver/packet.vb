@@ -404,7 +404,7 @@ Public Class packet
     ''' <summary>
     ''' Returns the data held by the packet as a string.
     ''' </summary>
-    ''' <param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+    ''' <param name="password">The password (If the data is encrypted with ase or unicodease).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function stringdata(Optional password As String = "") As String
@@ -446,7 +446,7 @@ Public Class packet
     ''' <summary>
     ''' Returns the data held by the packet as an object.
     ''' </summary>
-    ''' <param name="password">The password (If the data is encrypted with ase of unicodease).</param>
+    ''' <param name="password">The password (If the data is encrypted with ase or unicodease).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function objectdata(Optional password As String = "") As Object

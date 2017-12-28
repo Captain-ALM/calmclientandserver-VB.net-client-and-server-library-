@@ -372,11 +372,11 @@ Public Class client
         End Try
         If Not Msg.data Is Nothing Then
             If Msg.partnum = Msg.totalparts And _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
-                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
-                arr(Msg.partnum - 1) = Msg
-                _packet_frame_part_dict(Msg.refnum) = arr
-                Dim pf As packet_frame = Nothing
-                Dim sc As Boolean = False
+                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum) 'get the packet frame array parts
+                arr(Msg.partnum - 1) = Msg 'make the last part in array the current part
+                _packet_frame_part_dict(Msg.refnum) = arr 'set the dictionary value of the current part's ref number to the value of the array
+                Dim pf As packet_frame = Nothing 'define pf as packet frame
+                Dim sc As Boolean = False 'cast successful boolean
                 Try
                     pf = arr
                     sc = True
@@ -384,18 +384,18 @@ Public Class client
                     pf = Nothing
                     sc = False
                 End Try
-                If sc Then
-                    servermsgpr(pf.data)
+                If sc Then 'if cast successful
+                    servermsgpr(pf.data) 'call servermsg processor for the byte array casted to packet
                 End If
-                _packet_frame_part_dict.Remove(Msg.refnum)
+                _packet_frame_part_dict.Remove(Msg.refnum) 'remove the array from the dict
             ElseIf _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
-                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum)
-                arr(Msg.partnum - 1) = Msg
-                _packet_frame_part_dict(Msg.refnum) = arr
+                Dim arr As packet_frame_part() = _packet_frame_part_dict(Msg.refnum) 'get the array
+                arr(Msg.partnum - 1) = Msg 'set the partnum -1 to current msg
+                _packet_frame_part_dict(Msg.refnum) = arr 'put the array back into the dict
             ElseIf Not _packet_frame_part_dict.ContainsKey(Msg.refnum) Then
-                Dim arr(Msg.totalparts - 1) As packet_frame_part
-                arr(0) = Msg
-                If arr.Length = 1 Then
+                Dim arr(Msg.totalparts - 1) As packet_frame_part 'generate array
+                arr(0) = Msg 'set the first index to the current msg
+                If arr.Length = 1 Then 'the same as being complete
                     Dim pf As packet_frame = Nothing
                     Dim sc As Boolean = False
                     Try
@@ -409,7 +409,7 @@ Public Class client
                         servermsgpr(pf.data)
                     End If
                 Else
-                    _packet_frame_part_dict.Add(Msg.refnum, arr)
+                    _packet_frame_part_dict.Add(Msg.refnum, arr) 'add the arr to the dict
                 End If
             End If
             Disconnected = False
