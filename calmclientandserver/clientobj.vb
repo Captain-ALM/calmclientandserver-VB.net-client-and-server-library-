@@ -15,6 +15,7 @@ Friend Class clientobj
     Private Connected As Boolean = False
     Private discon_invoked As Boolean = False 'was the disconnection invoked by the disconect func already?
     Private _packet_frame_part_dict As New Dictionary(Of Integer, packet_frame_part())
+    Private _dis_on_i_pa As Boolean = False
 
     Public Event DataReceived(ByVal cname As String, ByVal Msg As packet_frame)
     Public Event errEncounter(ByVal ex As Exception)
@@ -36,9 +37,10 @@ Friend Class clientobj
         End Set
     End Property
 
-    Public Sub New(name2 As String, tcpClient2 As TcpClient)
+    Public Sub New(name2 As String, tcpClient2 As TcpClient, disipiv As Boolean)
+        _dis_on_i_pa = disipiv
         tcpClient = tcpClient2
-        Name = name2
+        name = name2
         networkStream = tcpClient.GetStream()
         Connected = True
         listenthread = New Thread(New ThreadStart(AddressOf Me.Listen))
@@ -125,9 +127,10 @@ Friend Class clientobj
                         c_index += 1
                     End While
                     c_byte = 0
-
                 Catch ex As Exception
-                    Exit Do
+                    If _dis_on_i_pa Then
+                        Exit Do
+                    End If
                 End Try
                 Thread.Sleep(150)
             Loop

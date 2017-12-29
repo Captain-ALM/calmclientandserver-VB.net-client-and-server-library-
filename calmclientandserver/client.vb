@@ -48,7 +48,14 @@ Public Class client
 
     Private _packet_frame_part_dict As New Dictionary(Of Integer, packet_frame_part())
 
-    Private _packet_delay As Integer = 1000
+    Private _packet_delay As Integer = 50
+
+    Private _no_packet_splitting As Boolean = False
+
+    Private _disconnect_on_invalid_packet As Boolean = False
+
+    Private _buffer_size As Integer = 8192
+
     ''' <summary>
     ''' Raised when a connection is successful.
     ''' </summary>
@@ -76,7 +83,7 @@ Public Class client
     ''' Flushes this instance of client (Cleaning).
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub flush()
+    Public Sub Flush()
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             tcpClient = Nothing
 
@@ -112,9 +119,15 @@ Public Class client
 
             _port = 0
 
-            _packet_delay = 1000
+            _packet_delay = 50
 
             _packet_frame_part_dict = New Dictionary(Of Integer, packet_frame_part())
+
+            _disconnect_on_invalid_packet = False
+
+            _no_packet_splitting = False
+
+            _buffer_size = 8192
         End If
     End Sub
 
@@ -211,32 +224,43 @@ Public Class client
         tcpClient = New TcpClient()
     End Sub
     ''' <summary>
-    ''' The number of bytes to send.
+    ''' Split the Packets when they are sent
     ''' </summary>
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Property SendBufferSize() As Integer
+    Public Property SplitPacketsOnSend() As Boolean
         Get
-            Return tcpClient.SendBufferSize
+            Return Not _no_packet_splitting
         End Get
-        Set(ByVal value As Integer)
-            tcpClient.SendBufferSize = value
+        Set(value As Boolean)
+            _no_packet_splitting = Not value
         End Set
     End Property
     ''' <summary>
-    ''' The number of bytes to receive.
+    ''' Disconnect if the packet could not be formatted correctly
     ''' </summary>
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Property ReceiveBufferSize() As Integer
+    Public Property DisconnectOnInvalidPacket() As Boolean
         Get
-            Return tcpClient.ReceiveBufferSize
+            Return _disconnect_on_invalid_packet
         End Get
-        Set(ByVal value As Integer)
-            tcpClient.ReceiveBufferSize = value
+        Set(value As Boolean)
+            _disconnect_on_invalid_packet = value
         End Set
+    End Property
+    ''' <summary>
+    ''' Get the buffer size of the client
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property BufferSize() As Integer
+        Get
+            Return _buffer_size
+        End Get
     End Property
     ''' <summary>
     ''' Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
@@ -252,42 +276,6 @@ Public Class client
             tcpClient.NoDelay = value
         End Set
     End Property
-    ''' <summary>
-    ''' Connect to a server.
-    ''' </summary>
-    ''' <param name="Clientname">The name of the client.</param>
-    ''' <param name="ipaddress">The IP address of the server.</param>
-    ''' <param name="port">The port of the server.</param>
-    ''' <param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-    ''' <param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use encryptionparameter to provide encryption")>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional password2 As String = "", Optional encrypttype2 As EncryptionMethod = EncryptionMethod.none) As Boolean
-        Dim result As Boolean = False
-        Try
-            If connected Then
-                result = True
-            Else
-                thisClient = Clientname
-                password = password2
-                encryptmethod = encrypttype2
-                _port = validate_port(port)
-                _ip = ipaddress
-                listenthread = New Thread(New ThreadStart(AddressOf Listen))
-                listenthread.IsBackground = True
-                listenthread.Start()
-                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
-                updatethread.IsBackground = True
-                updatethread.Start()
-                result = True
-            End If
-        Catch ex As Exception
-            result = False
-            RaiseEvent errEncounter(ex)
-        End Try
-        Return result
-    End Function
 
     ''' <summary>
     ''' Connect to a server.
@@ -298,13 +286,20 @@ Public Class client
     '''<param name="encrypt_p">The Encryption Parameter</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing) As Boolean
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192) As Boolean
         Dim result As Boolean = False
         Try
             If connected Then
                 result = True
             Else
                 thisClient = Clientname
+                If buffer_size >= 4096 Then
+                    _buffer_size = buffer_size
+                Else
+                    _buffer_size = 4096
+                End If
+                tcpClient.ReceiveBufferSize = _buffer_size
+                tcpClient.SendBufferSize = _buffer_size
                 If Not IsNothing(encrypt_p) Then
                     encryptmethod = encrypt_p.encrypt_method
                     password = encrypt_p.password
@@ -312,16 +307,16 @@ Public Class client
                     encryptmethod = EncryptionMethod.none
                     password = ""
                 End If
-                    _port = validate_port(port)
-                    _ip = ipaddress
-                    listenthread = New Thread(New ThreadStart(AddressOf Listen))
-                    listenthread.IsBackground = True
-                    listenthread.Start()
-                    updatethread = New Thread(New ThreadStart(AddressOf updatedata))
-                    updatethread.IsBackground = True
-                    updatethread.Start()
-                    result = True
-                End If
+                _port = validate_port(port)
+                _ip = ipaddress
+                listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                listenthread.IsBackground = True
+                listenthread.Start()
+                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                updatethread.IsBackground = True
+                updatethread.Start()
+                result = True
+            End If
         Catch ex As Exception
             result = False
             RaiseEvent errEncounter(ex)
@@ -422,7 +417,9 @@ Public Class client
                     End While
                     c_byte = 0
                 Catch ex As Exception
-                    Exit While
+                    If _disconnect_on_invalid_packet Then
+                        Exit While
+                    End If
                 End Try
                 Thread.Sleep(150)
             End While
@@ -516,7 +513,7 @@ Public Class client
     ''' <value>The currently connected clients on the server.</value>
     ''' <returns>The currently connected clients on the server.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property connected_clients As List(Of String)
+    Public ReadOnly Property Connected_Clients As List(Of String)
         Get
             Return clientData
         End Get
@@ -564,7 +561,7 @@ Public Class client
     ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub kill_threads()
+    Public Sub Kill_Threads()
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             While updatethread.IsAlive
                 Thread.Sleep(150)
@@ -588,7 +585,7 @@ Public Class client
     ''' Cleans accumalated packet_frames
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub flush_packet_frames()
+    Public Sub Flush_Packet_Frames()
         Try
             _packet_frame_part_dict.Clear()
         Catch ex As Exception
@@ -609,7 +606,7 @@ Public Class client
                     result = False
                 Else
                     Dim frame As New packet_frame(message)
-                    Dim f_p As packet_frame_part() = frame.ToParts(tcpClient.SendBufferSize)
+                    Dim f_p As packet_frame_part() = frame.ToParts(tcpClient.SendBufferSize, _no_packet_splitting)
                     For i As Integer = 0 To f_p.Length - 1 Step 1
                         Dim bytes As Byte() = f_p(i)
                         Dim b_l As Integer = bytes.Length
@@ -664,4 +661,71 @@ Public Class client
         End SyncLock
     End Sub
 
+
+    ''' <summary>
+    ''' Connect to a server.
+    ''' </summary>
+    ''' <param name="Clientname">The name of the client.</param>
+    ''' <param name="ipaddress">The IP address of the server.</param>
+    ''' <param name="port">The port of the server.</param>
+    ''' <param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
+    ''' <param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use encryptionparameter to provide encryption")>
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional password2 As String = "", Optional encrypttype2 As EncryptionMethod = EncryptionMethod.none) As Boolean
+        Dim result As Boolean = False
+        Try
+            If connected Then
+                result = True
+            Else
+                thisClient = Clientname
+                password = password2
+                encryptmethod = encrypttype2
+                _port = validate_port(port)
+                _ip = ipaddress
+                listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                listenthread.IsBackground = True
+                listenthread.Start()
+                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                updatethread.IsBackground = True
+                updatethread.Start()
+                result = True
+            End If
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+    ''' <summary>
+    ''' The number of bytes to send.
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Set the buffer size for both on the start function")>
+    Public Property SendBufferSize() As Integer
+        Get
+            Return tcpClient.SendBufferSize
+        End Get
+        Set(ByVal value As Integer)
+            tcpClient.SendBufferSize = value
+        End Set
+    End Property
+    ''' <summary>
+    ''' The number of bytes to receive.
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Set the buffer size for both on the start function")>
+    Public Property ReceiveBufferSize() As Integer
+        Get
+            Return tcpClient.ReceiveBufferSize
+        End Get
+        Set(ByVal value As Integer)
+            tcpClient.ReceiveBufferSize = value
+        End Set
+    End Property
 End Class

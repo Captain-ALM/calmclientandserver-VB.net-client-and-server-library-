@@ -29,27 +29,33 @@ Friend Structure packet_frame
         data = dat
     End Sub
 
-    Public Function ToParts(Optional ByVal buffer_size As Integer = 4096) As packet_frame_part()
-        Dim split_size As Integer = buffer_size / 4
-        Dim arrsize As Double = data.Length / split_size
-        Dim arrsiz As Integer = Int(Math.Ceiling(arrsize))
-        Dim frame_parts(arrsiz - 1) As packet_frame_part
-        Dim cindex As Integer = 0
+    Public Function ToParts(Optional ByVal buffer_size As Integer = 4096, Optional ByVal one_part_only As Boolean = False) As packet_frame_part()
+        If one_part_only Then
+            Dim frame_parts(0) As packet_frame_part
+            frame_parts(0) = New packet_frame_part(refnum, 1, 1, data)
+            Return frame_parts
+        Else
+            Dim split_size As Integer = buffer_size / 4
+            Dim arrsize As Double = data.Length / split_size
+            Dim arrsiz As Integer = Int(Math.Ceiling(arrsize))
+            Dim frame_parts(arrsiz - 1) As packet_frame_part
+            Dim cindex As Integer = 0
 
-        For i As Integer = 0 To arrsiz - 1 Step 1
-            If cindex + split_size > data.Length Then
-                Dim dat(data.Length - cindex - 1) As Byte
-                Buffer.BlockCopy(data, cindex, dat, 0, data.Length - cindex)
-                frame_parts(i) = New packet_frame_part(refnum, i + 1, arrsiz, dat)
-            Else
-                Dim dat(split_size - 1) As Byte
-                Buffer.BlockCopy(data, cindex, dat, 0, split_size)
-                frame_parts(i) = New packet_frame_part(refnum, i + 1, arrsiz, dat)
-            End If
-            cindex += split_size
-        Next
+            For i As Integer = 0 To arrsiz - 1 Step 1
+                If cindex + split_size > data.Length Then
+                    Dim dat(data.Length - cindex - 1) As Byte
+                    Buffer.BlockCopy(data, cindex, dat, 0, data.Length - cindex)
+                    frame_parts(i) = New packet_frame_part(refnum, i + 1, arrsiz, dat)
+                Else
+                    Dim dat(split_size - 1) As Byte
+                    Buffer.BlockCopy(data, cindex, dat, 0, split_size)
+                    frame_parts(i) = New packet_frame_part(refnum, i + 1, arrsiz, dat)
+                End If
+                cindex += split_size
+            Next
 
-        Return frame_parts
+            Return frame_parts
+        End If
     End Function
 
     Public Shared Narrowing Operator CType(ByVal packetfps As packet_frame_part()) As packet_frame

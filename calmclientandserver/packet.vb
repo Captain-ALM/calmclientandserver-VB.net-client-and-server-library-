@@ -88,56 +88,6 @@ Public Class packet
     ''' <param name="receivers">The Name(s) of the Receivers.</param>
     ''' <param name="header">The Header Data.</param>
     ''' <param name="data">The Data to Send [String].</param>
-    ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
-    ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use new method that uses Encryption Parameter")>
-    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As String, password As String, encryptmethod As EncryptionMethod)
-        Try
-            _refnumber = refnumber
-            _ispacketvalid = True
-            _sender = sender
-            _receivers = receivers
-            _header = header
-            _data = data
-            _isobj = False
-            If encryptmethod > 0 And encryptmethod < 4 Then
-                _encryptmethod = encryptmethod
-                _isencrypted = True
-            End If
-            If _isencrypted Then
-                If encryptmethod = EncryptionMethod.unicode Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    For i As Integer = 0 To oldstring.Length - 1 Step 1
-                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
-                    Next
-                ElseIf encryptmethod = EncryptionMethod.ase Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    _data = EncryptString(oldstring, password)
-                ElseIf encryptmethod = EncryptionMethod.unicodease Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    Dim oldstring2 As String = EncryptString(oldstring, password)
-                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
-                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
-                    Next
-                End If
-            End If
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    'string construction with encryption
-    ''' <summary>
-    ''' Creates a new valid packet with basic data and encryption [string data].
-    ''' </summary>
-    ''' <param name="refnumber">Reference Number.</param>
-    ''' <param name="sender">The Sender Name.</param>
-    ''' <param name="receivers">The Name(s) of the Receivers.</param>
-    ''' <param name="header">The Header Data.</param>
-    ''' <param name="data">The Data to Send [String].</param>
     ''' <param name="encrypt_param">The encryption parameter to use.</param>
     ''' <remarks></remarks>
     Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As String, encrypt_param As EncryptionParameter)
@@ -170,56 +120,6 @@ Public Class packet
                     Dim oldstring As String = _data
                     _data = ""
                     Dim oldstring2 As String = EncryptString(oldstring, encrypt_param.password)
-                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
-                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
-                    Next
-                End If
-            End If
-        Catch ex As Exception
-        End Try
-    End Sub
-
-    'object construction with encryption
-    ''' <summary>
-    ''' Creates a new valid packet with object data and encryption [encapsulated data].
-    ''' </summary>
-    ''' <param name="refnumber">Reference Number.</param>
-    ''' <param name="sender">The Sender Name.</param>
-    ''' <param name="receivers">The Name(s) of the Receivers.</param>
-    ''' <param name="header">The Header Data.</param>
-    ''' <param name="data">The Data to Send [Encapsulation].</param>
-    ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
-    ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use new method that uses Encryption Parameter")>
-    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation, password As String, encryptmethod As EncryptionMethod)
-        Try
-            _refnumber = refnumber
-            _ispacketvalid = True
-            _sender = sender
-            _receivers = receivers
-            _header = header
-            _data = data.data
-            _isobj = True
-            If encryptmethod > 0 And encryptmethod < 4 Then
-                _encryptmethod = encryptmethod
-                _isencrypted = True
-            End If
-            If _isencrypted Then
-                If encryptmethod = EncryptionMethod.unicode Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    For i As Integer = 0 To oldstring.Length - 1 Step 1
-                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
-                    Next
-                ElseIf encryptmethod = EncryptionMethod.ase Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    _data = EncryptString(oldstring, password)
-                ElseIf encryptmethod = EncryptionMethod.unicodease Then
-                    Dim oldstring As String = _data
-                    _data = ""
-                    Dim oldstring2 As String = EncryptString(oldstring, password)
                     For i As Integer = 0 To oldstring2.Length - 1 Step 1
                         _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
                     Next
@@ -660,6 +560,106 @@ Public Class packet
 
         Return barrret
     End Operator
+
+    'string construction with encryption
+    ''' <summary>
+    ''' Creates a new valid packet with basic data and encryption [string data].
+    ''' </summary>
+    ''' <param name="refnumber">Reference Number.</param>
+    ''' <param name="sender">The Sender Name.</param>
+    ''' <param name="receivers">The Name(s) of the Receivers.</param>
+    ''' <param name="header">The Header Data.</param>
+    ''' <param name="data">The Data to Send [String].</param>
+    ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
+    ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use new method that uses Encryption Parameter")>
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As String, password As String, encryptmethod As EncryptionMethod)
+        Try
+            _refnumber = refnumber
+            _ispacketvalid = True
+            _sender = sender
+            _receivers = receivers
+            _header = header
+            _data = data
+            _isobj = False
+            If encryptmethod > 0 And encryptmethod < 4 Then
+                _encryptmethod = encryptmethod
+                _isencrypted = True
+            End If
+            If _isencrypted Then
+                If encryptmethod = EncryptionMethod.unicode Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    For i As Integer = 0 To oldstring.Length - 1 Step 1
+                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
+                    Next
+                ElseIf encryptmethod = EncryptionMethod.ase Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    _data = EncryptString(oldstring, password)
+                ElseIf encryptmethod = EncryptionMethod.unicodease Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    Dim oldstring2 As String = EncryptString(oldstring, password)
+                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
+                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
+                    Next
+                End If
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
+
+    'object construction with encryption
+    ''' <summary>
+    ''' Creates a new valid packet with object data and encryption [encapsulated data].
+    ''' </summary>
+    ''' <param name="refnumber">Reference Number.</param>
+    ''' <param name="sender">The Sender Name.</param>
+    ''' <param name="receivers">The Name(s) of the Receivers.</param>
+    ''' <param name="header">The Header Data.</param>
+    ''' <param name="data">The Data to Send [Encapsulation].</param>
+    ''' <param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
+    ''' <param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use new method that uses Encryption Parameter")>
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation, password As String, encryptmethod As EncryptionMethod)
+        Try
+            _refnumber = refnumber
+            _ispacketvalid = True
+            _sender = sender
+            _receivers = receivers
+            _header = header
+            _data = data.data
+            _isobj = True
+            If encryptmethod > 0 And encryptmethod < 4 Then
+                _encryptmethod = encryptmethod
+                _isencrypted = True
+            End If
+            If _isencrypted Then
+                If encryptmethod = EncryptionMethod.unicode Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    For i As Integer = 0 To oldstring.Length - 1 Step 1
+                        _data = _data & AscW(oldstring.Substring(i, 1)).ToString() & " "
+                    Next
+                ElseIf encryptmethod = EncryptionMethod.ase Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    _data = EncryptString(oldstring, password)
+                ElseIf encryptmethod = EncryptionMethod.unicodease Then
+                    Dim oldstring As String = _data
+                    _data = ""
+                    Dim oldstring2 As String = EncryptString(oldstring, password)
+                    For i As Integer = 0 To oldstring2.Length - 1 Step 1
+                        _data = _data & AscW(oldstring2.Substring(i, 1)).ToString() & " "
+                    Next
+                End If
+            End If
+        Catch ex As Exception
+        End Try
+    End Sub
 End Class
 ''' <summary>
 ''' Packet Encryption Method.
