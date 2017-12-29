@@ -402,6 +402,16 @@ Public Class server
     ''' <remarks></remarks>
     Public Function Broadcast(ByVal packet As packet) As Boolean
         Dim result As Boolean = False
+        If Not packet.header.ToLower = "system" Then
+            result = broadcast_int(packet)
+        Else
+            result = False
+        End If
+        Return result
+    End Function
+
+    Private Function broadcast_int(packet As packet) As Boolean
+        Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
             Try
@@ -456,6 +466,16 @@ Public Class server
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function Send(ByVal clientName As String, ByVal message As packet) As Boolean
+        Dim result As Boolean = False
+        If Not message.header.ToLower = "system" Then
+            result = send_int(clientName, message)
+        Else
+            result = False
+        End If
+        Return result
+    End Function
+
+    Private Function send_int(clientname As String, message As packet) As Boolean
         Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
@@ -530,7 +550,7 @@ Public Class server
             clientnolst.Add(client)
             If message.header.ToLower.StartsWith("system") Then
                 If message.stringdata(password).ToLower = "clients" Then
-                    Send(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
+                    send_int(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
@@ -556,7 +576,7 @@ Public Class server
                         End If
                     End If
                 ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
-                    Send(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
+                    send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
                     Disconnect(client)
                 ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then

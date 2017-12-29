@@ -152,7 +152,7 @@ Public Class client
             If Not (arex) Then
                 clientData.Remove(thisClient)
                 clientData.Add(value)
-                Dim retyt As String = Send(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
+                Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
                 If retyt.ToLower = "success" Then
                     thisClient = value
                 End If
@@ -489,8 +489,8 @@ Public Class client
         While connected
             Thread.Sleep(_clientrefreshdelay)
             If tcpClient.Connected Then
-                Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
             End If
         End While
         Thread.CurrentThread.Abort()
@@ -502,8 +502,8 @@ Public Class client
     Public Sub UpdateClientData()
         If connected Then
             If tcpClient.Connected Then
-                Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
             End If
         End If
     End Sub
@@ -599,6 +599,16 @@ Public Class client
     ''' <remarks></remarks>
     Public Function Send(message As packet) As Boolean
         Dim result As Boolean = False
+        If Not message.header.ToLower = "system" Then
+            result = send_int(message)
+        Else
+            result = False
+        End If
+        Return result
+    End Function
+
+    Private Function send_int(message As packet) As Boolean
+        Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
             Try
@@ -641,14 +651,14 @@ Public Class client
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Add(cilname)
-                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
                     clientData.Remove(cilname)
-                    Send(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    Send(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.header.ToLower.StartsWith("system:clients") Then
                     clientData = DirectCast(message.objectdata(password), List(Of String))
                 ElseIf message.header.ToLower.StartsWith("system:name") Then
