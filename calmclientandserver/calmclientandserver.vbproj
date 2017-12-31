@@ -90,8 +90,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="packet.vb" />
+    <Compile Include="packet_frame.vb" />
     <Compile Include="server.vb" />
-    <Compile Include="test.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

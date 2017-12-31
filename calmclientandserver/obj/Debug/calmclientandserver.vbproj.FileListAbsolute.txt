@@ -7,3 +7,12 @@ C:\Users\Alfred\documents\visual studio 2013\Projects\calmclientandserver\calmcl
 C:\Users\Alfred\documents\visual studio 2013\Projects\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.vbprojResolveAssemblyReference.cache
 C:\Users\Alfred\Documents\Visual Studio 2013\Projects\calmclientandserver\calmclientandserver\bin\Debug\calmclientandserver.dll
 C:\Users\Alfred\Documents\Visual Studio 2013\Projects\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.dll
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Debug\calmclientandserver.dll
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Debug\calmclientandserver.pdb
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Debug\calmclientandserver.xml
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.vbprojResolveAssemblyReference.cache
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\captainalm.calmclientandserver.Resources.resources
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.vbproj.GenerateResource.Cache
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.dll
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.xml
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Debug\calmclientandserver.pdb

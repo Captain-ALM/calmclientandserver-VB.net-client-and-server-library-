@@ -42,6 +42,14 @@ Public Class server
 
     Private synclockchecks As Boolean = False
 
+    Private _packet_delay As Integer = 50
+
+    Private _no_packet_splitting As Boolean = False
+
+    Private _disconnect_on_invalid_packet As Boolean = False
+
+    Private _buffer_size As Integer = 8192
+
     ''' <summary>
     ''' Raised everytime data is received.
     ''' </summary>
@@ -77,7 +85,7 @@ Public Class server
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub New()
-        tcpListener = New TcpListener(_ip, _port)
+        tcpListener = New TcpListener(Ip, _port)
     End Sub
     ''' <summary>
     ''' Creates a new instance of the server class with the specified IP address and port (optional).
@@ -92,17 +100,17 @@ Public Class server
             _ip = System.Net.IPAddress.None
         End Try
         Try
-            _port = port
+            _port = validate_port(port)
         Catch ex As Exception
             _port = 100
         End Try
-        tcpListener = New TcpListener(_ip, _port)
+        tcpListener = New TcpListener(_ip, validate_port(_port))
     End Sub
     ''' <summary>
     ''' Flushes this instance of server (Cleaning).
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub flush()
+    Public Sub Flush()
         If Not listening And Not synclockcheckl And Not synclockchecks Then
             _ip = IPAddress.None
 
@@ -135,15 +143,78 @@ Public Class server
             synclockcheckl = False
 
             synclockchecks = False
+
+            _packet_delay = 50
+
+            _disconnect_on_invalid_packet = False
+
+            _no_packet_splitting = False
+
+            _buffer_size = 8192
         End If
     End Sub
+    ''' <summary>
+    ''' Split the Packets when they are sent
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Property SplitPacketsOnSend() As Boolean
+        Get
+            Return Not _no_packet_splitting
+        End Get
+        Set(value As Boolean)
+            _no_packet_splitting = Not value
+        End Set
+    End Property
+    ''' <summary>
+    ''' Disconnect if the packet could not be formatted correctly
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Property DisconnectOnInvalidPacket() As Boolean
+        Get
+            Return _disconnect_on_invalid_packet
+        End Get
+        Set(value As Boolean)
+            _disconnect_on_invalid_packet = value
+        End Set
+    End Property
+    ''' <summary>
+    ''' Get the buffer size of the client
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property BufferSize() As Integer
+        Get
+            Return _buffer_size
+        End Get
+    End Property
+    ''' <summary>
+    ''' Gets or Sets the delay between packet parts sent.
+    ''' </summary>
+    ''' <value>the delay between packet parts sent.</value>
+    ''' <returns>the delay between packet parts sent.</returns>
+    ''' <remarks></remarks>
+    Public Property MessageSendPacketDelay() As Integer
+        Get
+            Return _packet_delay
+        End Get
+        Set(value As Integer)
+            If Not value = Timeout.Infinite Then
+                _packet_delay = value
+            End If
+        End Set
+    End Property
     ''' <summary>
     ''' Get the IP address of the server.
     ''' </summary>
     ''' <value>IP address of the server.</value>
     ''' <returns>IP address of the server.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property ip() As IPAddress
+    Public ReadOnly Property Ip() As IPAddress
         Get
             If _ip Is IPAddress.None Then
                 Dim list As List(Of IPAddress) = New List(Of IPAddress)()
@@ -191,35 +262,6 @@ Public Class server
             _closeDelay = value
         End Set
     End Property
-
-    ''' <summary>
-    ''' The number of bytes to send.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Property SendBufferSize() As Integer
-        Get
-            Return tcpListener.Server.SendBufferSize
-        End Get
-        Set(ByVal value As Integer)
-            tcpListener.Server.SendBufferSize = value
-        End Set
-    End Property
-    ''' <summary>
-    ''' The number of bytes to receive.
-    ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Public Property ReceiveBufferSize() As Integer
-        Get
-            Return tcpListener.Server.ReceiveBufferSize
-        End Get
-        Set(ByVal value As Integer)
-            tcpListener.Server.ReceiveBufferSize = value
-        End Set
-    End Property
     ''' <summary>
     ''' Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
     ''' </summary>
@@ -240,7 +282,7 @@ Public Class server
     ''' <value>the currently connected clients.</value>
     ''' <returns>the currently connected clients.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property connected_clients As List(Of String)
+    Public ReadOnly Property Connected_Clients As List(Of String)
         Get
             Return serverData
         End Get
@@ -288,16 +330,30 @@ Public Class server
     ''' <summary>
     ''' Starts the server.
     ''' </summary>
-    ''' <param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-    ''' <param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+    '''<param name="encrypt_p">The encryption parameter</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Start(Optional password2 As String = "", Optional encrypttype As EncryptionMethod = EncryptionMethod.none) As Boolean
+    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192) As Boolean
         Dim result As Boolean = False
+        If listening Then
+            Return True
+        End If
         Try
             listening = True
-            password = password2
-            encryptmethod = encrypttype
+            If Not IsNothing(encrypt_p) Then
+                encryptmethod = encrypt_p.encrypt_method
+                password = encrypt_p.password
+            Else
+                encryptmethod = EncryptionMethod.none
+                password = ""
+            End If
+            If buffer_size >= 4096 Then
+                _buffer_size = buffer_size
+            Else
+                _buffer_size = 4096
+            End If
+            tcpListener.Server.ReceiveBufferSize = _buffer_size
+            tcpListener.Server.SendBufferSize = _buffer_size
             listenthread = New Thread(New ThreadStart(AddressOf Listen))
             listenthread.IsBackground = True
             listenthread.Start()
@@ -327,7 +383,7 @@ Public Class server
     ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub kill_threads()
+    Public Sub Kill_Threads()
         If Not listening And Not synclockcheckl And Not synclockchecks Then
             While listenthread.IsAlive
                 Thread.Sleep(150)
@@ -344,17 +400,44 @@ Public Class server
     ''' </summary>
     ''' <param name="packet">The packet to send.</param>
     ''' <remarks></remarks>
-    Public Function broadcast(ByVal packet As packet) As Boolean
-        Try
-            Dim Data() As Byte = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(packet))))
-            For Each c As clientobj In clients
-                c.SendData(Data)
-            Next
-            Return True
-        Catch ex As Exception
-            RaiseEvent errEncounter(ex)
-            Return False
-        End Try
+    Public Function Broadcast(ByVal packet As packet) As Boolean
+        Dim result As Boolean = False
+        If Not packet.header.ToLower = "system" Then
+            result = broadcast_int(packet)
+        Else
+            result = False
+        End If
+        Return result
+    End Function
+
+    Private Function broadcast_int(packet As packet) As Boolean
+        Dim result As Boolean = False
+        SyncLock lockSend
+            synclockchecks = True
+            Try
+                Dim frame As New packet_frame(packet)
+                Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
+                For i As Integer = 0 To f_p.Length - 1 Step 1
+                    Dim bytes() As Byte = f_p(i)
+                    Dim b_l As Integer = bytes.Length
+                    Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
+                    Dim data_byt(0) As Byte
+                    data_byt(0) = 1
+                    data_byt = JoinBytes(data_byt, b_l_b)
+                    Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                    For Each c As clientobj In clients
+                        c.SendData(bts)
+                    Next
+                    Thread.Sleep(_packet_delay)
+                Next
+                result = True
+            Catch ex As Exception
+                result = False
+                RaiseEvent errEncounter(ex)
+            End Try
+            synclockchecks = False
+        End SyncLock
+        Return result
     End Function
     ''' <summary>
     ''' Disconnect a specific user.
@@ -384,6 +467,16 @@ Public Class server
     ''' <remarks></remarks>
     Public Function Send(ByVal clientName As String, ByVal message As packet) As Boolean
         Dim result As Boolean = False
+        If Not message.header.ToLower = "system" Then
+            result = send_int(clientName, message)
+        Else
+            result = False
+        End If
+        Return result
+    End Function
+
+    Private Function send_int(clientname As String, message As packet) As Boolean
+        Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
             Try
@@ -393,8 +486,19 @@ Public Class server
                 ElseIf Not client.isConnected Then
                     result = False
                 Else
-                    Dim bytes As Byte() = intmsg.GetBytes(New intmsg(MainEncoding.GetBytes(packet2string(message))))
-                    client.SendData(bytes)
+                    Dim frame As New packet_frame(message)
+                    Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
+                    For i As Integer = 0 To f_p.Length - 1 Step 1
+                        Dim bytes() As Byte = f_p(i)
+                        Dim b_l As Integer = bytes.Length
+                        Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
+                        Dim data_byt(0) As Byte
+                        data_byt(0) = 1
+                        data_byt = JoinBytes(data_byt, b_l_b)
+                        Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                        client.SendData(bts)
+                        Thread.Sleep(_packet_delay)
+                    Next
                     result = True
                 End If
             Catch ex As Exception
@@ -424,7 +528,7 @@ Public Class server
                         clnom = OriginID & cnt
                     End While
                 End If
-                Dim clobj As New clientobj(clnom, tcpServer)
+                Dim clobj As New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet)
                 clobj.close_delay = _closeDelay
                 clients.Add(clobj)
                 serverData.Add(clnom)
@@ -446,7 +550,7 @@ Public Class server
             clientnolst.Add(client)
             If message.header.ToLower.StartsWith("system") Then
                 If message.stringdata(password).ToLower = "clients" Then
-                    Send(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), password, encryptmethod))
+                    send_int(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
                     Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
                     Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
@@ -472,7 +576,7 @@ Public Class server
                         End If
                     End If
                 ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
-                    Send(client, New packet(0, "0", clientnolst, "system:name", client, password, encryptmethod))
+                    send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
                 ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
                     Disconnect(client)
                 ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
@@ -485,24 +589,36 @@ Public Class server
         End SyncLock
     End Sub
 
-    Private Sub DecryptBytes(ByVal cname As String, ByVal Message As intmsg)
-        Dim Disconnecttf As Boolean = True
-        For b = 0 To Message.Data.Length - 1
-            Dim Msg As intmsg = intmsg.FromBytes(Message.Data, b)
-            If Not Msg.Data Is Nothing Then
-                'raise the data recived event
-                Dim packet As packet = string2packet(ConvertFromAscii(Msg.Data))
-                clientmsgpr(cname, packet)
-                Disconnecttf = False
-            End If
-            If b >= Message.Data.Length - 1 Then Exit For
+    ''' <summary>
+    ''' Cleans accumalated packet_frames
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub Flush_Packet_Frames()
+        For Each cl As clientobj In clients
+            Try
+                cl.purge_msgs()
+            Catch ex As Exception
+            End Try
         Next
+    End Sub
+
+    Private Sub DecryptBytes(ByVal cname As String, ByVal Message As packet_frame)
+        Dim Disconnecttf As Boolean = True
+        'For b = 0 To Message.Data.Length - 1
+        Dim Msg As packet_frame = Message
+        If Not Msg.Data Is Nothing Then
+            'raise the data recived event
+            Dim packet As packet = Msg.data
+            clientmsgpr(cname, packet)
+            Disconnecttf = False
+        End If
+        'Next
         If Disconnecttf Then
             Disconnect(cname)
         End If
     End Sub
 
-    Private Sub DataReceivedHandler(ByVal cname As String, ByVal Msg As intmsg)
+    Private Sub DataReceivedHandler(ByVal cname As String, ByVal Msg As packet_frame)
         DecryptBytes(cname, Msg)
     End Sub
 
@@ -519,4 +635,60 @@ Public Class server
         serverData.Remove(name)
         RemoveHandler Handler.lostConnection, AddressOf lostConnectionHandler
     End Sub
+
+    ''' <summary>
+    ''' Starts the server.
+    ''' </summary>
+    ''' <param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
+    ''' <param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use encryptionparameter to provide encryption")>
+    Public Function Start(Optional password2 As String = "", Optional encrypttype As EncryptionMethod = EncryptionMethod.none) As Boolean
+        Dim result As Boolean = False
+        Try
+            listening = True
+            password = password2
+            encryptmethod = encrypttype
+            listenthread = New Thread(New ThreadStart(AddressOf Listen))
+            listenthread.IsBackground = True
+            listenthread.Start()
+            result = True
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' The number of bytes to send.
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Set the buffer size for both on the start function")>
+    Public Property SendBufferSize() As Integer
+        Get
+            Return tcpListener.Server.SendBufferSize
+        End Get
+        Set(ByVal value As Integer)
+            tcpListener.Server.SendBufferSize = value
+        End Set
+    End Property
+    ''' <summary>
+    ''' The number of bytes to receive.
+    ''' </summary>
+    ''' <value></value>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Set the buffer size for both on the start function")>
+    Public Property ReceiveBufferSize() As Integer
+        Get
+            Return tcpListener.Server.ReceiveBufferSize
+        End Get
+        Set(ByVal value As Integer)
+            tcpListener.Server.ReceiveBufferSize = value
+        End Set
+    End Property
 End Class
