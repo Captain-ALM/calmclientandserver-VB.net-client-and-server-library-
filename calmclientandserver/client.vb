@@ -958,21 +958,22 @@ Public Class client
             If _auto_msg_pass Then
                 Dim clientnolst As New List(Of String)
                 If message.header.ToLower.StartsWith("system") Then
-                    If message.stringdata(password).ToLower = "disconnect" Then
-                        RaiseEvent ServerDisconnect()
-                    ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
-                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                        Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                        clientData.Add(cilname)
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                    ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
-                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                        Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                        clientData.Remove(cilname)
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                    ElseIf message.header.ToLower.StartsWith("system:clients") Then
+                    'If message.stringdata(password).ToLower = "disconnect" Then
+                    '    RaiseEvent ServerDisconnect()
+                    'ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
+                    '    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
+                    '    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
+                    '    clientData.Add(cilname)
+                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    'ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
+                    '    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
+                    '    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
+                    '    clientData.Remove(cilname)
+                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    'ElseIf message.header.ToLower.StartsWith("system:clients") Then
+                    If message.header.ToLower.StartsWith("system:clients") Then
                         clientData = DirectCast(message.objectdata(password), List(Of String))
                     ElseIf message.header.ToLower.StartsWith("system:name") Then
                         thisClient = message.stringdata(password)

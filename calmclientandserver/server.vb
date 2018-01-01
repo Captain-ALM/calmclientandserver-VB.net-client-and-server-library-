@@ -746,10 +746,10 @@ Public Class server
                         End If
                     ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
                         send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
-                    ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
-                        Disconnect(client)
-                    ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
-                        [Stop]()
+                        'ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
+                        '    Disconnect(client)
+                        'ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
+                        '    [Stop]()
                     End If
                 Else
                     RaiseEvent ClientMessage(client, message)
