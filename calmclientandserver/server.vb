@@ -137,6 +137,8 @@ Public Class server
 
             _port = 100
 
+            tcpListener = Nothing
+
             tcpListener = New TcpListener(IPAddress.None, _port)
 
             tcpServer = Nothing
@@ -510,7 +512,7 @@ Public Class server
                     result = False
                 Else
                     Dim frame As New packet_frame(message)
-                    Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize)
+                    Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
                     For i As Integer = 0 To f_p.Length - 1 Step 1
                         Dim bytes() As Byte = f_p(i)
                         Dim b_l As Integer = bytes.Length
@@ -539,9 +541,92 @@ Public Class server
             Try
                 tcpServer = tcpListener.AcceptTcpClient()
                 tcpServerNetStream = tcpServer.GetStream()
-                Dim bytes(tcpServer.ReceiveBufferSize) As Byte
-                tcpServerNetStream.Read(bytes, 0, tcpServer.ReceiveBufferSize)
-                Dim clnom As String = ConvertFromAscii(bytes)
+
+                Dim packet As packet = Nothing
+                Dim cdatarr(-1) As Byte
+                Dim cnumarr As New List(Of Byte)
+                Dim more_dat As Boolean = False
+                Dim length_left As Integer = 0
+                Dim in_packet As Boolean = False
+                Dim in_number As Integer = 0
+                Dim c_byte As Byte = 0
+                Dim c_index As Integer = 0
+
+                Dim bts(-1) As Byte
+
+                Do While tcpServer.Connected
+                    Try
+                        Dim Bytes(tcpServer.ReceiveBufferSize) As Byte
+                        tcpServerNetStream.Read(Bytes, 0, tcpServer.ReceiveBufferSize)
+                        c_index = 0
+                        If more_dat Then
+                            more_dat = False
+                            If c_index + length_left - 1 > Bytes.Length - 1 Then
+                                Dim rr(length_left - 1)
+                                Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
+                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
+                                length_left -= Bytes.Length - c_index
+                                more_dat = True
+                                c_index += rr.Length
+                            Else
+                                Dim rr(length_left - 1) As Byte
+                                Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
+                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
+                                Dim p(0) As packet_frame_part
+                                p(0) = cdatarr
+                                Dim packetf As New packet_frame(p)
+                                packet = packetf.data
+                                in_packet = False
+                                c_index += length_left
+                                ReDim bts(Bytes.Length - c_index - 1)
+                                Buffer.BlockCopy(Bytes, c_index, bts, 0, Bytes.Length - c_index)
+                                Exit Do
+                            End If
+                        End If
+                        While c_index < Bytes.Length
+                            c_byte = Bytes(c_index)
+                            If c_byte = 1 And Not in_packet Then
+                                in_packet = True
+                                in_number = True
+                                cnumarr.Clear()
+                            ElseIf c_byte = 1 And in_packet Then
+                                in_packet = False
+                            ElseIf in_number And Not c_byte = 2 Then
+                                cnumarr.Add(c_byte)
+                            ElseIf in_number And c_byte = 2 Then
+                                length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                                in_number = False
+                                If c_index + length_left - 1 > Bytes.Length - 1 Then
+                                    Dim rr(length_left - 1) As Byte
+                                    Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
+                                    cdatarr = rr
+                                    more_dat = True
+                                    length_left -= Bytes.Length - c_index
+                                Else
+                                    Dim rr(length_left - 1) As Byte
+                                    Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
+                                    Dim p(0) As packet_frame_part
+                                    p(0) = rr
+                                    Dim packetf As New packet_frame(p)
+                                    packet = packetf.data
+                                    in_packet = False
+                                    c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                    ReDim bts(Bytes.Length - (c_index + 1) - 1)
+                                    Buffer.BlockCopy(Bytes, c_index + 1, bts, 0, Bytes.Length - (c_index + 1))
+                                    Exit Do
+                                End If
+                            ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
+                                Throw New Exception("Disconnected")
+                            End If
+                            c_index += 1
+                        End While
+                        c_byte = 0
+                    Catch ex As Exception
+                        Exit Do
+                    End Try
+                    Thread.Sleep(150)
+                Loop
+                Dim clnom As String = packet.stringdata(password)
                 If Not GetClient(clnom) Is Nothing Then
                     Dim OriginID As String = clnom
                     Dim cnt As Integer = 1
@@ -551,8 +636,23 @@ Public Class server
                         clnom = OriginID & cnt
                     End While
                 End If
-                Dim clobj As New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet)
+                Dim clobj As New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet, bts)
                 clobj.close_delay = _closeDelay
+
+                Dim r As New List(Of String)
+                r.Add(clnom)
+                Dim p2 As New packet_frame(New packet(0, "", r, "", clnom, New EncryptionParameter(encryptmethod, password)))
+                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True)
+
+                Dim bytes2() As Byte = pfp(0)
+                Dim b_l2 As Integer = bytes2.Length
+                Dim b_l_b2 As Byte() = utils.Convert2Ascii(b_l2)
+                Dim data_byt(0) As Byte
+                data_byt(0) = 1
+                data_byt = JoinBytes(data_byt, b_l_b2)
+                Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
+                tcpServerNetStream.Write(bts2, 0, bts2.Length)
+
                 clients.Add(clobj)
                 serverData.Add(clnom)
                 AddHandler clobj.DataReceived, AddressOf DataReceivedHandler 'Handle all of the data received in all clients

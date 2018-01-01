@@ -101,6 +101,10 @@ Public Class client
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             tcpClient = Nothing
 
+            tcpClient = New TcpClient()
+            tcpClient.SendBufferSize = 8192
+            tcpClient.ReceiveBufferSize = 8192
+
             connected = False
 
             _closeDelay = 100
@@ -368,14 +372,123 @@ Public Class client
     End Function
 
     Private Sub Listen()
+        Dim bts(-1) As Byte
         Try
             tcpClient.Connect(_ip, _port)
             If tcpClient.Connected Then
                 'Send the client name
                 tcpClientNetStream = tcpClient.GetStream()
-                tcpClientNetStream.Write(Convert2Ascii(thisClient), 0, thisClient.Length)
-                tcpClientNetStream.Flush()
-                'Thread.Sleep(100) 'allow some time for the name to be sent : no need for this
+
+                Dim p2 As New packet_frame(New packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
+                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True)
+                Dim bytes2() As Byte = pfp(0)
+                Dim b_l2 As Integer = bytes2.Length
+                Dim b_l_b2 As Byte() = utils.Convert2Ascii(b_l2)
+                Dim data_byt(0) As Byte
+                data_byt(0) = 1
+                data_byt = JoinBytes(data_byt, b_l_b2)
+                Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
+                tcpClientNetStream.Write(bts2, 0, bts2.Length)
+
+                Dim packet As packet = Nothing
+                Dim cdatarr2(-1) As Byte
+                Dim cnumarr2 As New List(Of Byte)
+                Dim more_dat2 As Boolean = False
+                Dim length_left2 As Integer = 0
+                Dim in_packet2 As Boolean = False
+                Dim in_number2 As Integer = 0
+                Dim c_byte2 As Byte = 0
+                Dim c_index2 As Integer = 0
+
+                Do While tcpClient.Connected
+                    Try
+                        Dim Bytes(tcpClient.ReceiveBufferSize) As Byte
+                        tcpClientNetStream.Read(Bytes, 0, tcpClient.ReceiveBufferSize)
+                        c_index2 = 0
+                        If more_dat2 Then
+                            more_dat2 = False
+                            If c_index2 + length_left2 - 1 > Bytes.Length - 1 Then
+                                Dim rr(length_left2 - 1)
+                                Buffer.BlockCopy(Bytes, c_index2, rr, 0, Bytes.Length - c_index2)
+                                Buffer.BlockCopy(rr, 0, cdatarr2, cdatarr2.Length - length_left2, rr.Length)
+                                length_left2 -= Bytes.Length - c_index2
+                                more_dat2 = True
+                                c_index2 += rr.Length
+                            Else
+                                Dim rr(length_left2 - 1) As Byte
+                                Buffer.BlockCopy(Bytes, c_index2, rr, 0, length_left2)
+                                Buffer.BlockCopy(rr, 0, cdatarr2, cdatarr2.Length - length_left2, rr.Length)
+                                Dim p(0) As packet_frame_part
+                                p(0) = cdatarr2
+                                Dim packetf As New packet_frame(p)
+                                packet = packetf.data
+                                in_packet2 = False
+                                c_index2 += length_left2
+                                ReDim bts(Bytes.Length - c_index2 - 1)
+                                Buffer.BlockCopy(Bytes, c_index2, bts, 0, Bytes.Length - c_index2)
+                                Exit Do
+                            End If
+                        End If
+                        While c_index2 < Bytes.Length
+                            c_byte2 = Bytes(c_index2)
+                            If c_byte2 = 1 And Not in_packet2 Then
+                                in_packet2 = True
+                                in_number2 = True
+                                cnumarr2.Clear()
+                            ElseIf c_byte2 = 1 And in_packet2 Then
+                                in_packet2 = False
+                            ElseIf in_number2 And Not c_byte2 = 2 Then
+                                cnumarr2.Add(c_byte2)
+                            ElseIf in_number2 And c_byte2 = 2 Then
+                                length_left2 = utils.ConvertFromAscii(cnumarr2.ToArray)
+                                in_number2 = False
+                                If c_index2 + length_left2 - 1 > Bytes.Length - 1 Then
+                                    Dim rr(length_left2 - 1) As Byte
+                                    Buffer.BlockCopy(Bytes, c_index2, rr, 0, Bytes.Length - c_index2)
+                                    cdatarr2 = rr
+                                    more_dat2 = True
+                                    length_left2 -= Bytes.Length - c_index2
+                                Else
+                                    Dim rr(length_left2 - 1) As Byte
+                                    Buffer.BlockCopy(Bytes, c_index2, rr, 0, length_left2)
+                                    Dim p(0) As packet_frame_part
+                                    p(0) = rr
+                                    Dim packetf As New packet_frame(p)
+                                    packet = packetf.data
+                                    in_packet2 = False
+                                    c_index2 += length_left2 - 1 'take away one as the while loop increments it by one anyway
+                                    ReDim bts(Bytes.Length - (c_index2 + 1) - 1)
+                                    Buffer.BlockCopy(Bytes, c_index2 + 1, bts, 0, Bytes.Length - (c_index2 + 1))
+                                    Exit Do
+                                End If
+                            ElseIf c_byte2 = 0 And Not in_packet2 And c_index2 = 0 Then
+                                Throw New Exception("Disconnected")
+                            End If
+                            c_index2 += 1
+                        End While
+                        c_byte2 = 0
+                    Catch ex As Exception
+                        Exit Do
+                    End Try
+                    Thread.Sleep(150)
+                Loop
+
+                Dim sd As String = packet.stringdata(password)
+                If Not sd = "" Then
+                    thisClient = sd
+                Else
+                    Dim SBufferSize, RBufferSize As Integer
+                    SBufferSize = tcpClient.SendBufferSize
+                    RBufferSize = tcpClient.ReceiveBufferSize
+                    Dim NDelay As Boolean = tcpClient.NoDelay
+                    If Not tcpClient Is Nothing Then tcpClient.Close()
+                    tcpClient = New TcpClient()
+                    tcpClient.SendBufferSize = SBufferSize
+                    tcpClient.ReceiveBufferSize = RBufferSize
+                    tcpClient.NoDelay = NDelay
+                    RaiseEvent ServerConnectFailed(failed_connection_reason.unknown)
+                End If
+
                 connected = True
                 RaiseEvent ServerConnect()
                 RaiseEvent ServerConnectSuccess()
@@ -392,31 +505,31 @@ Public Class client
         Dim c_byte As Byte = 0
         Dim c_index As Integer = 0
         Try
-            While connected And tcpcon()
+            Dim had_ex As Boolean = False
+
+            If connected And tcpcon() Then
                 Try
-                    Dim bytes(tcpClient.ReceiveBufferSize) As Byte
-                    tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)
                     c_index = 0
                     If more_dat Then
                         more_dat = False
-                        If c_index + length_left - 1 > bytes.Length - 1 Then
+                        If c_index + length_left - 1 > bts.Length - 1 Then
                             Dim rr(length_left - 1)
-                            Buffer.BlockCopy(bytes, c_index, rr, 0, bytes.Length - c_index)
+                            Buffer.BlockCopy(bts, c_index, rr, 0, bts.Length - c_index)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                            length_left -= bytes.Length - c_index
+                            length_left -= bts.Length - c_index
                             more_dat = True
                             c_index += rr.Length
                         Else
                             Dim rr(length_left - 1) As Byte
-                            Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
+                            Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                             DecryptBytes(cdatarr)
                             in_packet = False
                             c_index += length_left
                         End If
                     End If
-                    While c_index < bytes.Length
-                        c_byte = bytes(c_index)
+                    While c_index < bts.Length
+                        c_byte = bts(c_index)
                         If c_byte = 1 And Not in_packet Then
                             in_packet = True
                             in_number = True
@@ -428,32 +541,94 @@ Public Class client
                         ElseIf in_number And c_byte = 2 Then
                             length_left = utils.ConvertFromAscii(cnumarr.ToArray)
                             in_number = False
-                            If c_index + length_left - 1 > bytes.Length - 1 Then
+                            If c_index + length_left - 1 > bts.Length - 1 Then
                                 Dim rr(length_left - 1) As Byte
-                                Buffer.BlockCopy(bytes, c_index, rr, 0, bytes.Length - c_index)
+                                Buffer.BlockCopy(bts, c_index, rr, 0, bts.Length - c_index)
                                 cdatarr = rr
                                 more_dat = True
-                                length_left -= bytes.Length - c_index
+                                length_left -= bts.Length - c_index
                             Else
                                 Dim rr(length_left - 1) As Byte
-                                Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
+                                Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
                                 DecryptBytes(rr)
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
                             End If
-                        ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
-                            connected = False
                         End If
                         c_index += 1
                     End While
                     c_byte = 0
                 Catch ex As Exception
                     If _disconnect_on_invalid_packet Then
-                        Exit While
+                        had_ex = True
                     End If
                 End Try
-                Thread.Sleep(150)
-            End While
+            End If
+
+            If Not had_ex Then
+                While connected And tcpcon()
+                    Try
+                        Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+                        tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)
+                        c_index = 0
+                        If more_dat Then
+                            more_dat = False
+                            If c_index + length_left - 1 > bytes.Length - 1 Then
+                                Dim rr(length_left - 1)
+                                Buffer.BlockCopy(bytes, c_index, rr, 0, bytes.Length - c_index)
+                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
+                                length_left -= bytes.Length - c_index
+                                more_dat = True
+                                c_index += rr.Length
+                            Else
+                                Dim rr(length_left - 1) As Byte
+                                Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
+                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
+                                DecryptBytes(cdatarr)
+                                in_packet = False
+                                c_index += length_left
+                            End If
+                        End If
+                        While c_index < bytes.Length
+                            c_byte = bytes(c_index)
+                            If c_byte = 1 And Not in_packet Then
+                                in_packet = True
+                                in_number = True
+                                cnumarr.Clear()
+                            ElseIf c_byte = 1 And in_packet Then
+                                in_packet = False
+                            ElseIf in_number And Not c_byte = 2 Then
+                                cnumarr.Add(c_byte)
+                            ElseIf in_number And c_byte = 2 Then
+                                length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                                in_number = False
+                                If c_index + length_left - 1 > bytes.Length - 1 Then
+                                    Dim rr(length_left - 1) As Byte
+                                    Buffer.BlockCopy(bytes, c_index, rr, 0, bytes.Length - c_index)
+                                    cdatarr = rr
+                                    more_dat = True
+                                    length_left -= bytes.Length - c_index
+                                Else
+                                    Dim rr(length_left - 1) As Byte
+                                    Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
+                                    DecryptBytes(rr)
+                                    in_packet = False
+                                    c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                End If
+                            ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
+                                connected = False
+                            End If
+                            c_index += 1
+                        End While
+                        c_byte = 0
+                    Catch ex As Exception
+                        If _disconnect_on_invalid_packet Then
+                            Exit While
+                        End If
+                    End Try
+                    Thread.Sleep(150)
+                End While
+            End If
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
         End Try
@@ -706,5 +881,4 @@ End Class
 Public Enum failed_connection_reason As Integer
     unknown = 0
     server_unavailable = 1
-    name_taken = 2
 End Enum

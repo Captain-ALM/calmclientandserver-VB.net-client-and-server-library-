@@ -190,7 +190,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientMessage">
 	<summary>
- Raised everytime data is received.
+ Raised everytime a packet is received.
  </summary>
 	<param name="Data">Packet received.</param>
 	<param name="clientname">The name of sender.</param>
@@ -203,13 +203,19 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientConnect">
 	<summary>
- Raised everytime a client connected.
+ Raised everytime a client connects successfully.
+ </summary>
+	<param name="clientname">The client connected ID.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientConnectFailed">
+	<summary>
+ Raised everytime a client connects successfully.
  </summary>
 	<param name="clientname">The client connected ID.</param>
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientDisconnect">
 	<summary>
- Raised everytime a client disconnected.
+ Raised everytime a client disconnects.
  </summary>
 	<param name="clientname">The disconnected client name.</param>
 	<remarks></remarks>
@@ -229,6 +235,15 @@ calmclientandserver
  </summary>
 	<param name="ipaddress">The IP address to bind to.</param>
 	<param name="port">The port to bind to (Optional) [Default: 100].</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.internalMessagePassing">
+	<summary>
+ Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ If this is disabled, you will not be able to set the client name while connected.
+ If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+ </summary>
+	<value>Internal Message Passing</value>
+	<returns>True/False</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Flush">
 	<summary>
@@ -452,6 +467,17 @@ calmclientandserver
  Raised when a connection is successful.
  </summary>
 	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerConnectSuccess">
+	<summary>
+ Raised when a connection is successful.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerConnectFailed">
+	<summary>
+ Raised when a connection fails
+ </summary>
+	<param name="reason">The reason the connection failed</param>
+	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.client.ServerDisconnect">
 	<summary>
  Raised when disconnected by the server.
@@ -541,6 +567,15 @@ calmclientandserver
  </summary>
 	<value></value>
 	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.internalMessagePassing">
+	<summary>
+ Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ If this is disabled, you will not be able to set the client name while connected.
+ If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+ </summary>
+	<value>Internal Message Passing</value>
+	<returns>True/False</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,captainalm.calmclientandserver.EncryptionParameter,System.Int32)">
 	<summary>

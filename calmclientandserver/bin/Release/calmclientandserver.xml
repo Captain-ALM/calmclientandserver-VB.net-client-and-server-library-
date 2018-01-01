@@ -145,30 +145,6 @@ calmclientandserver
  </summary>
 	<returns>byte array</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,System.String,System.String,captainalm.calmclientandserver.EncryptionMethod)">
-	<summary>
- Creates a new valid packet with basic data and encryption [string data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [String].</param>
-	<param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
-	<param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,captainalm.calmclientandserver.encapsulation,System.String,captainalm.calmclientandserver.EncryptionMethod)">
-	<summary>
- Creates a new valid packet with object data and encryption [encapsulated data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [Encapsulation].</param>
-	<param name="password">The password to protect the data (Optional if using no encryption or unicode only encryption).</param>
-	<param name="encryptmethod">The method to encrypt the data (No and Unicode Only encryption do not require a password while Ase and Unicode and Ase encryption do require a password).</param>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.packet">
 	<summary>
  The packet class.
@@ -214,7 +190,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientMessage">
 	<summary>
- Raised everytime data is received.
+ Raised everytime a packet is received.
  </summary>
 	<param name="Data">Packet received.</param>
 	<param name="clientname">The name of sender.</param>
@@ -227,13 +203,19 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientConnect">
 	<summary>
- Raised everytime a client connected.
+ Raised everytime a client connects successfully.
+ </summary>
+	<param name="clientname">The client connected ID.</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientConnectFailed">
+	<summary>
+ Raised everytime a client connects successfully.
  </summary>
 	<param name="clientname">The client connected ID.</param>
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientDisconnect">
 	<summary>
- Raised everytime a client disconnected.
+ Raised everytime a client disconnects.
  </summary>
 	<param name="clientname">The disconnected client name.</param>
 	<remarks></remarks>
@@ -253,6 +235,15 @@ calmclientandserver
  </summary>
 	<param name="ipaddress">The IP address to bind to.</param>
 	<param name="port">The port to bind to (Optional) [Default: 100].</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.internalMessagePassing">
+	<summary>
+ Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ If this is disabled, you will not be able to set the client name while connected.
+ If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+ </summary>
+	<value>Internal Message Passing</value>
+	<returns>True/False</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Flush">
 	<summary>
@@ -385,28 +376,6 @@ calmclientandserver
  Cleans accumalated packet_frames
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.Start(System.String,captainalm.calmclientandserver.EncryptionMethod)">
-	<summary>
- Starts the server.
- </summary>
-	<param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-	<param name="encrypttype">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.server.SendBufferSize">
-	<summary>
- The number of bytes to send.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.server.ReceiveBufferSize">
-	<summary>
- The number of bytes to receive.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.server">
 	<summary>
  Provides a server class.
@@ -498,6 +467,17 @@ calmclientandserver
  Raised when a connection is successful.
  </summary>
 	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerConnectSuccess">
+	<summary>
+ Raised when a connection is successful.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.client.ServerConnectFailed">
+	<summary>
+ Raised when a connection fails
+ </summary>
+	<param name="reason">The reason the connection failed</param>
+	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.client.ServerDisconnect">
 	<summary>
  Raised when disconnected by the server.
@@ -588,6 +568,15 @@ calmclientandserver
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.internalMessagePassing">
+	<summary>
+ Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ If this is disabled, you will not be able to set the client name while connected.
+ If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+ </summary>
+	<value>Internal Message Passing</value>
+	<returns>True/False</returns>
+	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,captainalm.calmclientandserver.EncryptionParameter,System.Int32)">
 	<summary>
  Connect to a server.
@@ -640,31 +629,6 @@ calmclientandserver
 	<param name="message">The packet to send.</param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,System.String,captainalm.calmclientandserver.EncryptionMethod)">
-	<summary>
- Connect to a server.
- </summary>
-	<param name="Clientname">The name of the client.</param>
-	<param name="ipaddress">The IP address of the server.</param>
-	<param name="port">The port of the server.</param>
-	<param name="password2">The server password to use (Optional if encrypt type is none or unicode only).</param>
-	<param name="encrypttype2">The encrypt type to use none, unicode, ase and unicodease (ase and unicode ase require a password).</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.client.SendBufferSize">
-	<summary>
- The number of bytes to send.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.client.ReceiveBufferSize">
-	<summary>
- The number of bytes to receive.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.client">
 	<summary>
  Provide a client class.
@@ -683,11 +647,6 @@ calmclientandserver
 	<summary>
   A strongly-typed resource class, for looking up localized strings, etc.
 </summary>
-</member><member name="T:captainalm.calmclientandserver.intmsg">
-	<summary>
- Internal Msg {Internal Access Only}
- </summary>
-	<remarks></remarks>
 </member>
 </members>
 </doc>
