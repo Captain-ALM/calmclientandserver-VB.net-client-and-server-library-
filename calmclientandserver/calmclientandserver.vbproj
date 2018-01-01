@@ -72,7 +72,6 @@
     <Compile Include="client.vb" />
     <Compile Include="clientobj.vb" />
     <Compile Include="encapsulation.vb" />
-    <Compile Include="intmsg.vb" />
     <Compile Include="intutils.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
