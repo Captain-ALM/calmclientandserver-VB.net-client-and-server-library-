@@ -50,8 +50,10 @@ Public Class server
 
     Private _buffer_size As Integer = 8192
 
+    Private _auto_msg_pass As Boolean = True
+
     ''' <summary>
-    ''' Raised everytime data is received.
+    ''' Raised everytime a packet is received.
     ''' </summary>
     ''' <param name="Data">Packet received.</param>
     ''' <param name="clientname">The name of sender.</param>
@@ -64,13 +66,19 @@ Public Class server
     ''' <remarks></remarks>
     Public Event errEncounter(ByVal ex As Exception)
     ''' <summary>
-    ''' Raised everytime a client connected.
+    ''' Raised everytime a client connects successfully.
     ''' </summary>
     ''' <param name="clientname">The client connected ID.</param>
     ''' <remarks></remarks>
     Public Event ClientConnect(ByVal clientname As String)
     ''' <summary>
-    ''' Raised everytime a client disconnected.
+    ''' Raised everytime a client connects successfully.
+    ''' </summary>
+    ''' <param name="clientname">The client connected ID.</param>
+    ''' <remarks></remarks>
+    Public Event ClientConnectFailed(ByVal clientname As String, ByVal reason As failed_connection_reason)
+    ''' <summary>
+    ''' Raised everytime a client disconnects.
     ''' </summary>
     ''' <param name="clientname">The disconnected client name.</param>
     ''' <remarks></remarks>
@@ -106,6 +114,19 @@ Public Class server
         End Try
         tcpListener = New TcpListener(_ip, validate_port(_port))
     End Sub
+    ''' <summary>
+    ''' Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+    ''' If this is disabled, you will not be able to set the client name while connected.
+    ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+    ''' </summary>
+    ''' <value>Internal Message Passing</value>
+    ''' <returns>True/False</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property internalMessagePassing As Boolean
+        Get
+            Return _auto_msg_pass
+        End Get
+    End Property
     ''' <summary>
     ''' Flushes this instance of server (Cleaning).
     ''' </summary>
@@ -151,6 +172,8 @@ Public Class server
             _no_packet_splitting = False
 
             _buffer_size = 8192
+
+            _auto_msg_pass = True
         End If
     End Sub
     ''' <summary>

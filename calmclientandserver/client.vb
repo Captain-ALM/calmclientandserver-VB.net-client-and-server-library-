@@ -56,11 +56,25 @@ Public Class client
 
     Private _buffer_size As Integer = 8192
 
+    Private _auto_msg_pass As Boolean = True
+
     ''' <summary>
     ''' Raised when a connection is successful.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Use ServerConnectSuccess and ServerConnectFailed instead.")>
     Public Event ServerConnect()
+    ''' <summary>
+    ''' Raised when a connection is successful.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Event ServerConnectSuccess()
+    ''' <summary>
+    ''' Raised when a connection fails
+    ''' </summary>
+    ''' <param name="reason">The reason the connection failed</param>
+    ''' <remarks></remarks>
+    Public Event ServerConnectFailed(ByVal reason As failed_connection_reason)
     ''' <summary>
     ''' Raised when disconnected by the server.
     ''' </summary>
@@ -128,6 +142,8 @@ Public Class client
             _no_packet_splitting = False
 
             _buffer_size = 8192
+
+            _auto_msg_pass = True
         End If
     End Sub
 
@@ -141,6 +157,7 @@ Public Class client
         Get
             Return thisClient
         End Get
+        <Obsolete("You should now not set the client name during execution, use the set name function.")>
         Set(value As String)
             Dim arex As Boolean = False
             For i As Integer = 0 To clientData.Count - 1
@@ -276,6 +293,19 @@ Public Class client
             tcpClient.NoDelay = value
         End Set
     End Property
+    ''' <summary>
+    ''' Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+    ''' If this is disabled, you will not be able to set the client name while connected.
+    ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+    ''' </summary>
+    ''' <value>Internal Message Passing</value>
+    ''' <returns>True/False</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property internalMessagePassing As Boolean
+        Get
+            Return _auto_msg_pass
+        End Get
+    End Property
 
     ''' <summary>
     ''' Connect to a server.
@@ -348,6 +378,7 @@ Public Class client
                 'Thread.Sleep(100) 'allow some time for the name to be sent : no need for this
                 connected = True
                 RaiseEvent ServerConnect()
+                RaiseEvent ServerConnectSuccess()
             End If
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
@@ -671,3 +702,9 @@ Public Class client
         End SyncLock
     End Sub
 End Class
+
+Public Enum failed_connection_reason As Integer
+    unknown = 0
+    server_unavailable = 1
+    name_taken = 2
+End Enum
