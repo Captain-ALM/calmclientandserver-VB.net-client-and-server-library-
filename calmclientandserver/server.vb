@@ -122,7 +122,7 @@ Public Class server
     ''' <value>Internal Message Passing</value>
     ''' <returns>True/False</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property internalMessagePassing As Boolean
+    Public ReadOnly Property InternalMessagePassing As Boolean
         Get
             Return _auto_msg_pass
         End Get
@@ -307,18 +307,38 @@ Public Class server
     ''' <value>the currently connected clients.</value>
     ''' <returns>the currently connected clients.</returns>
     ''' <remarks></remarks>
+    <Obsolete("Use ConnectedClients Instead")>
     Public ReadOnly Property Connected_Clients As List(Of String)
         Get
-            Return serverData
+            If serverData IsNot Nothing Then
+                Return serverData
+            Else
+                Return New List(Of String)
+            End If
+        End Get
+    End Property
+    ''' <summary>
+    ''' Gets the currently connected clients.
+    ''' </summary>
+    ''' <value>the currently connected clients.</value>
+    ''' <returns>the currently connected clients.</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property ConnectedClients As List(Of String)
+        Get
+            If serverData IsNot Nothing Then
+                Return serverData
+            Else
+                Return New List(Of String)
+            End If
         End Get
     End Property
     ''' <summary>
     ''' Returns if the server is listening.
     ''' </summary>
-    ''' <value></value>
-    ''' <returns></returns>
+    ''' <value>if the server is listening.</value>
+    ''' <returns>if the server is listening.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property isListening As Boolean
+    Public ReadOnly Property IsListening As Boolean
         Get
             Return listening
         End Get
@@ -408,6 +428,7 @@ Public Class server
     ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Use KillThreads Instead")>
     Public Sub Kill_Threads()
         If Not listening And Not synclockcheckl And Not synclockchecks Then
             While listenthread.IsAlive
@@ -421,16 +442,36 @@ Public Class server
         End If
     End Sub
     ''' <summary>
-    ''' Sends data to all of the connected clients.
+    ''' Kill the operating threads if they are still alive.
     ''' </summary>
-    ''' <param name="packet">The packet to send.</param>
     ''' <remarks></remarks>
-    Public Function Broadcast(ByVal packet As packet) As Boolean
+    Public Sub KillThreads()
+        If Not listening And Not synclockcheckl And Not synclockchecks Then
+            While listenthread.IsAlive
+                Thread.Sleep(150)
+                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    listenthread.Abort()
+                End If
+            End While
+        End If
+    End Sub
+    ''' <summary>
+    ''' Sends a message to all of the connected clients.
+    ''' </summary>
+    ''' <param name="message">The packet to send.</param>
+    ''' <remarks></remarks>
+    Public Function Broadcast(ByVal message As packet) As Boolean
         Dim result As Boolean = False
-        If Not packet.header.ToLower = "system" Then
-            result = broadcast_int(packet)
+        If Not message.header.ToLower.StartsWith("system") Then
+            result = broadcast_int(message)
         Else
-            result = False
+            If _auto_msg_pass Then
+                result = False
+            Else
+                result = broadcast_int(message)
+            End If
         End If
         Return result
     End Function
@@ -492,10 +533,14 @@ Public Class server
     ''' <remarks></remarks>
     Public Function Send(ByVal clientName As String, ByVal message As packet) As Boolean
         Dim result As Boolean = False
-        If Not message.header.ToLower = "system" Then
+        If Not message.header.ToLower.StartsWith("system") Then
             result = send_int(clientName, message)
         Else
-            result = False
+            If _auto_msg_pass Then
+                result = False
+            Else
+                result = send_int(clientName, message)
+            End If
         End If
         Return result
     End Function
@@ -669,41 +714,45 @@ Public Class server
     Private Sub clientmsgpr(client As String, message As packet)
         SyncLock lockListen
             synclockcheckl = True
-            Dim clientnolst As New List(Of String)
-            clientnolst.Add(client)
-            If message.header.ToLower.StartsWith("system") Then
-                If message.stringdata(password).ToLower = "clients" Then
-                    send_int(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
-                ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
-                    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
-                    Dim arex As Boolean = False
-                    For i As Integer = 0 To serverData.Count - 1
-                        If serverData(i) = newname Then
-                            arex = True
-                            Exit For
-                        End If
-                    Next
-                    If Not (arex) Then
-                        Dim arex2 As Boolean = False
-                        For i As Integer = 0 To clients.Count - 1
-                            If clients(i).name = client Then
-                                clients(i).name = newname
-                                arex2 = True
+            If _auto_msg_pass Then
+                Dim clientnolst As New List(Of String)
+                clientnolst.Add(client)
+                If message.header.ToLower.StartsWith("system") Then
+                    If message.stringdata(password).ToLower = "clients" Then
+                        send_int(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
+                    ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
+                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
+                        Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
+                        Dim arex As Boolean = False
+                        For i As Integer = 0 To serverData.Count - 1
+                            If serverData(i) = newname Then
+                                arex = True
                                 Exit For
                             End If
                         Next
-                        If arex2 Then
-                            serverData.Remove(client)
-                            serverData.Add(newname)
+                        If Not (arex) Then
+                            Dim arex2 As Boolean = False
+                            For i As Integer = 0 To clients.Count - 1
+                                If clients(i).name = client Then
+                                    clients(i).name = newname
+                                    arex2 = True
+                                    Exit For
+                                End If
+                            Next
+                            If arex2 Then
+                                serverData.Remove(client)
+                                serverData.Add(newname)
+                            End If
                         End If
+                    ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
+                        send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
+                    ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
+                        Disconnect(client)
+                    ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
+                        [Stop]()
                     End If
-                ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
-                    send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
-                ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
-                    Disconnect(client)
-                ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
-                    [Stop]()
+                Else
+                    RaiseEvent ClientMessage(client, message)
                 End If
             Else
                 RaiseEvent ClientMessage(client, message)
@@ -713,10 +762,24 @@ Public Class server
     End Sub
 
     ''' <summary>
-    ''' Cleans accumalated packet_frames
+    ''' Cleans accumalated packet_frames (Cleaning).
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Use FlushPacketFrames Instead")>
     Public Sub Flush_Packet_Frames()
+        For Each cl As clientobj In clients
+            Try
+                cl.purge_msgs()
+            Catch ex As Exception
+            End Try
+        Next
+    End Sub
+
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub FlushPacketFrames()
         For Each cl As clientobj In clients
             Try
                 cl.purge_msgs()

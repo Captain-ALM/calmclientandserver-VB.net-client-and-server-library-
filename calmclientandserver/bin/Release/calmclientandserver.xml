@@ -236,7 +236,7 @@ calmclientandserver
 	<param name="ipaddress">The IP address to bind to.</param>
 	<param name="port">The port to bind to (Optional) [Default: 100].</param>
 	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.server.internalMessagePassing">
+</member><member name="P:captainalm.calmclientandserver.server.InternalMessagePassing">
 	<summary>
  Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
  If this is disabled, you will not be able to set the client name while connected.
@@ -313,12 +313,19 @@ calmclientandserver
 	<value>the currently connected clients.</value>
 	<returns>the currently connected clients.</returns>
 	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.server.isListening">
+</member><member name="P:captainalm.calmclientandserver.server.ConnectedClients">
+	<summary>
+ Gets the currently connected clients.
+ </summary>
+	<value>the currently connected clients.</value>
+	<returns>the currently connected clients.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.IsListening">
 	<summary>
  Returns if the server is listening.
  </summary>
-	<value></value>
-	<returns></returns>
+	<value>if the server is listening.</value>
+	<returns>if the server is listening.</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.GetClient(System.String)">
 	<summary>
@@ -351,11 +358,16 @@ calmclientandserver
  Kill the operating threads if they are still alive.
  </summary>
 	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.KillThreads">
+	<summary>
+ Kill the operating threads if they are still alive.
+ </summary>
+	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Broadcast(captainalm.calmclientandserver.packet)">
 	<summary>
- Sends data to all of the connected clients.
+ Sends a message to all of the connected clients.
  </summary>
-	<param name="packet">The packet to send.</param>
+	<param name="message">The packet to send.</param>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Disconnect(System.String)">
 	<summary>
@@ -373,7 +385,12 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Flush_Packet_Frames">
 	<summary>
- Cleans accumalated packet_frames
+ Cleans accumalated packet_frames (Cleaning).
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.FlushPacketFrames">
+	<summary>
+ Cleans accumalated packet_frames (Cleaning).
  </summary>
 	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.server">
@@ -507,7 +524,7 @@ calmclientandserver
 	<value>the name of the client.</value>
 	<returns>the name of the client.</returns>
 	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.client.isConnected">
+</member><member name="P:captainalm.calmclientandserver.client.IsConnected">
 	<summary>
  Returns the current connection state (True if connected).
  </summary>
@@ -568,7 +585,7 @@ calmclientandserver
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.client.internalMessagePassing">
+</member><member name="P:captainalm.calmclientandserver.client.InternalMessagePassing">
 	<summary>
  Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
  If this is disabled, you will not be able to set the client name while connected.
@@ -594,10 +611,19 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.client.Connected_Clients">
 	<summary>
- The currently connected clients on the server.
+ Gets the currently connected clients on the server.
+ Throws an InvalidOperationException if InternalMessagePasing is not enabled.
  </summary>
-	<value>The currently connected clients on the server.</value>
-	<returns>The currently connected clients on the server.</returns>
+	<value>the currently connected clients on the server.</value>
+	<returns>the currently connected clients on the server.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.client.ConnectedClients">
+	<summary>
+ Gets the currently connected clients on the server.
+ Throws an InvalidOperationException if InternalMessagePasing is not enabled.
+ </summary>
+	<value>the currently connected clients on the server.</value>
+	<returns>the currently connected clients on the server.</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.CheckServer(System.String,System.Int32)">
 	<summary>
@@ -617,9 +643,19 @@ calmclientandserver
  Kill the operating threads if they are still alive.
  </summary>
 	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.KillThreads">
+	<summary>
+ Kill the operating threads if they are still alive.
+ </summary>
+	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.Flush_Packet_Frames">
 	<summary>
- Cleans accumalated packet_frames
+ Cleans accumalated packet_frames (Cleaning).
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.FlushPacketFrames">
+	<summary>
+ Cleans accumalated packet_frames (Cleaning).
  </summary>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.Send(captainalm.calmclientandserver.packet)">
@@ -632,6 +668,11 @@ calmclientandserver
 </member><member name="T:captainalm.calmclientandserver.client">
 	<summary>
  Provide a client class.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.failed_connection_reason">
+	<summary>
+ Gives a reason for a failed connection.
  </summary>
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.ResourceManager">

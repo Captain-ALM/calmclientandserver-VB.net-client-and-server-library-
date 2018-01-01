@@ -161,7 +161,7 @@ Public Class client
         Get
             Return thisClient
         End Get
-        <Obsolete("You should now not set the client name during execution, use the set name function.")>
+        <Obsolete("You should now not set the client name during execution, use the SetName method.")>
         Set(value As String)
             Dim arex As Boolean = False
             For i As Integer = 0 To clientData.Count - 1
@@ -174,7 +174,7 @@ Public Class client
                 clientData.Remove(thisClient)
                 clientData.Add(value)
                 Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
-                If retyt.ToLower = "success" Then
+                If retyt.ToLower = True Then
                     thisClient = value
                 End If
             End If
@@ -186,7 +186,7 @@ Public Class client
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property isConnected() As Boolean
+    Public ReadOnly Property IsConnected() As Boolean
         Get
             Return connected
         End Get
@@ -305,7 +305,7 @@ Public Class client
     ''' <value>Internal Message Passing</value>
     ''' <returns>True/False</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property internalMessagePassing As Boolean
+    Public ReadOnly Property InternalMessagePassing As Boolean
         Get
             Return _auto_msg_pass
         End Get
@@ -357,6 +357,30 @@ Public Class client
         End Try
         Return result
     End Function
+
+    Public Sub SetName(ByVal name As String)
+        If connected And tcpcon() Then
+            If _auto_msg_pass Then
+                Dim arex As Boolean = False
+                For i As Integer = 0 To clientData.Count - 1
+                    If clientData(i) = name Then
+                        arex = True
+                        Exit For
+                    End If
+                Next
+                If Not (arex) Then
+                    clientData.Remove(thisClient)
+                    clientData.Add(name)
+                    Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & name, New EncryptionParameter(encryptmethod, password)))
+                    If retyt.ToLower = True Then
+                        thisClient = name
+                    End If
+                End If
+            Else
+                Throw New InvalidOperationException("SetName can only be used if InternalMessagePassing is enabled")
+            End If
+        End If
+    End Sub
 
     Private Function tcpcon() As Boolean
         If Not tcpClient Is Nothing Then
@@ -693,11 +717,19 @@ Public Class client
 
     Private Sub updatedata()
         While connected
-            Thread.Sleep(_clientrefreshdelay)
-            If tcpClient.Connected Then
-                send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-            End If
+            Try
+                Thread.Sleep(_clientrefreshdelay)
+                If tcpClient.Connected Then
+                    If _auto_msg_pass Then
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    End If
+                End If
+            Catch ex As ThreadAbortException
+                Thread.CurrentThread.Abort()
+                Exit While
+            Catch ex As Exception
+            End Try
         End While
         Thread.CurrentThread.Abort()
     End Sub
@@ -708,20 +740,54 @@ Public Class client
     Public Sub UpdateClientData()
         If connected Then
             If tcpClient.Connected Then
-                send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                If _auto_msg_pass Then
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                Else
+                    Throw New InvalidOperationException("UpdateClientData can only be used if InternalMessagePassing is enabled")
+                End If
             End If
         End If
     End Sub
     ''' <summary>
-    ''' The currently connected clients on the server.
+    ''' Gets the currently connected clients on the server.
+    ''' Throws an InvalidOperationException if InternalMessagePasing is not enabled.
     ''' </summary>
-    ''' <value>The currently connected clients on the server.</value>
-    ''' <returns>The currently connected clients on the server.</returns>
+    ''' <value>the currently connected clients on the server.</value>
+    ''' <returns>the currently connected clients on the server.</returns>
     ''' <remarks></remarks>
+    <Obsolete("Use ConnectedClients Instead")>
     Public ReadOnly Property Connected_Clients As List(Of String)
         Get
-            Return clientData
+            If _auto_msg_pass Then
+                If clientData IsNot Nothing Then
+                    Return clientData
+                Else
+                    Return New List(Of String)
+                End If
+            Else
+                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
+            End If
+        End Get
+    End Property
+    ''' <summary>
+    ''' Gets the currently connected clients on the server.
+    ''' Throws an InvalidOperationException if InternalMessagePasing is not enabled.
+    ''' </summary>
+    ''' <value>the currently connected clients on the server.</value>
+    ''' <returns>the currently connected clients on the server.</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property ConnectedClients As List(Of String)
+        Get
+            If _auto_msg_pass Then
+                If clientData IsNot Nothing Then
+                    Return clientData
+                Else
+                    Return New List(Of String)
+                End If
+            Else
+                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
+            End If
         End Get
     End Property
     ''' <summary>
@@ -767,6 +833,7 @@ Public Class client
     ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Use KillThreads Instead")>
     Public Sub Kill_Threads()
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             While updatethread.IsAlive
@@ -788,10 +855,45 @@ Public Class client
         End If
     End Sub
     ''' <summary>
-    ''' Cleans accumalated packet_frames
+    ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
+    Public Sub KillThreads()
+        If Not connected And Not synclockcheckl And Not synclockchecks Then
+            While updatethread.IsAlive
+                Thread.Sleep(150)
+                If updatethread.ThreadState = ThreadState.AbortRequested Or updatethread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    updatethread.Abort()
+                End If
+            End While
+            While listenthread.IsAlive
+                Thread.Sleep(150)
+                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    listenthread.Abort()
+                End If
+            End While
+        End If
+    End Sub
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use FlushPacketFrames Instead")>
     Public Sub Flush_Packet_Frames()
+        Try
+            _packet_frame_part_dict.Clear()
+        Catch ex As Exception
+        End Try
+    End Sub
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Sub FlushPacketFrames()
         Try
             _packet_frame_part_dict.Clear()
         Catch ex As Exception
@@ -805,10 +907,14 @@ Public Class client
     ''' <remarks></remarks>
     Public Function Send(message As packet) As Boolean
         Dim result As Boolean = False
-        If Not message.header.ToLower = "system" Then
+        If Not message.header.ToLower.StartsWith("system") Then
             result = send_int(message)
         Else
-            result = False
+            If _auto_msg_pass Then
+                result = False
+            Else
+                result = send_int(message)
+            End If
         End If
         Return result
     End Function
@@ -849,26 +955,30 @@ Public Class client
     Private Sub servermsgpr(message As packet)
         SyncLock lockListen
             synclockcheckl = True
-            Dim clientnolst As New List(Of String)
-            If message.header.ToLower.StartsWith("system") Then
-                If message.stringdata(password).ToLower = "disconnect" Then
-                    RaiseEvent ServerDisconnect()
-                ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
-                    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                    clientData.Add(cilname)
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
-                    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                    clientData.Remove(cilname)
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                ElseIf message.header.ToLower.StartsWith("system:clients") Then
-                    clientData = DirectCast(message.objectdata(password), List(Of String))
-                ElseIf message.header.ToLower.StartsWith("system:name") Then
-                    thisClient = message.stringdata(password)
+            If _auto_msg_pass Then
+                Dim clientnolst As New List(Of String)
+                If message.header.ToLower.StartsWith("system") Then
+                    If message.stringdata(password).ToLower = "disconnect" Then
+                        RaiseEvent ServerDisconnect()
+                    ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
+                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
+                        Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
+                        clientData.Add(cilname)
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
+                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
+                        Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
+                        clientData.Remove(cilname)
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    ElseIf message.header.ToLower.StartsWith("system:clients") Then
+                        clientData = DirectCast(message.objectdata(password), List(Of String))
+                    ElseIf message.header.ToLower.StartsWith("system:name") Then
+                        thisClient = message.stringdata(password)
+                    End If
+                Else
+                    RaiseEvent ServerMessage(message)
                 End If
             Else
                 RaiseEvent ServerMessage(message)
@@ -877,7 +987,10 @@ Public Class client
         End SyncLock
     End Sub
 End Class
-
+''' <summary>
+''' Gives a reason for a failed connection.
+''' </summary>
+''' <remarks></remarks>
 Public Enum failed_connection_reason As Integer
     unknown = 0
     server_unavailable = 1
