@@ -163,19 +163,25 @@ Public Class client
         End Get
         <Obsolete("You should now not set the client name during execution, use the SetName method.")>
         Set(value As String)
-            Dim arex As Boolean = False
-            For i As Integer = 0 To clientData.Count - 1
-                If clientData(i) = value Then
-                    arex = True
-                    Exit For
-                End If
-            Next
-            If Not (arex) Then
-                clientData.Remove(thisClient)
-                clientData.Add(value)
-                Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
-                If retyt.ToLower = True Then
-                    thisClient = value
+            If connected And tcpcon() Then
+                If _auto_msg_pass Then
+                    Dim arex As Boolean = False
+                    For i As Integer = 0 To clientData.Count - 1
+                        If clientData(i) = value Then
+                            arex = True
+                            Exit For
+                        End If
+                    Next
+                    If Not (arex) Then
+                        clientData.Remove(thisClient)
+                        clientData.Add(value)
+                        Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
+                        If retyt.ToLower = True Then
+                            thisClient = value
+                        End If
+                    End If
+                Else
+                    Throw New InvalidOperationException("SetName can only be used if InternalMessagePassing is enabled")
                 End If
             End If
         End Set
@@ -206,17 +212,25 @@ Public Class client
         End Set
     End Property
     ''' <summary>
-    ''' Gets or Sets the delay to refresh the local client list.
+    ''' Gets or Sets the delay to refresh the local client list (If InternalMessagePassing is enabled).
     ''' </summary>
     ''' <value>the delay to refresh the local client list.</value>
     ''' <returns>the delay to refresh the local client list.</returns>
     ''' <remarks></remarks>
     Public Property ClientRefreshDelay() As Integer
         Get
-            Return _clientrefreshdelay
+            If _auto_msg_pass Then
+                Return _clientrefreshdelay
+            Else
+                Throw New InvalidOperationException("ClientRefreshDelay can only be used when InternalMessagePassing is enabled")
+            End If
         End Get
         Set(value As Integer)
-            _clientrefreshdelay = value
+            If _auto_msg_pass Then
+                _clientrefreshdelay = value
+            Else
+                Throw New InvalidOperationException("ClientRefreshDelay can only be used when InternalMessagePassing is enabled")
+            End If
         End Set
     End Property
 
@@ -241,7 +255,16 @@ Public Class client
     ''' Creates a new instance of client.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Instead use New with the client_constructor parameter")>
     Public Sub New()
+        tcpClient = New TcpClient()
+    End Sub
+    ''' <summary>
+    ''' Creates a new instance of client with the specified client_constructor.
+    ''' </summary>
+    ''' <param name="constructor">The client_constructor to use.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal constructor As client_constructor)
         tcpClient = New TcpClient()
     End Sub
     ''' <summary>
@@ -293,12 +316,13 @@ Public Class client
         Get
             Return tcpClient.NoDelay
         End Get
+        <Obsolete("Must be now set in the client_connector when creating a new instance of client")>
         Set(ByVal value As Boolean)
             tcpClient.NoDelay = value
         End Set
     End Property
     ''' <summary>
-    ''' Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+    ''' Is the client allowed to send and process internal messages, set it when starting the client in the ClientStart structure.
     ''' If this is disabled, you will not be able to set the client name while connected.
     ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
     ''' </summary>
@@ -317,10 +341,14 @@ Public Class client
     ''' <param name="Clientname">The name of the client.</param>
     ''' <param name="ipaddress">The IP address of the server.</param>
     ''' <param name="port">The port of the server.</param>
-    '''<param name="encrypt_p">The Encryption Parameter</param>
+    '''<param name="encrypt_p">The Encryption Parameter.</param>
+    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
+    ''' <param name="int_msg_passing">Enable internal message passing.</param>
+    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192) As Boolean
+    <Obsolete("Use the Connect method with the ClientStart structure Instead.")>
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False) As Boolean
         Dim result As Boolean = False
         Try
             If connected Then
@@ -341,14 +369,63 @@ Public Class client
                     encryptmethod = EncryptionMethod.none
                     password = ""
                 End If
+                _auto_msg_pass = int_msg_passing
+                tcpClient.NoDelay = _no_delay
                 _port = validate_port(port)
                 _ip = ipaddress
+                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                updatethread.IsBackground = True
                 listenthread = New Thread(New ThreadStart(AddressOf Listen))
                 listenthread.IsBackground = True
                 listenthread.Start()
+                result = True
+            End If
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Connect to a server.
+    ''' </summary>
+    '''<param name="starter">The ClientStart Information</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Connect(ByVal starter As ClientStart) As Boolean
+        Dim result As Boolean = False
+        Try
+            If connected Then
+                result = True
+            Else
+                thisClient = starter.client_name
+                If thisClient Is Nothing Or thisClient = "" Then
+                    Throw New InvalidOperationException()
+                End If
+                If starter.buffer_size >= 4096 Then
+                    _buffer_size = starter.buffer_size
+                Else
+                    _buffer_size = 4096
+                End If
+                tcpClient.ReceiveBufferSize = _buffer_size
+                tcpClient.SendBufferSize = _buffer_size
+                If Not IsNothing(starter.encrypt_param) Then
+                    encryptmethod = starter.encrypt_param.encrypt_method
+                    password = starter.encrypt_param.password
+                Else
+                    encryptmethod = EncryptionMethod.none
+                    password = ""
+                End If
+                _auto_msg_pass = starter.internal_message_passing
+                tcpClient.NoDelay = starter.no_delay
+                _port = validate_port(starter.port)
+                _ip = starter.ip_address.ToString
                 updatethread = New Thread(New ThreadStart(AddressOf updatedata))
                 updatethread.IsBackground = True
-                updatethread.Start()
+                listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                listenthread.IsBackground = True
+                listenthread.Start()
                 result = True
             End If
         Catch ex As Exception
@@ -510,10 +587,15 @@ Public Class client
                     tcpClient.SendBufferSize = SBufferSize
                     tcpClient.ReceiveBufferSize = RBufferSize
                     tcpClient.NoDelay = NDelay
-                    RaiseEvent ServerConnectFailed(failed_connection_reason.unknown)
+                    RaiseEvent ServerConnectFailed(failed_connection_reason.name_taken)
                 End If
 
                 connected = True
+
+                If _auto_msg_pass Then
+                    updatethread.Start()
+                End If
+
                 RaiseEvent ServerConnect()
                 RaiseEvent ServerConnectSuccess()
             End If
@@ -995,4 +1077,80 @@ End Class
 Public Enum failed_connection_reason As Integer
     unknown = 0
     server_unavailable = 1
+    name_taken = 2
 End Enum
+''' <summary>
+''' Provides parameters for client construction.
+''' </summary>
+''' <remarks></remarks>
+Public Structure client_constructor
+End Structure
+''' <summary>
+''' The ClientStart structure for connecting to a server.
+''' </summary>
+''' <remarks></remarks>
+Public Structure ClientStart
+    ''' <summary>
+    ''' Specifies the connecting Client's Name
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public client_name As String
+    ''' <summary>
+    ''' The IP Address for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public ip_address As IPAddress
+    ''' <summary>
+    ''' The port for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public port As Integer
+    ''' <summary>
+    ''' The Encryption Parameter to use in the client.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public encrypt_param As EncryptionParameter
+    ''' <summary>
+    ''' If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public internal_message_passing As Boolean
+    ''' <summary>
+    ''' The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public buffer_size As Integer
+    ''' <summary>
+    ''' If there is a delay before sending accumalated packets.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public no_delay As Boolean
+    ''' <summary>
+    ''' Creates a new set of client start info to start the client with.
+    ''' </summary>
+    ''' <param name="ipaddress">The IP Address for the server to bind to.</param>
+    ''' <param name="_port">The port for the server to bind to.</param>
+    ''' <param name="name">Specifies the connecting Client's Name</param>
+    ''' <param name="encryptparam">The Encryption Parameter to use in the client.</param>
+    ''' <param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
+    ''' <param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
+    ''' <param name="_no_delay">If there is a delay before sending accumalated packets.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal ipaddress As IPAddress, ByVal _port As Integer, ByVal name As String, Optional ByVal encryptparam As EncryptionParameter = Nothing, Optional ByVal buffersize As Integer = 8192, Optional ByVal internalmsgpass As Boolean = True, Optional ByVal _no_delay As Boolean = False)
+        ip_address = ipaddress
+        port = _port
+        client_name = name
+        If Not IsNothing(encryptparam) Then
+            encrypt_param = encryptparam
+        Else
+            encrypt_param = New EncryptionParameter(EncryptionMethod.none)
+        End If
+        If buffersize >= 4096 Then
+            buffer_size = buffersize
+        Else
+            buffer_size = 4096
+        End If
+        internal_message_passing = internalmsgpass
+        no_delay = _no_delay
+    End Sub
+End Structure

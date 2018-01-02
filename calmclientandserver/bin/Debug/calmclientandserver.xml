@@ -207,6 +207,12 @@ calmclientandserver
  </summary>
 	<param name="clientname">The client connected ID.</param>
 	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ClientConnectSuccess">
+	<summary>
+ Raised everytime a client connects successfully.
+ </summary>
+	<param name="clientname">The client connected ID.</param>
+	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientConnectFailed">
 	<summary>
  Raised everytime a client connects successfully.
@@ -224,6 +230,17 @@ calmclientandserver
  Raised when the Server Stops.
  </summary>
 	<remarks></remarks>
+</member><member name="E:captainalm.calmclientandserver.server.ServerStopped">
+	<summary>
+ Raised when the Server Stops.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.#ctor(captainalm.calmclientandserver.server_constructor)">
+	<summary>
+ Creates a new instance of server with the specified server_constructor.
+ </summary>
+	<param name="constructor">The server_constructor to use.</param>
+	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.#ctor">
 	<summary>
  Creates a new default instance of the server class.
@@ -238,7 +255,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.server.InternalMessagePassing">
 	<summary>
- Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ Is the client allowed to send and process internal messages, set it when starting the server in the ServerStart structure.
  If this is disabled, you will not be able to set the client name while connected.
  If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
  </summary>
@@ -341,11 +358,22 @@ calmclientandserver
 	<param name="name">The client to remove.</param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.Start(captainalm.calmclientandserver.EncryptionParameter,System.Int32)">
+</member><member name="M:captainalm.calmclientandserver.server.Start(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean)">
 	<summary>
  Starts the server.
  </summary>
 	<param name="encrypt_p">The encryption parameter</param>
+	<param name="buffer_size">The size of the buffer (Min:4096).</param>
+	<param name="int_msg_passing">Enable internal message passing.</param>
+	<param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
+	<param name="allow_clients_with_the_same_name">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server.Start(captainalm.calmclientandserver.ServerStart)">
+	<summary>
+ Starts the server.
+ </summary>
+	<param name="starter">The ServerStart Info</param>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.server.Stop">
@@ -396,6 +424,68 @@ calmclientandserver
 </member><member name="T:captainalm.calmclientandserver.server">
 	<summary>
  Provides a server class.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.server_constructor.ip_address">
+	<summary>
+ The IP Address for the server to bind to.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.server_constructor.port">
+	<summary>
+ The port for the server to bind to.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.server_constructor.#ctor(System.Net.IPAddress,System.Int32)">
+	<summary>
+ Creates a new server_constructor to be used in making a new server object.
+ </summary>
+	<param name="ipaddress">The IP Address for the server to bind to.</param>
+	<param name="_port">The port for the server to bind to.</param>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.server_constructor">
+	<summary>
+ Provides parameters for server construction.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ServerStart.encrypt_param">
+	<summary>
+ The Encryption Parameter to use in the client.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ServerStart.internal_message_passing">
+	<summary>
+ If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ServerStart.buffer_size">
+	<summary>
+ The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ServerStart.no_delay">
+	<summary>
+ If there is a delay before sending accumalated packets.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ServerStart.allow_clients_with_the_same_name_to_connect">
+	<summary>
+ Allow clients with the same name to connect and increment their names if a client with that name already exists.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.ServerStart.#ctor(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean)">
+	<summary>
+ Creates a new set of server start info to start the server with.
+ </summary>
+	<param name="encryptparam">The Encryption Parameter to use in the client.</param>
+	<param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
+	<param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
+	<param name="_no_delay">If there is a delay before sending accumalated packets.</param>
+	<param name="acwtsntc">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.ServerStart">
+	<summary>
+ The ServerStart structure for starting a server.
  </summary>
 	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.intutils">
@@ -540,7 +630,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.client.ClientRefreshDelay">
 	<summary>
- Gets or Sets the delay to refresh the local client list.
+ Gets or Sets the delay to refresh the local client list (If InternalMessagePassing is enabled).
  </summary>
 	<value>the delay to refresh the local client list.</value>
 	<returns>the delay to refresh the local client list.</returns>
@@ -556,6 +646,12 @@ calmclientandserver
 	<summary>
  Creates a new instance of client.
  </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.#ctor(captainalm.calmclientandserver.client_constructor)">
+	<summary>
+ Creates a new instance of client with the specified client_constructor.
+ </summary>
+	<param name="constructor">The client_constructor to use.</param>
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.client.SplitPacketsOnSend">
 	<summary>
@@ -587,21 +683,31 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.client.InternalMessagePassing">
 	<summary>
- Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+ Is the client allowed to send and process internal messages, set it when starting the client in the ClientStart structure.
  If this is disabled, you will not be able to set the client name while connected.
  If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
  </summary>
 	<value>Internal Message Passing</value>
 	<returns>True/False</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,captainalm.calmclientandserver.EncryptionParameter,System.Int32)">
+</member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean)">
 	<summary>
  Connect to a server.
  </summary>
 	<param name="Clientname">The name of the client.</param>
 	<param name="ipaddress">The IP address of the server.</param>
 	<param name="port">The port of the server.</param>
-	<param name="encrypt_p">The Encryption Parameter</param>
+	<param name="encrypt_p">The Encryption Parameter.</param>
+	<param name="buffer_size">The size of the buffer (Min:4096).</param>
+	<param name="int_msg_passing">Enable internal message passing.</param>
+	<param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.client.Connect(captainalm.calmclientandserver.ClientStart)">
+	<summary>
+ Connect to a server.
+ </summary>
+	<param name="starter">The ClientStart Information</param>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.client.UpdateClientData">
@@ -673,6 +779,63 @@ calmclientandserver
 </member><member name="T:captainalm.calmclientandserver.failed_connection_reason">
 	<summary>
  Gives a reason for a failed connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.client_constructor">
+	<summary>
+ Provides parameters for client construction.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.client_name">
+	<summary>
+ Specifies the connecting Client's Name
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.ip_address">
+	<summary>
+ The IP Address for the server to bind to.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.port">
+	<summary>
+ The port for the server to bind to.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.encrypt_param">
+	<summary>
+ The Encryption Parameter to use in the client.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.internal_message_passing">
+	<summary>
+ If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.buffer_size">
+	<summary>
+ The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.ClientStart.no_delay">
+	<summary>
+ If there is a delay before sending accumalated packets.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.ClientStart.#ctor(System.Net.IPAddress,System.Int32,System.String,captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean)">
+	<summary>
+ Creates a new set of client start info to start the client with.
+ </summary>
+	<param name="ipaddress">The IP Address for the server to bind to.</param>
+	<param name="_port">The port for the server to bind to.</param>
+	<param name="name">Specifies the connecting Client's Name</param>
+	<param name="encryptparam">The Encryption Parameter to use in the client.</param>
+	<param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
+	<param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
+	<param name="_no_delay">If there is a delay before sending accumalated packets.</param>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.ClientStart">
+	<summary>
+ The ClientStart structure for connecting to a server.
  </summary>
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.ResourceManager">

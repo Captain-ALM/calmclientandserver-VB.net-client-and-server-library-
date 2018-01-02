@@ -52,6 +52,8 @@ Public Class server
 
     Private _auto_msg_pass As Boolean = True
 
+    Private _increment_client_names As Boolean = True
+
     ''' <summary>
     ''' Raised everytime a packet is received.
     ''' </summary>
@@ -70,7 +72,14 @@ Public Class server
     ''' </summary>
     ''' <param name="clientname">The client connected ID.</param>
     ''' <remarks></remarks>
+    <Obsolete("Use ClientConnectSuccess instead")>
     Public Event ClientConnect(ByVal clientname As String)
+    ''' <summary>
+    ''' Raised everytime a client connects successfully.
+    ''' </summary>
+    ''' <param name="clientname">The client connected ID.</param>
+    ''' <remarks></remarks>
+    Public Event ClientConnectSuccess(ByVal clientname As String)
     ''' <summary>
     ''' Raised everytime a client connects successfully.
     ''' </summary>
@@ -87,11 +96,32 @@ Public Class server
     ''' Raised when the Server Stops.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Use ServerStopped Instead")>
     Public Event ConnectionClosed()
+    ''' <summary>
+    ''' Raised when the Server Stops.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Event ServerStopped()
+    ''' <summary>
+    ''' Creates a new instance of server with the specified server_constructor.
+    ''' </summary>
+    ''' <param name="constructor">The server_constructor to use.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal constructor As server_constructor)
+        If constructor.ip_address IsNot Nothing Then
+            _ip = constructor.ip_address
+        Else
+            _ip = Me.Ip
+        End If
+        _port = validate_port(constructor.port)
+        tcpListener = New TcpListener(_ip, _port)
+    End Sub
     ''' <summary>
     ''' Creates a new default instance of the server class.
     ''' </summary>
     ''' <remarks></remarks>
+    <Obsolete("Instead use New with the server_constructor parameter")>
     Public Sub New()
         tcpListener = New TcpListener(Ip, _port)
     End Sub
@@ -101,6 +131,7 @@ Public Class server
     ''' <param name="ipaddress">The IP address to bind to.</param>
     ''' <param name="port">The port to bind to (Optional) [Default: 100].</param>
     ''' <remarks></remarks>
+    <Obsolete("Instead use New with the server_constructor parameter")>
     Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal port As Integer = 100)
         Try
             _ip = ipaddress
@@ -115,7 +146,7 @@ Public Class server
         tcpListener = New TcpListener(_ip, validate_port(_port))
     End Sub
     ''' <summary>
-    ''' Is the client allowed to send and process internal messages, set it when starting the client in the client constructor.
+    ''' Is the client allowed to send and process internal messages, set it when starting the server in the ServerStart structure.
     ''' If this is disabled, you will not be able to set the client name while connected.
     ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
     ''' </summary>
@@ -176,8 +207,16 @@ Public Class server
             _buffer_size = 8192
 
             _auto_msg_pass = True
+
+            _increment_client_names = True
         End If
     End Sub
+
+    Public ReadOnly Property IncrementClientNames() As Boolean
+        Get
+            Return _increment_client_names
+        End Get
+    End Property
     ''' <summary>
     ''' Split the Packets when they are sent
     ''' </summary>
@@ -255,7 +294,8 @@ Public Class server
                     End If
                 Next
                 If list.Count = 0 Then
-                    Return IPAddress.None
+                    _ip = IPAddress.Loopback
+                    Return IPAddress.Loopback
                 End If
                 _ip = list(0)
             End If
@@ -297,6 +337,7 @@ Public Class server
         Get
             Return tcpListener.Server.NoDelay
         End Get
+        <Obsolete("Must be now set in the server_constructor when creating a new instance of server")>
         Set(ByVal value As Boolean)
             tcpListener.Server.NoDelay = value
         End Set
@@ -376,9 +417,14 @@ Public Class server
     ''' Starts the server.
     ''' </summary>
     '''<param name="encrypt_p">The encryption parameter</param>
+    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
+    ''' <param name="int_msg_passing">Enable internal message passing.</param>
+    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
+    ''' <param name="allow_clients_with_the_same_name">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192) As Boolean
+    <Obsolete("Use the Start method with the ServerStart structure Instead.")>
+    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False, Optional allow_clients_with_the_same_name As Boolean = True) As Boolean
         Dim result As Boolean = False
         If listening Then
             Return True
@@ -397,6 +443,49 @@ Public Class server
             Else
                 _buffer_size = 4096
             End If
+            _auto_msg_pass = int_msg_passing
+            _increment_client_names = allow_clients_with_the_same_name
+            tcpListener.Server.NoDelay = _no_delay
+            tcpListener.Server.ReceiveBufferSize = _buffer_size
+            tcpListener.Server.SendBufferSize = _buffer_size
+            listenthread = New Thread(New ThreadStart(AddressOf Listen))
+            listenthread.IsBackground = True
+            listenthread.Start()
+            result = True
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+    ''' <summary>
+    ''' Starts the server.
+    ''' </summary>
+    '''<param name="starter">The ServerStart Info</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Start(ByVal starter As ServerStart) As Boolean
+        Dim result As Boolean = False
+        If listening Then
+            Return True
+        End If
+        Try
+            listening = True
+            If Not IsNothing(starter.encrypt_param) Then
+                encryptmethod = starter.encrypt_param.encrypt_method
+                password = starter.encrypt_param.password
+            Else
+                encryptmethod = EncryptionMethod.none
+                password = ""
+            End If
+            If starter.buffer_size >= 4096 Then
+                _buffer_size = starter.buffer_size
+            Else
+                _buffer_size = 4096
+            End If
+            _auto_msg_pass = starter.internal_message_passing
+            _increment_client_names = starter.allow_clients_with_the_same_name_to_connect
+            tcpListener.Server.NoDelay = starter.no_delay
             tcpListener.Server.ReceiveBufferSize = _buffer_size
             tcpListener.Server.SendBufferSize = _buffer_size
             listenthread = New Thread(New ThreadStart(AddressOf Listen))
@@ -423,6 +512,7 @@ Public Class server
         If Not tcpServerNetStream Is Nothing Then tcpServerNetStream.Close(0)
         tcpListener.Stop()
         RaiseEvent ConnectionClosed()
+        RaiseEvent ServerStopped()
     End Sub
     ''' <summary>
     ''' Kill the operating threads if they are still alive.
@@ -550,7 +640,7 @@ Public Class server
         SyncLock lockSend
             synclockchecks = True
             Try
-                Dim client As clientobj = GetClient(clientName)
+                Dim client As clientobj = GetClient(clientname)
                 If client Is Nothing Then
                     result = False
                 ElseIf Not client.isConnected Then
@@ -672,7 +762,9 @@ Public Class server
                     Thread.Sleep(150)
                 Loop
                 Dim clnom As String = packet.stringdata(password)
-                If Not GetClient(clnom) Is Nothing Then
+                Dim allow_cl As Boolean = False
+
+                If Not GetClient(clnom) Is Nothing And _increment_client_names Then
                     Dim OriginID As String = clnom
                     Dim cnt As Integer = 1
                     clnom = OriginID & cnt
@@ -680,13 +772,30 @@ Public Class server
                         cnt += 1
                         clnom = OriginID & cnt
                     End While
+                    allow_cl = True
+                ElseIf Not GetClient(clnom) Is Nothing And Not _increment_client_names Then
+                    allow_cl = False
+                Else
+                    allow_cl = True
                 End If
-                Dim clobj As New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet, bts)
-                clobj.close_delay = _closeDelay
+
+                Dim clobj As clientobj = Nothing
+
+                If allow_cl Then
+                    clobj = New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet, bts)
+                    clobj.close_delay = _closeDelay
+                End If
 
                 Dim r As New List(Of String)
                 r.Add(clnom)
-                Dim p2 As New packet_frame(New packet(0, "", r, "", clnom, New EncryptionParameter(encryptmethod, password)))
+                Dim p2 As packet_frame = Nothing
+
+                If allow_cl Then
+                    p2 = New packet_frame(New packet(0, "", r, "", clnom, New EncryptionParameter(encryptmethod, password)))
+                Else
+                    p2 = New packet_frame(New packet(0, "", r, "", "", New EncryptionParameter(encryptmethod, password)))
+                End If
+
                 Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
 
                 Dim bytes2() As Byte = pfp(0)
@@ -698,12 +807,17 @@ Public Class server
                 Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
                 tcpServerNetStream.Write(bts2, 0, bts2.Length)
 
-                clients.Add(clobj)
-                serverData.Add(clnom)
-                AddHandler clobj.DataReceived, AddressOf DataReceivedHandler 'Handle all of the data received in all clients
-                AddHandler clobj.errEncounter, AddressOf errEncounterHandler 'Handle all clients errors
-                AddHandler clobj.lostConnection, AddressOf lostConnectionHandler 'Handle all clients lost connections
-                RaiseEvent ClientConnect(clnom)
+                If allow_cl Then
+                    clients.Add(clobj)
+                    serverData.Add(clnom)
+                    AddHandler clobj.DataReceived, AddressOf DataReceivedHandler 'Handle all of the data received in all clients
+                    AddHandler clobj.errEncounter, AddressOf errEncounterHandler 'Handle all clients errors
+                    AddHandler clobj.lostConnection, AddressOf lostConnectionHandler 'Handle all clients lost connections
+                    RaiseEvent ClientConnect(clnom)
+                    RaiseEvent ClientConnectSuccess(clnom)
+                Else
+                    RaiseEvent ClientConnectFailed(clnom, failed_connection_reason.name_taken)
+                End If
             Catch ex As Exception
                 RaiseEvent errEncounter(ex)
             End Try
@@ -792,7 +906,7 @@ Public Class server
         Dim Disconnecttf As Boolean = True
         'For b = 0 To Message.Data.Length - 1
         Dim Msg As packet_frame = Message
-        If Not Msg.Data Is Nothing Then
+        If Not Msg.data Is Nothing Then
             'raise the data recived event
             Dim packet As packet = Msg.data
             clientmsgpr(cname, packet)
@@ -813,7 +927,7 @@ Public Class server
     End Sub
 
     Private Sub lostConnectionHandler(ByVal name As String)
-        RaiseEvent ClientDisconnect(Name)
+        RaiseEvent ClientDisconnect(name)
         Dim Handler As clientobj = GetClient(name)
         RemoveHandler Handler.DataReceived, AddressOf DataReceivedHandler
         RemoveHandler Handler.errEncounter, AddressOf errEncounterHandler
@@ -822,3 +936,84 @@ Public Class server
         RemoveHandler Handler.lostConnection, AddressOf lostConnectionHandler
     End Sub
 End Class
+''' <summary>
+''' Provides parameters for server construction.
+''' </summary>
+''' <remarks></remarks>
+Public Structure server_constructor
+    ''' <summary>
+    ''' The IP Address for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public ip_address As IPAddress
+    ''' <summary>
+    ''' The port for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public port As Integer
+    ''' <summary>
+    ''' Creates a new server_constructor to be used in making a new server object.
+    ''' </summary>
+    ''' <param name="ipaddress">The IP Address for the server to bind to.</param>
+    ''' <param name="_port">The port for the server to bind to.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
+        ip_address = ipaddress
+        port = _port
+    End Sub
+End Structure
+''' <summary>
+''' The ServerStart structure for starting a server.
+''' </summary>
+''' <remarks></remarks>
+Public Structure ServerStart
+    ''' <summary>
+    ''' The Encryption Parameter to use in the client.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public encrypt_param As EncryptionParameter
+    ''' <summary>
+    ''' If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public internal_message_passing As Boolean
+    ''' <summary>
+    ''' The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public buffer_size As Integer
+    ''' <summary>
+    ''' If there is a delay before sending accumalated packets.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public no_delay As Boolean
+    ''' <summary>
+    ''' Allow clients with the same name to connect and increment their names if a client with that name already exists.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public allow_clients_with_the_same_name_to_connect As Boolean
+    ''' <summary>
+    ''' Creates a new set of server start info to start the server with.
+    ''' </summary>
+    ''' <param name="encryptparam">The Encryption Parameter to use in the client.</param>
+    ''' <param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
+    ''' <param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
+    ''' <param name="_no_delay">If there is a delay before sending accumalated packets.</param>
+    ''' <param name="acwtsntc">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal encryptparam As EncryptionParameter, Optional ByVal buffersize As Integer = 8192, Optional ByVal internalmsgpass As Boolean = True, Optional ByVal _no_delay As Boolean = False, Optional ByVal acwtsntc As Boolean = False)
+        If Not IsNothing(encryptparam) Then
+            encrypt_param = encryptparam
+        Else
+            encrypt_param = New EncryptionParameter(EncryptionMethod.none)
+        End If
+        If buffersize >= 4096 Then
+            buffer_size = buffersize
+        Else
+            buffer_size = 4096
+        End If
+        internal_message_passing = internalmsgpass
+        no_delay = _no_delay
+        allow_clients_with_the_same_name_to_connect = acwtsntc
+    End Sub
+End Structure
