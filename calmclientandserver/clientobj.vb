@@ -83,7 +83,7 @@ Friend Class clientobj
                     If more_dat Then
                         more_dat = False
                         If c_index + length_left - 1 > sent_bytes.Length - 1 Then
-                            Dim rr(length_left - 1)
+                            Dim rr(length_left - 1) As Byte
                             Buffer.BlockCopy(sent_bytes, c_index, rr, 0, sent_bytes.Length - c_index)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                             length_left -= sent_bytes.Length - c_index
@@ -138,13 +138,13 @@ Friend Class clientobj
             If Not had_ex Then
                 Do While Connected And tcpcon()
                     Try
-                        Dim Bytes(tcpClient.ReceiveBufferSize) As Byte
+                        Dim Bytes(tcpClient.ReceiveBufferSize - 1) As Byte
                         networkStream.Read(Bytes, 0, tcpClient.ReceiveBufferSize)
                         c_index = 0
                         If more_dat Then
                             more_dat = False
                             If c_index + length_left - 1 > Bytes.Length - 1 Then
-                                Dim rr(length_left - 1)
+                                Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
                                 Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                                 length_left -= Bytes.Length - c_index

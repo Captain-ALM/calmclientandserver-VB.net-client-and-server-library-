@@ -404,7 +404,7 @@ Public Class client
                 tcpClientNetStream = tcpClient.GetStream()
 
                 Dim p2 As New packet_frame(New packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
-                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True)
+                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
                 Dim bytes2() As Byte = pfp(0)
                 Dim b_l2 As Integer = bytes2.Length
                 Dim b_l_b2 As Byte() = utils.Convert2Ascii(b_l2)
@@ -426,7 +426,7 @@ Public Class client
 
                 Do While tcpClient.Connected
                     Try
-                        Dim Bytes(tcpClient.ReceiveBufferSize) As Byte
+                        Dim Bytes(tcpClient.ReceiveBufferSize - 1) As Byte
                         tcpClientNetStream.Read(Bytes, 0, tcpClient.ReceiveBufferSize)
                         c_index2 = 0
                         If more_dat2 Then
@@ -537,7 +537,7 @@ Public Class client
                     If more_dat Then
                         more_dat = False
                         If c_index + length_left - 1 > bts.Length - 1 Then
-                            Dim rr(length_left - 1)
+                            Dim rr(length_left - 1) As Byte
                             Buffer.BlockCopy(bts, c_index, rr, 0, bts.Length - c_index)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                             length_left -= bts.Length - c_index
@@ -592,13 +592,13 @@ Public Class client
             If Not had_ex Then
                 While connected And tcpcon()
                     Try
-                        Dim bytes(tcpClient.ReceiveBufferSize) As Byte
+                        Dim bytes(tcpClient.ReceiveBufferSize - 1) As Byte
                         tcpClientNetStream.Read(bytes, 0, tcpClient.ReceiveBufferSize)
                         c_index = 0
                         If more_dat Then
                             more_dat = False
                             If c_index + length_left - 1 > bytes.Length - 1 Then
-                                Dim rr(length_left - 1)
+                                Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(bytes, c_index, rr, 0, bytes.Length - c_index)
                                 Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                                 length_left -= bytes.Length - c_index

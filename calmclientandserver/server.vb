@@ -601,7 +601,7 @@ Public Class server
 
                 Do While tcpServer.Connected
                     Try
-                        Dim Bytes(tcpServer.ReceiveBufferSize) As Byte
+                        Dim Bytes(tcpServer.ReceiveBufferSize - 1) As Byte
                         tcpServerNetStream.Read(Bytes, 0, tcpServer.ReceiveBufferSize)
                         c_index = 0
                         If more_dat Then
@@ -687,7 +687,7 @@ Public Class server
                 Dim r As New List(Of String)
                 r.Add(clnom)
                 Dim p2 As New packet_frame(New packet(0, "", r, "", clnom, New EncryptionParameter(encryptmethod, password)))
-                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True)
+                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
 
                 Dim bytes2() As Byte = pfp(0)
                 Dim b_l2 As Integer = bytes2.Length
