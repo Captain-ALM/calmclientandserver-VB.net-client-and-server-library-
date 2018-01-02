@@ -72,13 +72,6 @@ Public Class server
     ''' </summary>
     ''' <param name="clientname">The client connected ID.</param>
     ''' <remarks></remarks>
-    <Obsolete("Use ClientConnectSuccess instead")>
-    Public Event ClientConnect(ByVal clientname As String)
-    ''' <summary>
-    ''' Raised everytime a client connects successfully.
-    ''' </summary>
-    ''' <param name="clientname">The client connected ID.</param>
-    ''' <remarks></remarks>
     Public Event ClientConnectSuccess(ByVal clientname As String)
     ''' <summary>
     ''' Raised everytime a client connects successfully.
@@ -92,12 +85,6 @@ Public Class server
     ''' <param name="clientname">The disconnected client name.</param>
     ''' <remarks></remarks>
     Public Event ClientDisconnect(ByVal clientname As String)
-    ''' <summary>
-    ''' Raised when the Server Stops.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use ServerStopped Instead")>
-    Public Event ConnectionClosed()
     ''' <summary>
     ''' Raised when the Server Stops.
     ''' </summary>
@@ -116,34 +103,6 @@ Public Class server
         End If
         _port = validate_port(constructor.port)
         tcpListener = New TcpListener(_ip, _port)
-    End Sub
-    ''' <summary>
-    ''' Creates a new default instance of the server class.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Instead use New with the server_constructor parameter")>
-    Public Sub New()
-        tcpListener = New TcpListener(Ip, _port)
-    End Sub
-    ''' <summary>
-    ''' Creates a new instance of the server class with the specified IP address and port (optional).
-    ''' </summary>
-    ''' <param name="ipaddress">The IP address to bind to.</param>
-    ''' <param name="port">The port to bind to (Optional) [Default: 100].</param>
-    ''' <remarks></remarks>
-    <Obsolete("Instead use New with the server_constructor parameter")>
-    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal port As Integer = 100)
-        Try
-            _ip = ipaddress
-        Catch ex As Exception
-            _ip = System.Net.IPAddress.None
-        End Try
-        Try
-            _port = validate_port(port)
-        Catch ex As Exception
-            _port = 100
-        End Try
-        tcpListener = New TcpListener(_ip, validate_port(_port))
     End Sub
     ''' <summary>
     ''' Is the client allowed to send and process internal messages, set it when starting the server in the ServerStart structure.
@@ -348,22 +307,6 @@ Public Class server
     ''' <value>the currently connected clients.</value>
     ''' <returns>the currently connected clients.</returns>
     ''' <remarks></remarks>
-    <Obsolete("Use ConnectedClients Instead")>
-    Public ReadOnly Property Connected_Clients As List(Of String)
-        Get
-            If serverData IsNot Nothing Then
-                Return serverData
-            Else
-                Return New List(Of String)
-            End If
-        End Get
-    End Property
-    ''' <summary>
-    ''' Gets the currently connected clients.
-    ''' </summary>
-    ''' <value>the currently connected clients.</value>
-    ''' <returns>the currently connected clients.</returns>
-    ''' <remarks></remarks>
     Public ReadOnly Property ConnectedClients As List(Of String)
         Get
             If serverData IsNot Nothing Then
@@ -412,51 +355,6 @@ Public Class server
             Return True
         End If
         Return False
-    End Function
-    ''' <summary>
-    ''' Starts the server.
-    ''' </summary>
-    '''<param name="encrypt_p">The encryption parameter</param>
-    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
-    ''' <param name="int_msg_passing">Enable internal message passing.</param>
-    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
-    ''' <param name="allow_clients_with_the_same_name">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use the Start method with the ServerStart structure Instead.")>
-    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False, Optional allow_clients_with_the_same_name As Boolean = True) As Boolean
-        Dim result As Boolean = False
-        If listening Then
-            Return True
-        End If
-        Try
-            listening = True
-            If Not IsNothing(encrypt_p) Then
-                encryptmethod = encrypt_p.encrypt_method
-                password = encrypt_p.password
-            Else
-                encryptmethod = EncryptionMethod.none
-                password = ""
-            End If
-            If buffer_size >= 4096 Then
-                _buffer_size = buffer_size
-            Else
-                _buffer_size = 4096
-            End If
-            _auto_msg_pass = int_msg_passing
-            _increment_client_names = allow_clients_with_the_same_name
-            tcpListener.Server.NoDelay = _no_delay
-            tcpListener.Server.ReceiveBufferSize = _buffer_size
-            tcpListener.Server.SendBufferSize = _buffer_size
-            listenthread = New Thread(New ThreadStart(AddressOf Listen))
-            listenthread.IsBackground = True
-            listenthread.Start()
-            result = True
-        Catch ex As Exception
-            result = False
-            RaiseEvent errEncounter(ex)
-        End Try
-        Return result
     End Function
     ''' <summary>
     ''' Starts the server.
@@ -513,23 +411,6 @@ Public Class server
         tcpListener.Stop()
         RaiseEvent ConnectionClosed()
         RaiseEvent ServerStopped()
-    End Sub
-    ''' <summary>
-    ''' Kill the operating threads if they are still alive.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use KillThreads Instead")>
-    Public Sub Kill_Threads()
-        If Not listening And Not synclockcheckl And Not synclockchecks Then
-            While listenthread.IsAlive
-                Thread.Sleep(150)
-                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
-                    Exit While
-                ElseIf Not synclockcheckl And Not synclockchecks Then
-                    listenthread.Abort()
-                End If
-            End While
-        End If
     End Sub
     ''' <summary>
     ''' Kill the operating threads if they are still alive.
@@ -879,20 +760,6 @@ Public Class server
     ''' Cleans accumalated packet_frames (Cleaning).
     ''' </summary>
     ''' <remarks></remarks>
-    <Obsolete("Use FlushPacketFrames Instead")>
-    Public Sub Flush_Packet_Frames()
-        For Each cl As clientobj In clients
-            Try
-                cl.purge_msgs()
-            Catch ex As Exception
-            End Try
-        Next
-    End Sub
-
-    ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
     Public Sub FlushPacketFrames()
         For Each cl As clientobj In clients
             Try
@@ -934,6 +801,139 @@ Public Class server
         clients.Remove(Handler)
         serverData.Remove(name)
         RemoveHandler Handler.lostConnection, AddressOf lostConnectionHandler
+    End Sub
+
+    ''' <summary>
+    ''' Raised everytime a client connects successfully.
+    ''' </summary>
+    ''' <param name="clientname">The client connected ID.</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use ClientConnectSuccess instead")>
+    Public Event ClientConnect(ByVal clientname As String)
+    ''' <summary>
+    ''' Raised when the Server Stops.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use ServerStopped Instead")>
+    Public Event ConnectionClosed()
+    ''' <summary>
+    ''' Creates a new default instance of the server class.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Instead use New with the server_constructor parameter")>
+    Public Sub New()
+        tcpListener = New TcpListener(Ip, _port)
+    End Sub
+    ''' <summary>
+    ''' Creates a new instance of the server class with the specified IP address and port (optional).
+    ''' </summary>
+    ''' <param name="ipaddress">The IP address to bind to.</param>
+    ''' <param name="port">The port to bind to (Optional) [Default: 100].</param>
+    ''' <remarks></remarks>
+    <Obsolete("Instead use New with the server_constructor parameter")>
+    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal port As Integer = 100)
+        Try
+            _ip = ipaddress
+        Catch ex As Exception
+            _ip = System.Net.IPAddress.None
+        End Try
+        Try
+            _port = validate_port(port)
+        Catch ex As Exception
+            _port = 100
+        End Try
+        tcpListener = New TcpListener(_ip, validate_port(_port))
+    End Sub
+    ''' <summary>
+    ''' Gets the currently connected clients.
+    ''' </summary>
+    ''' <value>the currently connected clients.</value>
+    ''' <returns>the currently connected clients.</returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use ConnectedClients Instead")>
+    Public ReadOnly Property Connected_Clients As List(Of String)
+        Get
+            If serverData IsNot Nothing Then
+                Return serverData
+            Else
+                Return New List(Of String)
+            End If
+        End Get
+    End Property
+    ''' <summary>
+    ''' Starts the server.
+    ''' </summary>
+    '''<param name="encrypt_p">The encryption parameter</param>
+    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
+    ''' <param name="int_msg_passing">Enable internal message passing.</param>
+    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
+    ''' <param name="allow_clients_with_the_same_name">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use the Start method with the ServerStart structure Instead.")>
+    Public Function Start(Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False, Optional allow_clients_with_the_same_name As Boolean = True) As Boolean
+        Dim result As Boolean = False
+        If listening Then
+            Return True
+        End If
+        Try
+            listening = True
+            If Not IsNothing(encrypt_p) Then
+                encryptmethod = encrypt_p.encrypt_method
+                password = encrypt_p.password
+            Else
+                encryptmethod = EncryptionMethod.none
+                password = ""
+            End If
+            If buffer_size >= 4096 Then
+                _buffer_size = buffer_size
+            Else
+                _buffer_size = 4096
+            End If
+            _auto_msg_pass = int_msg_passing
+            _increment_client_names = allow_clients_with_the_same_name
+            tcpListener.Server.NoDelay = _no_delay
+            tcpListener.Server.ReceiveBufferSize = _buffer_size
+            tcpListener.Server.SendBufferSize = _buffer_size
+            listenthread = New Thread(New ThreadStart(AddressOf Listen))
+            listenthread.IsBackground = True
+            listenthread.Start()
+            result = True
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+    ''' <summary>
+    ''' Kill the operating threads if they are still alive.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use KillThreads Instead")>
+    Public Sub Kill_Threads()
+        If Not listening And Not synclockcheckl And Not synclockchecks Then
+            While listenthread.IsAlive
+                Thread.Sleep(150)
+                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    listenthread.Abort()
+                End If
+            End While
+        End If
+    End Sub
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use FlushPacketFrames Instead")>
+    Public Sub Flush_Packet_Frames()
+        For Each cl As clientobj In clients
+            Try
+                cl.purge_msgs()
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 End Class
 ''' <summary>

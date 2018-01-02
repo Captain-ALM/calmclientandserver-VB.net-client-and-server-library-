@@ -57,13 +57,6 @@ Public Class client
     Private _buffer_size As Integer = 8192
 
     Private _auto_msg_pass As Boolean = True
-
-    ''' <summary>
-    ''' Raised when a connection is successful.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use ServerConnectSuccess and ServerConnectFailed instead.")>
-    Public Event ServerConnect()
     ''' <summary>
     ''' Raised when a connection is successful.
     ''' </summary>
@@ -250,15 +243,6 @@ Public Class client
             End If
         End Set
     End Property
-
-    ''' <summary>
-    ''' Creates a new instance of client.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Instead use New with the client_constructor parameter")>
-    Public Sub New()
-        tcpClient = New TcpClient()
-    End Sub
     ''' <summary>
     ''' Creates a new instance of client with the specified client_constructor.
     ''' </summary>
@@ -324,7 +308,7 @@ Public Class client
     ''' <summary>
     ''' Is the client allowed to send and process internal messages, set it when starting the client in the ClientStart structure.
     ''' If this is disabled, you will not be able to set the client name while connected.
-    ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
+    ''' If this is disabled, you will not be able to get a list of clients connected to the server via the connectedclients property.
     ''' </summary>
     ''' <value>Internal Message Passing</value>
     ''' <returns>True/False</returns>
@@ -334,58 +318,6 @@ Public Class client
             Return _auto_msg_pass
         End Get
     End Property
-
-    ''' <summary>
-    ''' Connect to a server.
-    ''' </summary>
-    ''' <param name="Clientname">The name of the client.</param>
-    ''' <param name="ipaddress">The IP address of the server.</param>
-    ''' <param name="port">The port of the server.</param>
-    '''<param name="encrypt_p">The Encryption Parameter.</param>
-    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
-    ''' <param name="int_msg_passing">Enable internal message passing.</param>
-    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use the Connect method with the ClientStart structure Instead.")>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False) As Boolean
-        Dim result As Boolean = False
-        Try
-            If connected Then
-                result = True
-            Else
-                thisClient = Clientname
-                If buffer_size >= 4096 Then
-                    _buffer_size = buffer_size
-                Else
-                    _buffer_size = 4096
-                End If
-                tcpClient.ReceiveBufferSize = _buffer_size
-                tcpClient.SendBufferSize = _buffer_size
-                If Not IsNothing(encrypt_p) Then
-                    encryptmethod = encrypt_p.encrypt_method
-                    password = encrypt_p.password
-                Else
-                    encryptmethod = EncryptionMethod.none
-                    password = ""
-                End If
-                _auto_msg_pass = int_msg_passing
-                tcpClient.NoDelay = _no_delay
-                _port = validate_port(port)
-                _ip = ipaddress
-                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
-                updatethread.IsBackground = True
-                listenthread = New Thread(New ThreadStart(AddressOf Listen))
-                listenthread.IsBackground = True
-                listenthread.Start()
-                result = True
-            End If
-        Catch ex As Exception
-            result = False
-            RaiseEvent errEncounter(ex)
-        End Try
-        Return result
-    End Function
 
     ''' <summary>
     ''' Connect to a server.
@@ -838,27 +770,6 @@ Public Class client
     ''' <value>the currently connected clients on the server.</value>
     ''' <returns>the currently connected clients on the server.</returns>
     ''' <remarks></remarks>
-    <Obsolete("Use ConnectedClients Instead")>
-    Public ReadOnly Property Connected_Clients As List(Of String)
-        Get
-            If _auto_msg_pass Then
-                If clientData IsNot Nothing Then
-                    Return clientData
-                Else
-                    Return New List(Of String)
-                End If
-            Else
-                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
-            End If
-        End Get
-    End Property
-    ''' <summary>
-    ''' Gets the currently connected clients on the server.
-    ''' Throws an InvalidOperationException if InternalMessagePasing is not enabled.
-    ''' </summary>
-    ''' <value>the currently connected clients on the server.</value>
-    ''' <returns>the currently connected clients on the server.</returns>
-    ''' <remarks></remarks>
     Public ReadOnly Property ConnectedClients As List(Of String)
         Get
             If _auto_msg_pass Then
@@ -868,7 +779,7 @@ Public Class client
                     Return New List(Of String)
                 End If
             Else
-                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
+                Throw New InvalidOperationException("ConnectedClients can only be used with InternalMessagePassing Enabled")
             End If
         End Get
     End Property
@@ -915,31 +826,6 @@ Public Class client
     ''' Kill the operating threads if they are still alive.
     ''' </summary>
     ''' <remarks></remarks>
-    <Obsolete("Use KillThreads Instead")>
-    Public Sub Kill_Threads()
-        If Not connected And Not synclockcheckl And Not synclockchecks Then
-            While updatethread.IsAlive
-                Thread.Sleep(150)
-                If updatethread.ThreadState = ThreadState.AbortRequested Or updatethread.ThreadState = 132 Then
-                    Exit While
-                ElseIf Not synclockcheckl And Not synclockchecks Then
-                    updatethread.Abort()
-                End If
-            End While
-            While listenthread.IsAlive
-                Thread.Sleep(150)
-                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
-                    Exit While
-                ElseIf Not synclockcheckl And Not synclockchecks Then
-                    listenthread.Abort()
-                End If
-            End While
-        End If
-    End Sub
-    ''' <summary>
-    ''' Kill the operating threads if they are still alive.
-    ''' </summary>
-    ''' <remarks></remarks>
     Public Sub KillThreads()
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             While updatethread.IsAlive
@@ -959,17 +845,6 @@ Public Class client
                 End If
             End While
         End If
-    End Sub
-    ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use FlushPacketFrames Instead")>
-    Public Sub Flush_Packet_Frames()
-        Try
-            _packet_frame_part_dict.Clear()
-        Catch ex As Exception
-        End Try
     End Sub
     ''' <summary>
     ''' Cleans accumalated packet_frames (Cleaning).
@@ -1068,6 +943,134 @@ Public Class client
             End If
             synclockcheckl = False
         End SyncLock
+    End Sub
+
+    ''' <summary>
+    ''' Creates a new instance of client.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Instead use New with the client_constructor parameter")>
+    Public Sub New()
+        tcpClient = New TcpClient()
+    End Sub
+
+    ''' <summary>
+    ''' Raised when a connection is successful.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use ServerConnectSuccess and ServerConnectFailed instead.")>
+    Public Event ServerConnect()
+
+    ''' <summary>
+    ''' Connect to a server.
+    ''' </summary>
+    ''' <param name="Clientname">The name of the client.</param>
+    ''' <param name="ipaddress">The IP address of the server.</param>
+    ''' <param name="port">The port of the server.</param>
+    '''<param name="encrypt_p">The Encryption Parameter.</param>
+    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
+    ''' <param name="int_msg_passing">Enable internal message passing.</param>
+    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use the Connect method with the ClientStart structure Instead.")>
+    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False) As Boolean
+        Dim result As Boolean = False
+        Try
+            If connected Then
+                result = True
+            Else
+                thisClient = Clientname
+                If buffer_size >= 4096 Then
+                    _buffer_size = buffer_size
+                Else
+                    _buffer_size = 4096
+                End If
+                tcpClient.ReceiveBufferSize = _buffer_size
+                tcpClient.SendBufferSize = _buffer_size
+                If Not IsNothing(encrypt_p) Then
+                    encryptmethod = encrypt_p.encrypt_method
+                    password = encrypt_p.password
+                Else
+                    encryptmethod = EncryptionMethod.none
+                    password = ""
+                End If
+                _auto_msg_pass = int_msg_passing
+                tcpClient.NoDelay = _no_delay
+                _port = validate_port(port)
+                _ip = ipaddress
+                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                updatethread.IsBackground = True
+                listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                listenthread.IsBackground = True
+                listenthread.Start()
+                result = True
+            End If
+        Catch ex As Exception
+            result = False
+            RaiseEvent errEncounter(ex)
+        End Try
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Kill the operating threads if they are still alive.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use KillThreads Instead")>
+    Public Sub Kill_Threads()
+        If Not connected And Not synclockcheckl And Not synclockchecks Then
+            While updatethread.IsAlive
+                Thread.Sleep(150)
+                If updatethread.ThreadState = ThreadState.AbortRequested Or updatethread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    updatethread.Abort()
+                End If
+            End While
+            While listenthread.IsAlive
+                Thread.Sleep(150)
+                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
+                    Exit While
+                ElseIf Not synclockcheckl And Not synclockchecks Then
+                    listenthread.Abort()
+                End If
+            End While
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Gets the currently connected clients on the server.
+    ''' Throws an InvalidOperationException if InternalMessagePasing is not enabled.
+    ''' </summary>
+    ''' <value>the currently connected clients on the server.</value>
+    ''' <returns>the currently connected clients on the server.</returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use ConnectedClients Instead")>
+    Public ReadOnly Property Connected_Clients As List(Of String)
+        Get
+            If _auto_msg_pass Then
+                If clientData IsNot Nothing Then
+                    Return clientData
+                Else
+                    Return New List(Of String)
+                End If
+            Else
+                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
+            End If
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use FlushPacketFrames Instead")>
+    Public Sub Flush_Packet_Frames()
+        Try
+            _packet_frame_part_dict.Clear()
+        Catch ex As Exception
+        End Try
     End Sub
 End Class
 ''' <summary>
