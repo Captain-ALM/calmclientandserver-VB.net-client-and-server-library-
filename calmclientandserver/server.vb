@@ -1001,7 +1001,7 @@ Public Structure ServerStart
     ''' <param name="_no_delay">If there is a delay before sending accumalated packets.</param>
     ''' <param name="acwtsntc">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
     ''' <remarks></remarks>
-    Public Sub New(ByVal encryptparam As EncryptionParameter, Optional ByVal buffersize As Integer = 8192, Optional ByVal internalmsgpass As Boolean = True, Optional ByVal _no_delay As Boolean = False, Optional ByVal acwtsntc As Boolean = False)
+    Public Sub New(ByVal encryptparam As EncryptionParameter, Optional ByVal buffersize As Integer = 8192, Optional ByVal internalmsgpass As Boolean = True, Optional ByVal _no_delay As Boolean = False, Optional ByVal acwtsntc As Boolean = True)
         If Not IsNothing(encryptparam) Then
             encrypt_param = encryptparam
         Else
