@@ -429,7 +429,7 @@ Public Class client
                 Dim more_dat2 As Boolean = False
                 Dim length_left2 As Integer = 0
                 Dim in_packet2 As Boolean = False
-                Dim in_number2 As Integer = 0
+                Dim in_number2 As Boolean = False
                 Dim c_byte2 As Byte = 0
                 Dim c_index2 As Integer = 0
 
@@ -539,7 +539,7 @@ Public Class client
         Dim more_dat As Boolean = False
         Dim length_left As Integer = 0
         Dim in_packet As Boolean = False
-        Dim in_number As Integer = 0
+        Dim in_number As Boolean = False
         Dim c_byte As Byte = 0
         Dim c_index As Integer = 0
         Try
@@ -561,9 +561,13 @@ Public Class client
                             Dim rr(length_left - 1) As Byte
                             Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                            DecryptBytes(cdatarr)
+                            Try
+                                DecryptBytes(cdatarr)
+                            Catch ex As Exception
+                            End Try
                             in_packet = False
                             c_index += length_left
+                            length_left = 0
                         End If
                     End If
                     While c_index < bts.Length
@@ -588,15 +592,26 @@ Public Class client
                             Else
                                 Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
-                                DecryptBytes(rr)
+                                Try
+                                    DecryptBytes(rr)
+                                Catch ex As Exception
+                                End Try
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                length_left = 0
                             End If
                         End If
                         c_index += 1
                     End While
                     c_byte = 0
                 Catch ex As Exception
+                    in_number = False
+                    in_packet = False
+                    c_byte = 0
+                    c_index = 0
+                    more_dat = False
+                    length_left = 0
+                    cnumarr.Clear()
                     If _disconnect_on_invalid_packet Then
                         had_ex = True
                     End If
@@ -622,9 +637,13 @@ Public Class client
                                 Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
                                 Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                                DecryptBytes(cdatarr)
+                                Try
+                                    DecryptBytes(cdatarr)
+                                Catch ex As Exception
+                                End Try
                                 in_packet = False
                                 c_index += length_left
+                                length_left = 0
                             End If
                         End If
                         While c_index < bytes.Length
@@ -649,9 +668,13 @@ Public Class client
                                 Else
                                     Dim rr(length_left - 1) As Byte
                                     Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
-                                    DecryptBytes(rr)
+                                    Try
+                                        DecryptBytes(rr)
+                                    Catch ex As Exception
+                                    End Try
                                     in_packet = False
                                     c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                    length_left = 0
                                 End If
                             ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
                                 connected = False
@@ -660,6 +683,13 @@ Public Class client
                         End While
                         c_byte = 0
                     Catch ex As Exception
+                        in_number = False
+                        in_packet = False
+                        c_byte = 0
+                        c_index = 0
+                        more_dat = False
+                        length_left = 0
+                        cnumarr.Clear()
                         If _disconnect_on_invalid_packet Then
                             Exit While
                         End If
