@@ -93,9 +93,13 @@ Friend Class clientobj
                             Dim rr(length_left - 1) As Byte
                             Buffer.BlockCopy(sent_bytes, c_index, rr, 0, length_left)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                            pr_bytes(cdatarr)
+                            Try
+                                pr_bytes(cdatarr)
+                            Catch ex As Exception
+                            End Try
                             in_packet = False
                             c_index += length_left
+                            length_left = 0
                         End If
                     End If
                     While c_index < sent_bytes.Length
@@ -120,9 +124,13 @@ Friend Class clientobj
                             Else
                                 Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(sent_bytes, c_index, rr, 0, length_left)
-                                pr_bytes(rr)
+                                Try
+                                    pr_bytes(rr)
+                                Catch ex As Exception
+                                End Try
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                length_left = 0
                             End If
                         End If
                         c_index += 1
@@ -131,7 +139,7 @@ Friend Class clientobj
                 Catch ex As Exception
                     in_number = False
                     in_packet = False
-                    c_byte = 1
+                    c_byte = 0
                     c_index = 0
                     more_dat = False
                     length_left = 0
@@ -188,9 +196,13 @@ Friend Class clientobj
                                 Else
                                     Dim rr(length_left - 1) As Byte
                                     Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
-                                    pr_bytes(rr)
+                                    Try
+                                        pr_bytes(rr)
+                                    Catch ex As Exception
+                                    End Try
                                     in_packet = False
                                     c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                    length_left = 0
                                 End If
                             ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
                                 Connected = False
@@ -201,7 +213,7 @@ Friend Class clientobj
                     Catch ex As Exception
                         in_number = False
                         in_packet = False
-                        c_byte = 1
+                        c_byte = 0
                         c_index = 0
                         more_dat = False
                         length_left = 0

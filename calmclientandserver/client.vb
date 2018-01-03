@@ -561,9 +561,13 @@ Public Class client
                             Dim rr(length_left - 1) As Byte
                             Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                            DecryptBytes(cdatarr)
+                            Try
+                                DecryptBytes(cdatarr)
+                            Catch ex As Exception
+                            End Try
                             in_packet = False
                             c_index += length_left
+                            length_left = 0
                         End If
                     End If
                     While c_index < bts.Length
@@ -588,9 +592,13 @@ Public Class client
                             Else
                                 Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
-                                DecryptBytes(rr)
+                                Try
+                                    DecryptBytes(rr)
+                                Catch ex As Exception
+                                End Try
                                 in_packet = False
                                 c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                length_left = 0
                             End If
                         End If
                         c_index += 1
@@ -599,7 +607,7 @@ Public Class client
                 Catch ex As Exception
                     in_number = False
                     in_packet = False
-                    c_byte = 1
+                    c_byte = 0
                     c_index = 0
                     more_dat = False
                     length_left = 0
@@ -629,9 +637,13 @@ Public Class client
                                 Dim rr(length_left - 1) As Byte
                                 Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
                                 Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                                DecryptBytes(cdatarr)
+                                Try
+                                    DecryptBytes(cdatarr)
+                                Catch ex As Exception
+                                End Try
                                 in_packet = False
                                 c_index += length_left
+                                length_left = 0
                             End If
                         End If
                         While c_index < bytes.Length
@@ -656,9 +668,13 @@ Public Class client
                                 Else
                                     Dim rr(length_left - 1) As Byte
                                     Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
-                                    DecryptBytes(rr)
+                                    Try
+                                        DecryptBytes(rr)
+                                    Catch ex As Exception
+                                    End Try
                                     in_packet = False
                                     c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                    length_left = 0
                                 End If
                             ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
                                 connected = False
@@ -669,7 +685,7 @@ Public Class client
                     Catch ex As Exception
                         in_number = False
                         in_packet = False
-                        c_byte = 1
+                        c_byte = 0
                         c_index = 0
                         more_dat = False
                         length_left = 0
