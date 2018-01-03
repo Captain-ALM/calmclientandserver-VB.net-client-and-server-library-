@@ -71,7 +71,7 @@ Friend Class clientobj
             Dim more_dat As Boolean = False
             Dim length_left As Integer = 0
             Dim in_packet As Boolean = False
-            Dim in_number As Integer = 0
+            Dim in_number As Boolean = False
             Dim c_byte As Byte = 0
             Dim c_index As Integer = 0
 
@@ -129,6 +129,13 @@ Friend Class clientobj
                     End While
                     c_byte = 0
                 Catch ex As Exception
+                    in_number = False
+                    in_packet = False
+                    c_byte = 1
+                    c_index = 0
+                    more_dat = False
+                    length_left = 0
+                    cnumarr.Clear()
                     If _dis_on_i_pa Then
                         had_ex = True
                     End If
@@ -192,6 +199,13 @@ Friend Class clientobj
                         End While
                         c_byte = 0
                     Catch ex As Exception
+                        in_number = False
+                        in_packet = False
+                        c_byte = 1
+                        c_index = 0
+                        more_dat = False
+                        length_left = 0
+                        cnumarr.Clear()
                         If _dis_on_i_pa Then
                             Exit Do
                         End If

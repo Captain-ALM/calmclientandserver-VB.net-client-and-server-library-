@@ -564,7 +564,7 @@ Public Class server
                 Dim more_dat As Boolean = False
                 Dim length_left As Integer = 0
                 Dim in_packet As Boolean = False
-                Dim in_number As Integer = 0
+                Dim in_number As Boolean = False
                 Dim c_byte As Byte = 0
                 Dim c_index As Integer = 0
 

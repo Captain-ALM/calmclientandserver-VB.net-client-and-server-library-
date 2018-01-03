@@ -429,7 +429,7 @@ Public Class client
                 Dim more_dat2 As Boolean = False
                 Dim length_left2 As Integer = 0
                 Dim in_packet2 As Boolean = False
-                Dim in_number2 As Integer = 0
+                Dim in_number2 As Boolean = False
                 Dim c_byte2 As Byte = 0
                 Dim c_index2 As Integer = 0
 
@@ -539,7 +539,7 @@ Public Class client
         Dim more_dat As Boolean = False
         Dim length_left As Integer = 0
         Dim in_packet As Boolean = False
-        Dim in_number As Integer = 0
+        Dim in_number As Boolean = False
         Dim c_byte As Byte = 0
         Dim c_index As Integer = 0
         Try
@@ -597,6 +597,13 @@ Public Class client
                     End While
                     c_byte = 0
                 Catch ex As Exception
+                    in_number = False
+                    in_packet = False
+                    c_byte = 1
+                    c_index = 0
+                    more_dat = False
+                    length_left = 0
+                    cnumarr.Clear()
                     If _disconnect_on_invalid_packet Then
                         had_ex = True
                     End If
@@ -660,6 +667,13 @@ Public Class client
                         End While
                         c_byte = 0
                     Catch ex As Exception
+                        in_number = False
+                        in_packet = False
+                        c_byte = 1
+                        c_index = 0
+                        more_dat = False
+                        length_left = 0
+                        cnumarr.Clear()
                         If _disconnect_on_invalid_packet Then
                             Exit While
                         End If
