@@ -711,6 +711,7 @@ Public Class client
                 End While
             End If
         Catch ex As ThreadAbortException
+            Disconnect()
             Throw ex
         Catch ex As Exception
             RaiseEvent errEncounter(ex)

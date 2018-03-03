@@ -568,6 +568,7 @@ Public Class server
     End Function
 
     Private Sub Listen()
+        Try
         tcpListener.Start()
         Do
             Try
@@ -663,7 +664,7 @@ Public Class server
                 Dim clnom As String = packet.stringdata(password)
                 Dim allow_cl As Boolean = False
                 Dim allow_cl_r As failed_connection_reason = failed_connection_reason.unknown
-                Dim clclr As Boolean = clients.Count > _client_num_limit + 1
+                Dim clclr As Boolean = clients.Count + 1 > _client_num_limit
                 If _client_num_limit = 0 Then
                     clclr = False
                 End If
@@ -731,7 +732,16 @@ Public Class server
                 RaiseEvent errEncounter(ex)
             End Try
             Thread.Sleep(150)
-        Loop Until listening = False
+            Loop Until listening = False
+        Catch ex As ThreadAbortException
+            listening = False
+            RaiseEvent ServerStopped()
+            Throw ex
+        Catch ex As Exception
+            listening = False
+            RaiseEvent errEncounter(ex)
+            RaiseEvent ServerStopped()
+        End Try
     End Sub
 
     Private Sub clientmsgpr(client As String, message As packet)
@@ -916,7 +926,7 @@ Public Structure ServerStart
             buffer_size = 4096
         End If
         If clnumlmt < 0 Then
-            clnumlmt = 0
+            client_limit_count = 0
         Else
             client_limit_count = clnumlmt
         End If
