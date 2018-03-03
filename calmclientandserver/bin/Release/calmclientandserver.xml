@@ -205,13 +205,14 @@ calmclientandserver
 	<summary>
  Raised everytime a client connects successfully.
  </summary>
-	<param name="clientname">The client connected ID.</param>
+	<param name="clientname">The client connected name.</param>
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientConnectFailed">
 	<summary>
- Raised everytime a client connects successfully.
+ Raised everytime a client does not connect successfully.
  </summary>
-	<param name="clientname">The client connected ID.</param>
+	<param name="clientname">The client connected name.</param>
+	<param name="reason">The reason that the connection failed.</param>
 	<remarks></remarks>
 </member><member name="E:captainalm.calmclientandserver.server.ClientDisconnect">
 	<summary>
@@ -243,6 +244,13 @@ calmclientandserver
 	<summary>
  Flushes this instance of server (Cleaning).
  </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.server.IncrementClientNames">
+	<summary>
+ Returns if client names are incremented if a client has already taken a name.
+ </summary>
+	<value></value>
+	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.server.SplitPacketsOnSend">
 	<summary>
@@ -370,57 +378,6 @@ calmclientandserver
  Cleans accumalated packet_frames (Cleaning).
  </summary>
 	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.server.ClientConnect">
-	<summary>
- Raised everytime a client connects successfully.
- </summary>
-	<param name="clientname">The client connected ID.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.server.ConnectionClosed">
-	<summary>
- Raised when the Server Stops.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.#ctor">
-	<summary>
- Creates a new default instance of the server class.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.#ctor(System.Net.IPAddress,System.Int32)">
-	<summary>
- Creates a new instance of the server class with the specified IP address and port (optional).
- </summary>
-	<param name="ipaddress">The IP address to bind to.</param>
-	<param name="port">The port to bind to (Optional) [Default: 100].</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.server.Connected_Clients">
-	<summary>
- Gets the currently connected clients.
- </summary>
-	<value>the currently connected clients.</value>
-	<returns>the currently connected clients.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.Start(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean)">
-	<summary>
- Starts the server.
- </summary>
-	<param name="encrypt_p">The encryption parameter</param>
-	<param name="buffer_size">The size of the buffer (Min:4096).</param>
-	<param name="int_msg_passing">Enable internal message passing.</param>
-	<param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
-	<param name="allow_clients_with_the_same_name">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.Kill_Threads">
-	<summary>
- Kill the operating threads if they are still alive.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server.Flush_Packet_Frames">
-	<summary>
- Cleans accumalated packet_frames (Cleaning).
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.server">
 	<summary>
  Provides a server class.
@@ -473,7 +430,12 @@ calmclientandserver
  Allow clients with the same name to connect and increment their names if a client with that name already exists.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.ServerStart.#ctor(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean)">
+</member><member name="F:captainalm.calmclientandserver.ServerStart.client_limit_count">
+	<summary>
+ The amount of clients the server is limited to, this can be set to 0 for any number.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.calmclientandserver.ServerStart.#ctor(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
 	<summary>
  Creates a new set of server start info to start the server with.
  </summary>
@@ -482,6 +444,7 @@ calmclientandserver
 	<param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
 	<param name="_no_delay">If there is a delay before sending accumalated packets.</param>
 	<param name="acwtsntc">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
+	<param name="clnumlmt">The amount of clients the server is limited to, this can be set to 0 for any number.</param>
 	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.ServerStart">
 	<summary>
@@ -730,50 +693,29 @@ calmclientandserver
 	<param name="message">The packet to send.</param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.#ctor">
-	<summary>
- Creates a new instance of client.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.client.ServerConnect">
-	<summary>
- Raised when a connection is successful.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.Connect(System.String,System.String,System.Int32,captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean)">
-	<summary>
- Connect to a server.
- </summary>
-	<param name="Clientname">The name of the client.</param>
-	<param name="ipaddress">The IP address of the server.</param>
-	<param name="port">The port of the server.</param>
-	<param name="encrypt_p">The Encryption Parameter.</param>
-	<param name="buffer_size">The size of the buffer (Min:4096).</param>
-	<param name="int_msg_passing">Enable internal message passing.</param>
-	<param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.Kill_Threads">
-	<summary>
- Kill the operating threads if they are still alive.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.client.Connected_Clients">
-	<summary>
- Gets the currently connected clients on the server.
- Throws an InvalidOperationException if InternalMessagePasing is not enabled.
- </summary>
-	<value>the currently connected clients on the server.</value>
-	<returns>the currently connected clients on the server.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.client.Flush_Packet_Frames">
-	<summary>
- Cleans accumalated packet_frames (Cleaning).
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.client">
 	<summary>
  Provide a client class.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.unknown">
+	<summary>
+ The Reason for the failed connection is not specified.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.server_unavailable">
+	<summary>
+ The server is unavailable.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.name_taken">
+	<summary>
+ The client name is already in use on the server.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.too_many_clients">
+	<summary>
+ The server has the maximum amount of clients connected to it.
  </summary>
 	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.failed_connection_reason">

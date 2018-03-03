@@ -1,4 +1,6 @@
-﻿'Packet design padded by a /u004 character
+﻿Imports System.Threading
+
+'Packet design padded by a /u004 character
 'refnum sender recievers header [payload]
 'each part seperated by a /u005 character
 'Payload design padded by a /u006 character
@@ -52,6 +54,8 @@ Public Class packet
             _header = header
             _data = data
             _isobj = False
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -75,6 +79,8 @@ Public Class packet
             _header = header
             _data = data.data
             _isobj = True
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -125,6 +131,8 @@ Public Class packet
                     Next
                 End If
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -175,6 +183,8 @@ Public Class packet
                     Next
                 End If
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -210,6 +220,8 @@ Public Class packet
             Else
                 _ispacketvalid = False
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -319,6 +331,8 @@ Public Class packet
                             Dim conint As Integer = 0
                             Try
                                 conint = CInt(chars)
+                            Catch ex As ThreadAbortException
+                                Throw ex
                             Catch ex As Exception
                                 conint = 0
                             End Try
@@ -339,6 +353,8 @@ Public Class packet
                 End If
                 Return returned
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return ""
@@ -361,6 +377,8 @@ Public Class packet
                             Dim conint As Integer = 0
                             Try
                                 conint = CInt(chars)
+                            Catch ex As ThreadAbortException
+                                Throw ex
                             Catch ex As Exception
                                 conint = 0
                             End Try
@@ -382,6 +400,8 @@ Public Class packet
                 Dim retobj As Object = convertstringtoobject(returned)
                 Return retobj
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return Nothing

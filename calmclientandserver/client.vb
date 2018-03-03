@@ -150,34 +150,10 @@ Public Class client
     ''' <value>the name of the client.</value>
     ''' <returns>the name of the client.</returns>
     ''' <remarks></remarks>
-    Public Property Name() As String
+    Public ReadOnly Property Name() As String
         Get
             Return thisClient
         End Get
-        <Obsolete("You should now not set the client name during execution, use the SetName method.")>
-        Set(value As String)
-            If connected And tcpcon() Then
-                If _auto_msg_pass Then
-                    Dim arex As Boolean = False
-                    For i As Integer = 0 To clientData.Count - 1
-                        If clientData(i) = value Then
-                            arex = True
-                            Exit For
-                        End If
-                    Next
-                    If Not (arex) Then
-                        clientData.Remove(thisClient)
-                        clientData.Add(value)
-                        Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & value, New EncryptionParameter(encryptmethod, password)))
-                        If retyt.ToLower = True Then
-                            thisClient = value
-                        End If
-                    End If
-                Else
-                    Throw New InvalidOperationException("SetName can only be used if InternalMessagePassing is enabled")
-                End If
-            End If
-        End Set
     End Property
     ''' <summary>
     ''' Returns the current connection state (True if connected).
@@ -296,14 +272,10 @@ Public Class client
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Property NoDelay() As Boolean
+    Public ReadOnly Property NoDelay() As Boolean
         Get
             Return tcpClient.NoDelay
         End Get
-        <Obsolete("Must be now set in the client_connector when creating a new instance of client")>
-        Set(ByVal value As Boolean)
-            tcpClient.NoDelay = value
-        End Set
     End Property
     ''' <summary>
     ''' Is the client allowed to send and process internal messages, set it when starting the client in the ClientStart structure.
@@ -360,6 +332,8 @@ Public Class client
                 listenthread.Start()
                 result = True
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             result = False
             RaiseEvent errEncounter(ex)
@@ -396,6 +370,8 @@ Public Class client
             Try
                 Dim c As Boolean = tcpClient.Connected
                 Return c
+            Catch ex As ThreadAbortException
+                Throw ex
             Catch ex As Exception
                 Return False
             End Try
@@ -500,6 +476,8 @@ Public Class client
                             c_index2 += 1
                         End While
                         c_byte2 = 0
+                    Catch ex As ThreadAbortException
+                        Throw ex
                     Catch ex As Exception
                         Exit Do
                     End Try
@@ -507,9 +485,17 @@ Public Class client
                 Loop
 
                 Dim sd As String = packet.stringdata(password)
-                If Not sd = "" Then
-                    thisClient = sd
-                Else
+                If sd = "" Then
+                    thisClient = packet.receivers(0)
+
+                    connected = True
+
+                    If _auto_msg_pass Then
+                        updatethread.Start()
+                    End If
+
+                    RaiseEvent ServerConnectSuccess()
+                ElseIf sd = failed_connection_reason.name_taken Then
                     Dim SBufferSize, RBufferSize As Integer
                     SBufferSize = tcpClient.SendBufferSize
                     RBufferSize = tcpClient.ReceiveBufferSize
@@ -520,17 +506,32 @@ Public Class client
                     tcpClient.ReceiveBufferSize = RBufferSize
                     tcpClient.NoDelay = NDelay
                     RaiseEvent ServerConnectFailed(failed_connection_reason.name_taken)
+                ElseIf sd = failed_connection_reason.too_many_clients Then
+                    Dim SBufferSize, RBufferSize As Integer
+                    SBufferSize = tcpClient.SendBufferSize
+                    RBufferSize = tcpClient.ReceiveBufferSize
+                    Dim NDelay As Boolean = tcpClient.NoDelay
+                    If Not tcpClient Is Nothing Then tcpClient.Close()
+                    tcpClient = New TcpClient()
+                    tcpClient.SendBufferSize = SBufferSize
+                    tcpClient.ReceiveBufferSize = RBufferSize
+                    tcpClient.NoDelay = NDelay
+                    RaiseEvent ServerConnectFailed(failed_connection_reason.too_many_clients)
+                Else
+                    Dim SBufferSize, RBufferSize As Integer
+                    SBufferSize = tcpClient.SendBufferSize
+                    RBufferSize = tcpClient.ReceiveBufferSize
+                    Dim NDelay As Boolean = tcpClient.NoDelay
+                    If Not tcpClient Is Nothing Then tcpClient.Close()
+                    tcpClient = New TcpClient()
+                    tcpClient.SendBufferSize = SBufferSize
+                    tcpClient.ReceiveBufferSize = RBufferSize
+                    tcpClient.NoDelay = NDelay
+                    RaiseEvent ServerConnectFailed(failed_connection_reason.unknown)
                 End If
-
-                connected = True
-
-                If _auto_msg_pass Then
-                    updatethread.Start()
-                End If
-
-                RaiseEvent ServerConnect()
-                RaiseEvent ServerConnectSuccess()
             End If
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
         End Try
@@ -563,6 +564,8 @@ Public Class client
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                             Try
                                 DecryptBytes(cdatarr)
+                            Catch ex As ThreadAbortException
+                                Throw ex
                             Catch ex As Exception
                             End Try
                             in_packet = False
@@ -594,6 +597,8 @@ Public Class client
                                 Buffer.BlockCopy(bts, c_index, rr, 0, length_left)
                                 Try
                                     DecryptBytes(rr)
+                                Catch ex As ThreadAbortException
+                                    Throw ex
                                 Catch ex As Exception
                                 End Try
                                 in_packet = False
@@ -604,6 +609,8 @@ Public Class client
                         c_index += 1
                     End While
                     c_byte = 0
+                Catch ex As ThreadAbortException
+                    Throw ex
                 Catch ex As Exception
                     in_number = False
                     in_packet = False
@@ -639,6 +646,8 @@ Public Class client
                                 Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                                 Try
                                     DecryptBytes(cdatarr)
+                                Catch ex As ThreadAbortException
+                                    Throw ex
                                 Catch ex As Exception
                                 End Try
                                 in_packet = False
@@ -670,6 +679,8 @@ Public Class client
                                     Buffer.BlockCopy(bytes, c_index, rr, 0, length_left)
                                     Try
                                         DecryptBytes(rr)
+                                    Catch ex As ThreadAbortException
+                                        Throw ex
                                     Catch ex As Exception
                                     End Try
                                     in_packet = False
@@ -682,6 +693,8 @@ Public Class client
                             c_index += 1
                         End While
                         c_byte = 0
+                    Catch ex As ThreadAbortException
+                        Throw ex
                     Catch ex As Exception
                         in_number = False
                         in_packet = False
@@ -697,6 +710,9 @@ Public Class client
                     Thread.Sleep(150)
                 End While
             End If
+        Catch ex As ThreadAbortException
+            Disconnect()
+            Throw ex
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
         End Try
@@ -709,6 +725,8 @@ Public Class client
         Dim Msg As packet_frame_part = Nothing
         Try
             Msg = Message
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             Msg = Nothing
         End Try
@@ -722,6 +740,8 @@ Public Class client
                 Try
                     pf = arr
                     sc = True
+                Catch ex As ThreadAbortException
+                    Throw ex
                 Catch ex As Exception
                     pf = Nothing
                     sc = False
@@ -743,6 +763,8 @@ Public Class client
                     Try
                         pf = arr
                         sc = True
+                    Catch ex As ThreadAbortException
+                        Throw ex
                     Catch ex As Exception
                         pf = Nothing
                         sc = False
@@ -883,6 +905,8 @@ Public Class client
     Public Sub FlushPacketFrames()
         Try
             _packet_frame_part_dict.Clear()
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub
@@ -930,6 +954,8 @@ Public Class client
                     Next
                     result = True
                 End If
+            Catch ex As ThreadAbortException
+                Throw ex
             Catch ex As Exception
                 result = False
                 RaiseEvent errEncounter(ex)
@@ -974,143 +1000,32 @@ Public Class client
             synclockcheckl = False
         End SyncLock
     End Sub
-
-    ''' <summary>
-    ''' Creates a new instance of client.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Instead use New with the client_constructor parameter")>
-    Public Sub New()
-        tcpClient = New TcpClient()
-    End Sub
-
-    ''' <summary>
-    ''' Raised when a connection is successful.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use ServerConnectSuccess and ServerConnectFailed instead.")>
-    Public Event ServerConnect()
-
-    ''' <summary>
-    ''' Connect to a server.
-    ''' </summary>
-    ''' <param name="Clientname">The name of the client.</param>
-    ''' <param name="ipaddress">The IP address of the server.</param>
-    ''' <param name="port">The port of the server.</param>
-    '''<param name="encrypt_p">The Encryption Parameter.</param>
-    ''' <param name="buffer_size">The size of the buffer (Min:4096).</param>
-    ''' <param name="int_msg_passing">Enable internal message passing.</param>
-    ''' <param name="_no_delay">Send data to the server with no buffering delay to accumalate messages.</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use the Connect method with the ClientStart structure Instead.")>
-    Public Function Connect(Clientname As String, ipaddress As String, Optional port As Integer = 100, Optional encrypt_p As EncryptionParameter = Nothing, Optional buffer_size As Integer = 8192, Optional int_msg_passing As Boolean = True, Optional _no_delay As Boolean = False) As Boolean
-        Dim result As Boolean = False
-        Try
-            If connected Then
-                result = True
-            Else
-                thisClient = Clientname
-                If buffer_size >= 4096 Then
-                    _buffer_size = buffer_size
-                Else
-                    _buffer_size = 4096
-                End If
-                tcpClient.ReceiveBufferSize = _buffer_size
-                tcpClient.SendBufferSize = _buffer_size
-                If Not IsNothing(encrypt_p) Then
-                    encryptmethod = encrypt_p.encrypt_method
-                    password = encrypt_p.password
-                Else
-                    encryptmethod = EncryptionMethod.none
-                    password = ""
-                End If
-                _auto_msg_pass = int_msg_passing
-                tcpClient.NoDelay = _no_delay
-                _port = validate_port(port)
-                _ip = ipaddress
-                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
-                updatethread.IsBackground = True
-                listenthread = New Thread(New ThreadStart(AddressOf Listen))
-                listenthread.IsBackground = True
-                listenthread.Start()
-                result = True
-            End If
-        Catch ex As Exception
-            result = False
-            RaiseEvent errEncounter(ex)
-        End Try
-        Return result
-    End Function
-
-    ''' <summary>
-    ''' Kill the operating threads if they are still alive.
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use KillThreads Instead")>
-    Public Sub Kill_Threads()
-        If Not connected And Not synclockcheckl And Not synclockchecks Then
-            While updatethread.IsAlive
-                Thread.Sleep(150)
-                If updatethread.ThreadState = ThreadState.AbortRequested Or updatethread.ThreadState = 132 Then
-                    Exit While
-                ElseIf Not synclockcheckl And Not synclockchecks Then
-                    updatethread.Abort()
-                End If
-            End While
-            While listenthread.IsAlive
-                Thread.Sleep(150)
-                If listenthread.ThreadState = ThreadState.AbortRequested Or listenthread.ThreadState = 132 Then
-                    Exit While
-                ElseIf Not synclockcheckl And Not synclockchecks Then
-                    listenthread.Abort()
-                End If
-            End While
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Gets the currently connected clients on the server.
-    ''' Throws an InvalidOperationException if InternalMessagePasing is not enabled.
-    ''' </summary>
-    ''' <value>the currently connected clients on the server.</value>
-    ''' <returns>the currently connected clients on the server.</returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use ConnectedClients Instead")>
-    Public ReadOnly Property Connected_Clients As List(Of String)
-        Get
-            If _auto_msg_pass Then
-                If clientData IsNot Nothing Then
-                    Return clientData
-                Else
-                    Return New List(Of String)
-                End If
-            Else
-                Throw New InvalidOperationException("Connected_Clients can only be used with InternalMessagePassing Enabled")
-            End If
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use FlushPacketFrames Instead")>
-    Public Sub Flush_Packet_Frames()
-        Try
-            _packet_frame_part_dict.Clear()
-        Catch ex As Exception
-        End Try
-    End Sub
 End Class
 ''' <summary>
 ''' Gives a reason for a failed connection.
 ''' </summary>
 ''' <remarks></remarks>
 Public Enum failed_connection_reason As Integer
+    ''' <summary>
+    ''' The Reason for the failed connection is not specified.
+    ''' </summary>
+    ''' <remarks></remarks>
     unknown = 0
+    ''' <summary>
+    ''' The server is unavailable.
+    ''' </summary>
+    ''' <remarks></remarks>
     server_unavailable = 1
+    ''' <summary>
+    ''' The client name is already in use on the server.
+    ''' </summary>
+    ''' <remarks></remarks>
     name_taken = 2
+    ''' <summary>
+    ''' The server has the maximum amount of clients connected to it.
+    ''' </summary>
+    ''' <remarks></remarks>
+    too_many_clients = 3
 End Enum
 ''' <summary>
 ''' Provides parameters for client construction.
