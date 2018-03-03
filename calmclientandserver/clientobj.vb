@@ -55,6 +55,8 @@ Friend Class clientobj
             Try
                 Dim c As Boolean = tcpClient.Connected
                 Return c
+            Catch ex As ThreadAbortException
+                Throw ex
             Catch ex As Exception
                 Return False
             End Try
@@ -64,7 +66,7 @@ Friend Class clientobj
     End Function
 
     Private Sub Listen()
-            Try
+        Try
             networkStream = tcpClient.GetStream()
             Dim cdatarr(-1) As Byte
             Dim cnumarr As New List(Of Byte)
@@ -95,6 +97,8 @@ Friend Class clientobj
                             Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                             Try
                                 pr_bytes(cdatarr)
+                            Catch ex As ThreadAbortException
+                                Throw ex
                             Catch ex As Exception
                             End Try
                             in_packet = False
@@ -126,6 +130,8 @@ Friend Class clientobj
                                 Buffer.BlockCopy(sent_bytes, c_index, rr, 0, length_left)
                                 Try
                                     pr_bytes(rr)
+                                Catch ex As ThreadAbortException
+                                    Throw ex
                                 Catch ex As Exception
                                 End Try
                                 in_packet = False
@@ -136,6 +142,8 @@ Friend Class clientobj
                         c_index += 1
                     End While
                     c_byte = 0
+                Catch ex As ThreadAbortException
+                    Throw ex
                 Catch ex As Exception
                     in_number = False
                     in_packet = False
@@ -198,6 +206,8 @@ Friend Class clientobj
                                     Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
                                     Try
                                         pr_bytes(rr)
+                                    Catch ex As ThreadAbortException
+                                        Throw ex
                                     Catch ex As Exception
                                     End Try
                                     in_packet = False
@@ -210,6 +220,8 @@ Friend Class clientobj
                             c_index += 1
                         End While
                         c_byte = 0
+                    Catch ex As ThreadAbortException
+                        Throw ex
                     Catch ex As Exception
                         in_number = False
                         in_packet = False
@@ -237,6 +249,8 @@ Friend Class clientobj
         Dim Msg As packet_frame_part = Nothing
         Try
             Msg = bytes
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             Msg = Nothing
         End Try
@@ -250,6 +264,8 @@ Friend Class clientobj
                 Try
                     pf = arr
                     sc = True
+                Catch ex As ThreadAbortException
+                    Throw ex
                 Catch ex As Exception
                     pf = Nothing
                     sc = False
@@ -271,6 +287,8 @@ Friend Class clientobj
                     Try
                         pf = arr
                         sc = True
+                    Catch ex As ThreadAbortException
+                        Throw ex
                     Catch ex As Exception
                         pf = Nothing
                         sc = False
@@ -291,6 +309,8 @@ Friend Class clientobj
         Try
             networkStream.Write(Data, 0, Data.Length)
             networkStream.Flush()
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             RaiseEvent errEncounter(ex)
         End Try
@@ -309,6 +329,8 @@ Friend Class clientobj
     Public Sub purge_msgs()
         Try
             _packet_frame_part_dict.Clear()
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
     End Sub

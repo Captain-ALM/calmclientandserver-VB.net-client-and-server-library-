@@ -4,14 +4,14 @@ Add proper return values from functions (Instead of booleans)
 
 (X)Merge MSG and packet classes (so packet can return bytes and consume bytes)
 
-Change intmsg to packet_frame and have packts placed into frames to stop endofstream errors (the buffer is too small / packet is too big for buffer)
+(X)Change intmsg to packet_frame and have packts placed into frames to stop endofstream errors (the buffer is too small / packet is too big for buffer)
 
-fix If statement order bugs, add try-catch blocks
+(X)fix If statement order bugs, add try-catch blocks
 
 check for nulls and make sure threads are closed
 
-fix encryption errors that may come
+(X)fix encryption errors that may come
 
-add prototype structures to create client and server instead of certain paramenters
+(X)add prototype structures to create client and server instead of certain paramenters
 
 Bugfixes + Code Cleanup

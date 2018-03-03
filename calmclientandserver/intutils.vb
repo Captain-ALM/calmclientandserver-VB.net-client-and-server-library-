@@ -2,6 +2,8 @@
 Imports System.Runtime.Serialization.Formatters.Binary
 Imports System.Text
 Imports System.Security.Cryptography
+Imports System.Threading
+
 ''' <summary>
 ''' Utilities Module {Access Internal}
 ''' </summary>
@@ -32,6 +34,8 @@ Friend Module intutils
                 Dim bytes As Byte() = DoCryptoOperation(arg_35_0, key, iv, False)
                 Return Encoding.UTF8.GetString(bytes)
             End SyncLock
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return ""
@@ -46,6 +50,8 @@ Friend Module intutils
                 Dim inArray As Byte() = DoCryptoOperation(Encoding.UTF8.GetBytes(plaintext), key, array2, True)
                 Return String.Format("{0}:{1}:{2}", Convert.ToBase64String(array2), Convert.ToBase64String(array), Convert.ToBase64String(inArray))
             End SyncLock
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return ""
@@ -117,6 +123,8 @@ Public Module utils
         Try
             Dim returned As packet = CType(convertstringtoobject(str), packet)
             Return returned
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return New packet()
@@ -131,6 +139,8 @@ Public Module utils
         Try
             Dim returned As String = convertobjecttostring(str)
             Return returned
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
         End Try
         Return ""
@@ -151,6 +161,8 @@ Public Module utils
             memorysteam.Dispose()
             memorysteam = Nothing
             Return toreturn
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             Return ""
         End Try
@@ -170,6 +182,8 @@ Public Module utils
             memorysteam.Dispose()
             memorysteam = Nothing
             Return retobj
+        Catch ex As ThreadAbortException
+            Throw ex
         Catch ex As Exception
             Return New Object
         End Try
