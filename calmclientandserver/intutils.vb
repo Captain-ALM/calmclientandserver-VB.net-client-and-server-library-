@@ -23,6 +23,8 @@ Friend Module intutils
 
     Private synclockdecrypt As New Object()
 
+    Private synclockbyteman As New Object()
+
     Public Function DecryptString(ciphertext As String, passphrase As String) As String
         Try
             SyncLock synclockdecrypt
@@ -107,27 +109,45 @@ Friend Module intutils
             Return 100
         End If
     End Function
+
+    Public Function createsendablebytes(ByVal ppframes As packet_frame_part()) As List(Of Byte())
+        Dim toret As New List(Of Byte())
+        SyncLock synclockbyteman
+            For i As Integer = 0 To ppframes.Length - 1 Step 1
+                Dim bytes() As Byte = ppframes(i)
+                Dim b_l As Integer = bytes.Length
+                Dim b_l_b As Byte() = Utils.Convert2Ascii(b_l)
+                Dim data_byt(0) As Byte
+                data_byt(0) = 1
+                data_byt = JoinBytes(data_byt, b_l_b)
+                Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                toret.Add(bts)
+            Next
+        End SyncLock
+        Return toret
+    End Function
+
 End Module
 ''' <summary>
 ''' Utilities Module {Access public}
 ''' </summary>
 ''' <remarks></remarks>
-Public Module utils
+Public Module Utils
     ''' <summary>
     ''' Converts a string to a packet.
     ''' </summary>
     ''' <param name="str">The string to convert.</param>
     ''' <returns>The converted packet.</returns>
     ''' <remarks></remarks>
-    Public Function string2packet(str As String) As packet
+    Public Function String2Packet(str As String) As Packet
         Try
-            Dim returned As packet = CType(convertstringtoobject(str), packet)
+            Dim returned As Packet = CType(ConvertStringToObject(str), Packet)
             Return returned
         Catch ex As ThreadAbortException
             Throw ex
         Catch ex As Exception
         End Try
-        Return New packet()
+        Return New Packet()
     End Function
     ''' <summary>
     ''' Converts a packet to a string.
@@ -135,7 +155,7 @@ Public Module utils
     ''' <param name="str">The packet to convert.</param>
     ''' <returns>The converted string.</returns>
     ''' <remarks></remarks>
-    Public Function packet2string(str As packet) As String
+    Public Function Packet2String(str As Packet) As String
         Try
             Dim returned As String = convertobjecttostring(str)
             Return returned
@@ -151,7 +171,7 @@ Public Module utils
     ''' <param name="obj">The object to convert.</param>
     ''' <returns>The converted object.</returns>
     ''' <remarks></remarks>
-    Public Function convertobjecttostring(obj As Object) As String
+    Public Function ConvertObjectToString(obj As Object) As String
         Try
             Dim memorysteam As New MemoryStream
             Dim formatter As New BinaryFormatter()
@@ -173,7 +193,7 @@ Public Module utils
     ''' <param name="str">The string to convert.</param>
     ''' <returns>The converted string.</returns>
     ''' <remarks></remarks>
-    Public Function convertstringtoobject(str As String) As Object
+    Public Function ConvertStringToObject(str As String) As Object
         Try
             Dim memorysteam As MemoryStream = New MemoryStream(Convert.FromBase64String(str))
             Dim formatter As BinaryFormatter = New BinaryFormatter()

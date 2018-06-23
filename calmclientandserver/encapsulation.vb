@@ -3,7 +3,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 <Serializable()>
-Public Class encapsulation
+Public Class Encapsulation
     Private _data As String = ""
     ''' <summary>
     ''' Creates a new Encapsulation Instance with a New Empty Object.
@@ -26,7 +26,7 @@ Public Class encapsulation
     ''' <value>The data of the encapsulation object.</value>
     ''' <returns>The data of the encapsulation object.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property data As String
+    Public ReadOnly Property Data As String
         Get
             Return _data
         End Get
@@ -36,7 +36,17 @@ Public Class encapsulation
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
+    Public Function GetObject() As Object
+        Return ConvertStringToObject(_data)
+    End Function
+
+    ''' <summary>
+    ''' Gets the object held by the encapsulation object.
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Obsolete("Use GetObject Instead")>
     Public Function get_object() As Object
-        Return convertstringtoobject(_data)
+        Return ConvertStringToObject(_data)
     End Function
 End Class

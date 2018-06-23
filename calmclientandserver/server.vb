@@ -9,7 +9,9 @@ Imports System.Threading
 ''' Provides a server class.
 ''' </summary>
 ''' <remarks></remarks>
-Public Class server
+Public Class Server
+    Implements IDisposable
+
     Private _ip As IPAddress = IPAddress.None
 
     Private _port As Integer = 100
@@ -62,13 +64,13 @@ Public Class server
     ''' <param name="Data">Packet received.</param>
     ''' <param name="clientname">The name of sender.</param>
     ''' <remarks></remarks>
-    Public Event ClientMessage(ByVal clientname As String, ByVal data As packet)
+    Public Event ClientMessage(ByVal clientname As String, ByVal data As Packet)
     ''' <summary>
     ''' Raised when an error occurs.
     ''' </summary>
     ''' <param name="ex">The exception occured.</param>
     ''' <remarks></remarks>
-    Public Event errEncounter(ByVal ex As Exception)
+    Public Event ErrorOccured(ByVal ex As Exception)
     ''' <summary>
     ''' Raised everytime a client connects successfully.
     ''' </summary>
@@ -81,7 +83,7 @@ Public Class server
     ''' <param name="clientname">The client connected name.</param>
     ''' <param name="reason">The reason that the connection failed.</param>
     ''' <remarks></remarks>
-    Public Event ClientConnectFailed(ByVal clientname As String, ByVal reason As failed_connection_reason)
+    Public Event ClientConnectFailed(ByVal clientname As String, ByVal reason As FailedConnectionReason)
     ''' <summary>
     ''' Raised everytime a client disconnects.
     ''' </summary>
@@ -94,17 +96,32 @@ Public Class server
     ''' <remarks></remarks>
     Public Event ServerStopped()
     ''' <summary>
-    ''' Creates a new instance of server with the specified server_constructor.
+    ''' The count of currently stored packet fragments.
     ''' </summary>
-    ''' <param name="constructor">The server_constructor to use.</param>
+    ''' <value>Number of stored packet fragments.</value>
+    ''' <returns>Integer</returns>
     ''' <remarks></remarks>
-    Public Sub New(ByVal constructor As server_constructor)
-        If constructor.ip_address IsNot Nothing Then
-            _ip = constructor.ip_address
+    Public ReadOnly Property PacketFragmentCount As Integer
+        Get
+            Dim toret As Integer = 0
+            For Each clfpfc As clientobj In clients
+                toret += clfpfc.pfc
+            Next
+            Return toret
+        End Get
+    End Property
+    ''' <summary>
+    ''' Creates a new instance of server with the specified ServerConstructor.
+    ''' </summary>
+    ''' <param name="constructor">The ServerConstructor to use.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal constructor As ServerConstructor)
+        If constructor.IpAddress IsNot Nothing Then
+            _ip = constructor.IpAddress
         Else
             _ip = Me.Ip
         End If
-        _port = validate_port(constructor.port)
+        _port = validate_port(constructor.Port)
         tcpListener = New TcpListener(_ip, _port)
     End Sub
     ''' <summary>
@@ -121,10 +138,10 @@ Public Class server
         End Get
     End Property
     ''' <summary>
-    ''' Flushes this instance of server (Cleaning).
+    ''' Cleans this instance of server.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub Flush()
+    Public Sub Clean()
         If Not listening And Not synclockcheckl And Not synclockchecks Then
             _ip = IPAddress.None
 
@@ -403,6 +420,7 @@ Public Class server
             Throw ex
         Catch ex As Exception
             result = False
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Return result
@@ -443,9 +461,9 @@ Public Class server
     ''' </summary>
     ''' <param name="message">The packet to send.</param>
     ''' <remarks></remarks>
-    Public Function Broadcast(ByVal message As packet) As Boolean
+    Public Function Broadcast(ByVal message As Packet) As Boolean
         Dim result As Boolean = False
-        If Not message.header.ToLower.StartsWith("system") Then
+        If Not message.Header.ToLower.StartsWith("system") Then
             result = broadcast_int(message)
         Else
             If _auto_msg_pass Then
@@ -457,23 +475,17 @@ Public Class server
         Return result
     End Function
 
-    Private Function broadcast_int(packet As packet) As Boolean
+    Private Function broadcast_int(packet As Packet) As Boolean
         Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
             Try
                 Dim frame As New packet_frame(packet)
                 Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
-                For i As Integer = 0 To f_p.Length - 1 Step 1
-                    Dim bytes() As Byte = f_p(i)
-                    Dim b_l As Integer = bytes.Length
-                    Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
-                    Dim data_byt(0) As Byte
-                    data_byt(0) = 1
-                    data_byt = JoinBytes(data_byt, b_l_b)
-                    Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                Dim blst As List(Of Byte()) = createsendablebytes(f_p)
+                For Each cbm As Byte() In blst
                     For Each c As clientobj In clients
-                        c.SendData(bts)
+                        c.SendData(cbm)
                     Next
                     Thread.Sleep(_packet_delay)
                 Next
@@ -482,6 +494,7 @@ Public Class server
                 Throw ex
             Catch ex As Exception
                 result = False
+                RaiseEvent ErrorOccured(ex)
                 RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
@@ -505,6 +518,7 @@ Public Class server
             Throw ex
         Catch ex As Exception
             result = False
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Return result
@@ -516,9 +530,9 @@ Public Class server
     ''' <param name="message">The packet to send.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Send(ByVal clientName As String, ByVal message As packet) As Boolean
+    Public Function Send(ByVal clientName As String, ByVal message As Packet) As Boolean
         Dim result As Boolean = False
-        If Not message.header.ToLower.StartsWith("system") Then
+        If Not message.Header.ToLower.StartsWith("system") Then
             result = send_int(clientName, message)
         Else
             If _auto_msg_pass Then
@@ -530,7 +544,7 @@ Public Class server
         Return result
     End Function
 
-    Private Function send_int(clientname As String, message As packet) As Boolean
+    Private Function send_int(clientname As String, message As Packet) As Boolean
         Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
@@ -543,15 +557,9 @@ Public Class server
                 Else
                     Dim frame As New packet_frame(message)
                     Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
-                    For i As Integer = 0 To f_p.Length - 1 Step 1
-                        Dim bytes() As Byte = f_p(i)
-                        Dim b_l As Integer = bytes.Length
-                        Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
-                        Dim data_byt(0) As Byte
-                        data_byt(0) = 1
-                        data_byt = JoinBytes(data_byt, b_l_b)
-                        Dim bts As Byte() = JoinBytes(data_byt, bytes)
-                        client.SendData(bts)
+                    Dim blst As List(Of Byte()) = createsendablebytes(f_p)
+                    For Each cbm As Byte() In blst
+                        client.SendData(cbm)
                         Thread.Sleep(_packet_delay)
                     Next
                     result = True
@@ -560,6 +568,7 @@ Public Class server
                 Throw ex
             Catch ex As Exception
                 result = False
+                RaiseEvent ErrorOccured(ex)
                 RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
@@ -569,169 +578,170 @@ Public Class server
 
     Private Sub Listen()
         Try
-        tcpListener.Start()
-        Do
-            Try
-                tcpServer = tcpListener.AcceptTcpClient()
-                tcpServerNetStream = tcpServer.GetStream()
+            tcpListener.Start()
+            Do
+                Try
+                    tcpServer = tcpListener.AcceptTcpClient()
+                    tcpServerNetStream = tcpServer.GetStream()
 
-                Dim packet As packet = Nothing
-                Dim cdatarr(-1) As Byte
-                Dim cnumarr As New List(Of Byte)
-                Dim more_dat As Boolean = False
-                Dim length_left As Integer = 0
-                Dim in_packet As Boolean = False
-                Dim in_number As Boolean = False
-                Dim c_byte As Byte = 0
-                Dim c_index As Integer = 0
+                    Dim packet As Packet = Nothing
+                    Dim cdatarr(-1) As Byte
+                    Dim cnumarr As New List(Of Byte)
+                    Dim more_dat As Boolean = False
+                    Dim length_left As Integer = 0
+                    Dim in_packet As Boolean = False
+                    Dim in_number As Boolean = False
+                    Dim c_byte As Byte = 0
+                    Dim c_index As Integer = 0
 
-                Dim bts(-1) As Byte
+                    Dim bts(-1) As Byte
 
-                Do While tcpServer.Connected
-                    Try
-                        Dim Bytes(tcpServer.ReceiveBufferSize - 1) As Byte
-                        tcpServerNetStream.Read(Bytes, 0, tcpServer.ReceiveBufferSize)
-                        c_index = 0
-                        If more_dat Then
-                            more_dat = False
-                            If c_index + length_left - 1 > Bytes.Length - 1 Then
-                                Dim rr(length_left - 1)
-                                Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
-                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                                length_left -= Bytes.Length - c_index
-                                more_dat = True
-                                c_index += rr.Length
-                            Else
-                                Dim rr(length_left - 1) As Byte
-                                Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
-                                Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
-                                Dim p(0) As packet_frame_part
-                                p(0) = cdatarr
-                                Dim packetf As New packet_frame(p)
-                                packet = packetf.data
-                                in_packet = False
-                                c_index += length_left
-                                ReDim bts(Bytes.Length - c_index - 1)
-                                Buffer.BlockCopy(Bytes, c_index, bts, 0, Bytes.Length - c_index)
-                                Exit Do
-                            End If
-                        End If
-                        While c_index < Bytes.Length
-                            c_byte = Bytes(c_index)
-                            If c_byte = 1 And Not in_packet Then
-                                in_packet = True
-                                in_number = True
-                                cnumarr.Clear()
-                            ElseIf c_byte = 1 And in_packet Then
-                                in_packet = False
-                            ElseIf in_number And Not c_byte = 2 Then
-                                cnumarr.Add(c_byte)
-                            ElseIf in_number And c_byte = 2 Then
-                                length_left = utils.ConvertFromAscii(cnumarr.ToArray)
-                                in_number = False
+                    Do While tcpServer.Connected
+                        Try
+                            Dim Bytes(tcpServer.ReceiveBufferSize - 1) As Byte
+                            tcpServerNetStream.Read(Bytes, 0, tcpServer.ReceiveBufferSize)
+                            c_index = 0
+                            If more_dat Then
+                                more_dat = False
                                 If c_index + length_left - 1 > Bytes.Length - 1 Then
-                                    Dim rr(length_left - 1) As Byte
+                                    Dim rr(length_left - 1)
                                     Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
-                                    cdatarr = rr
-                                    more_dat = True
+                                    Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                                     length_left -= Bytes.Length - c_index
+                                    more_dat = True
+                                    c_index += rr.Length
                                 Else
                                     Dim rr(length_left - 1) As Byte
                                     Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
+                                    Buffer.BlockCopy(rr, 0, cdatarr, cdatarr.Length - length_left, rr.Length)
                                     Dim p(0) As packet_frame_part
-                                    p(0) = rr
+                                    p(0) = cdatarr
                                     Dim packetf As New packet_frame(p)
                                     packet = packetf.data
                                     in_packet = False
-                                    c_index += length_left - 1 'take away one as the while loop increments it by one anyway
-                                    ReDim bts(Bytes.Length - (c_index + 1) - 1)
-                                    Buffer.BlockCopy(Bytes, c_index + 1, bts, 0, Bytes.Length - (c_index + 1))
+                                    c_index += length_left
+                                    ReDim bts(Bytes.Length - c_index - 1)
+                                    Buffer.BlockCopy(Bytes, c_index, bts, 0, Bytes.Length - c_index)
                                     Exit Do
                                 End If
-                            ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
-                                Throw New Exception("Disconnected")
                             End If
-                            c_index += 1
-                        End While
-                        c_byte = 0
-                    Catch ex As ThreadAbortException
-                        Throw ex
-                    Catch ex As Exception
-                        Exit Do
-                    End Try
-                    Thread.Sleep(150)
-                Loop
-                Dim clnom As String = packet.stringdata(password)
-                Dim allow_cl As Boolean = False
-                Dim allow_cl_r As failed_connection_reason = failed_connection_reason.unknown
-                Dim clclr As Boolean = clients.Count + 1 > _client_num_limit
-                If _client_num_limit = 0 Then
-                    clclr = False
-                End If
+                            While c_index < Bytes.Length
+                                c_byte = Bytes(c_index)
+                                If c_byte = 1 And Not in_packet Then
+                                    in_packet = True
+                                    in_number = True
+                                    cnumarr.Clear()
+                                ElseIf c_byte = 1 And in_packet Then
+                                    in_packet = False
+                                ElseIf in_number And Not c_byte = 2 Then
+                                    cnumarr.Add(c_byte)
+                                ElseIf in_number And c_byte = 2 Then
+                                    length_left = Utils.ConvertFromAscii(cnumarr.ToArray)
+                                    in_number = False
+                                    If c_index + length_left - 1 > Bytes.Length - 1 Then
+                                        Dim rr(length_left - 1) As Byte
+                                        Buffer.BlockCopy(Bytes, c_index, rr, 0, Bytes.Length - c_index)
+                                        cdatarr = rr
+                                        more_dat = True
+                                        length_left -= Bytes.Length - c_index
+                                    Else
+                                        Dim rr(length_left - 1) As Byte
+                                        Buffer.BlockCopy(Bytes, c_index, rr, 0, length_left)
+                                        Dim p(0) As packet_frame_part
+                                        p(0) = rr
+                                        Dim packetf As New packet_frame(p)
+                                        packet = packetf.data
+                                        in_packet = False
+                                        c_index += length_left - 1 'take away one as the while loop increments it by one anyway
+                                        ReDim bts(Bytes.Length - (c_index + 1) - 1)
+                                        Buffer.BlockCopy(Bytes, c_index + 1, bts, 0, Bytes.Length - (c_index + 1))
+                                        Exit Do
+                                    End If
+                                ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
+                                    Throw New Exception("Disconnected")
+                                End If
+                                c_index += 1
+                            End While
+                            c_byte = 0
+                        Catch ex As ThreadAbortException
+                            Throw ex
+                        Catch ex As Exception
+                            Exit Do
+                        End Try
+                        Thread.Sleep(150)
+                    Loop
+                    Dim clnom As String = packet.StringData(password)
+                    Dim allow_cl As Boolean = False
+                    Dim allow_cl_r As FailedConnectionReason = FailedConnectionReason.Unknown
+                    Dim clclr As Boolean = clients.Count + 1 > _client_num_limit
+                    If _client_num_limit = 0 Then
+                        clclr = False
+                    End If
 
-                If Not GetClient(clnom) Is Nothing And _increment_client_names And Not clclr Then
-                    Dim OriginID As String = clnom
-                    Dim cnt As Integer = 1
-                    clnom = OriginID & cnt
-                    While Not GetClient(clnom) Is Nothing
-                        cnt += 1
+                    If Not GetClient(clnom) Is Nothing And _increment_client_names And Not clclr Then
+                        Dim OriginID As String = clnom
+                        Dim cnt As Integer = 1
                         clnom = OriginID & cnt
-                    End While
-                    allow_cl = True
-                ElseIf Not GetClient(clnom) Is Nothing And Not _increment_client_names And Not clclr Then
-                    allow_cl = False
-                    allow_cl_r = failed_connection_reason.name_taken
-                ElseIf clclr Then
-                    allow_cl = False
-                    allow_cl_r = failed_connection_reason.too_many_clients
-                Else
-                    allow_cl = True
-                End If
+                        While Not GetClient(clnom) Is Nothing
+                            cnt += 1
+                            clnom = OriginID & cnt
+                        End While
+                        allow_cl = True
+                    ElseIf Not GetClient(clnom) Is Nothing And Not _increment_client_names And Not clclr Then
+                        allow_cl = False
+                        allow_cl_r = FailedConnectionReason.NameTaken
+                    ElseIf clclr Then
+                        allow_cl = False
+                        allow_cl_r = FailedConnectionReason.TooManyClients
+                    Else
+                        allow_cl = True
+                    End If
 
-                Dim clobj As clientobj = Nothing
+                    Dim clobj As clientobj = Nothing
 
-                If allow_cl Then
-                    clobj = New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet, bts)
-                    clobj.close_delay = _closeDelay
-                End If
+                    If allow_cl Then
+                        clobj = New clientobj(clnom, tcpServer, _disconnect_on_invalid_packet, bts)
+                        clobj.close_delay = _closeDelay
+                    End If
 
-                Dim r As New List(Of String)
-                r.Add(clnom)
-                Dim p2 As packet_frame = Nothing
+                    Dim r As New List(Of String)
+                    r.Add(clnom)
+                    Dim p2 As packet_frame = Nothing
 
-                If allow_cl Then
-                    p2 = New packet_frame(New packet(0, "", r, "", "", New EncryptionParameter(encryptmethod, password)))
-                Else
-                    p2 = New packet_frame(New packet(0, "", r, "", allow_cl_r, New EncryptionParameter(encryptmethod, password)))
-                End If
+                    If allow_cl Then
+                        p2 = New packet_frame(New Packet(0, "", r, "", "", New EncryptionParameter(encryptmethod, password)))
+                    Else
+                        p2 = New packet_frame(New Packet(0, "", r, "", allow_cl_r, New EncryptionParameter(encryptmethod, password)))
+                    End If
 
-                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
+                    Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
 
-                Dim bytes2() As Byte = pfp(0)
-                Dim b_l2 As Integer = bytes2.Length
-                Dim b_l_b2 As Byte() = utils.Convert2Ascii(b_l2)
-                Dim data_byt(0) As Byte
-                data_byt(0) = 1
-                data_byt = JoinBytes(data_byt, b_l_b2)
-                Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
-                tcpServerNetStream.Write(bts2, 0, bts2.Length)
+                    Dim bytes2() As Byte = pfp(0)
+                    Dim b_l2 As Integer = bytes2.Length
+                    Dim b_l_b2 As Byte() = Utils.Convert2Ascii(b_l2)
+                    Dim data_byt(0) As Byte
+                    data_byt(0) = 1
+                    data_byt = JoinBytes(data_byt, b_l_b2)
+                    Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
+                    tcpServerNetStream.Write(bts2, 0, bts2.Length)
 
-                If allow_cl Then
-                    clients.Add(clobj)
-                    serverData.Add(clnom)
-                    AddHandler clobj.DataReceived, AddressOf DataReceivedHandler 'Handle all of the data received in all clients
-                    AddHandler clobj.errEncounter, AddressOf errEncounterHandler 'Handle all clients errors
-                    AddHandler clobj.lostConnection, AddressOf lostConnectionHandler 'Handle all clients lost connections
-                    RaiseEvent ClientConnectSuccess(clnom)
-                Else
-                    RaiseEvent ClientConnectFailed(clnom, allow_cl_r)
-                End If
-            Catch ex As ThreadAbortException
-                Throw ex
-            Catch ex As Exception
-                RaiseEvent errEncounter(ex)
-            End Try
-            Thread.Sleep(150)
+                    If allow_cl Then
+                        clients.Add(clobj)
+                        serverData.Add(clnom)
+                        AddHandler clobj.DataReceived, AddressOf DataReceivedHandler 'Handle all of the data received in all clients
+                        AddHandler clobj.errEncounter, AddressOf errEncounterHandler 'Handle all clients errors
+                        AddHandler clobj.lostConnection, AddressOf lostConnectionHandler 'Handle all clients lost connections
+                        RaiseEvent ClientConnectSuccess(clnom)
+                    Else
+                        RaiseEvent ClientConnectFailed(clnom, allow_cl_r)
+                    End If
+                Catch ex As ThreadAbortException
+                    Throw ex
+                Catch ex As Exception
+                    RaiseEvent ErrorOccured(ex)
+                    RaiseEvent errEncounter(ex)
+                End Try
+                Thread.Sleep(150)
             Loop Until listening = False
         Catch ex As ThreadAbortException
             listening = False
@@ -739,23 +749,24 @@ Public Class server
             Throw ex
         Catch ex As Exception
             listening = False
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
             RaiseEvent ServerStopped()
         End Try
     End Sub
 
-    Private Sub clientmsgpr(client As String, message As packet)
+    Private Sub clientmsgpr(client As String, message As Packet)
         SyncLock lockListen
             synclockcheckl = True
             If _auto_msg_pass Then
                 Dim clientnolst As New List(Of String)
                 clientnolst.Add(client)
-                If message.header.ToLower.StartsWith("system") Then
-                    If message.stringdata(password).ToLower = "clients" Then
-                        send_int(client, New packet(0, "0", clientnolst, "system:clients", New encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
-                    ElseIf message.stringdata(password).ToLower.StartsWith("client:") Then
-                        Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                        Dim newname As String = message.stringdata(password).Substring(colonindx + 1)
+                If message.Header.ToLower.StartsWith("system") Then
+                    If message.StringData(password).ToLower = "clients" Then
+                        send_int(client, New Packet(0, "0", clientnolst, "system:clients", New Encapsulation(serverData), New EncryptionParameter(encryptmethod, password)))
+                    ElseIf message.StringData(password).ToLower.StartsWith("client:") Then
+                        Dim colonindx As Integer = message.StringData(password).ToLower.IndexOf(":")
+                        Dim newname As String = message.StringData(password).Substring(colonindx + 1)
                         Dim arex As Boolean = False
                         For i As Integer = 0 To serverData.Count - 1
                             If serverData(i) = newname Then
@@ -777,12 +788,8 @@ Public Class server
                                 serverData.Add(newname)
                             End If
                         End If
-                    ElseIf message.stringdata(password).ToLower.StartsWith("client") Then
-                        send_int(client, New packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
-                        'ElseIf message.stringdata(password).ToLower.StartsWith("disconnect") Then
-                        '    Disconnect(client)
-                        'ElseIf message.stringdata(password).ToLower.StartsWith("stop") Then
-                        '    [Stop]()
+                    ElseIf message.StringData(password).ToLower.StartsWith("client") Then
+                        send_int(client, New Packet(0, "0", clientnolst, "system:name", client, New EncryptionParameter(encryptmethod, password)))
                     End If
                 Else
                     RaiseEvent ClientMessage(client, message)
@@ -795,10 +802,10 @@ Public Class server
     End Sub
 
     ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' Cleans accumalated packet_frames.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub FlushPacketFrames()
+    Public Sub CleanPacketFrames()
         For Each cl As clientobj In clients
             Try
                 cl.purge_msgs()
@@ -815,7 +822,7 @@ Public Class server
         Dim Msg As packet_frame = Message
         If Not Msg.data Is Nothing Then
             'raise the data recived event
-            Dim packet As packet = Msg.data
+            Dim packet As Packet = Msg.data
             clientmsgpr(cname, packet)
             Disconnecttf = False
         End If
@@ -830,6 +837,7 @@ Public Class server
     End Sub
 
     Private Sub errEncounterHandler(ByVal ex As Exception)
+        RaiseEvent ErrorOccured(ex)
         RaiseEvent errEncounter(ex)
     End Sub
 
@@ -842,22 +850,172 @@ Public Class server
         serverData.Remove(name)
         RemoveHandler Handler.lostConnection, AddressOf lostConnectionHandler
     End Sub
+    ''' <summary>
+    ''' Creates a new instance of server with the specified server_constructor.
+    ''' </summary>
+    ''' <param name="constructor">The server_constructor to use.</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use New with ServerConstructor Instead.")>
+    Public Sub New(ByVal constructor As server_constructor)
+        If constructor.ip_address IsNot Nothing Then
+            _ip = constructor.ip_address
+        Else
+            _ip = Me.Ip
+        End If
+        _port = validate_port(constructor.port)
+        tcpListener = New TcpListener(_ip, _port)
+    End Sub
+    ''' <summary>
+    ''' Raised when an error occurs.
+    ''' </summary>
+    ''' <param name="ex">The exception occured.</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use ErrorOcurred")>
+    Public Event errEncounter(ByVal ex As Exception)
+    ''' <summary>
+    ''' Flushes this instance of server (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use Clean Instead.")>
+    Public Sub Flush()
+        If Not listening And Not synclockcheckl And Not synclockchecks Then
+            _ip = IPAddress.None
+
+            _port = 100
+
+            tcpListener = Nothing
+
+            tcpListener = New TcpListener(IPAddress.None, _port)
+
+            tcpServer = Nothing
+
+            tcpServerNetStream = Nothing
+
+            listening = False
+
+            _closeDelay = 100
+
+            lockSend = New Object()
+
+            lockListen = New Object()
+
+            clients = New List(Of clientobj)
+
+            serverData = New List(Of String)
+
+            encryptmethod = EncryptionMethod.none
+
+            password = ""
+
+            listenthread = Nothing
+
+            synclockcheckl = False
+
+            synclockchecks = False
+
+            _packet_delay = 50
+
+            _disconnect_on_invalid_packet = False
+
+            _no_packet_splitting = False
+
+            _buffer_size = 8192
+
+            _auto_msg_pass = True
+
+            _increment_client_names = True
+        End If
+    End Sub
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use CleanPacketFrames Instead.")>
+    Public Sub FlushPacketFrames()
+        For Each cl As clientobj In clients
+            Try
+                cl.purge_msgs()
+            Catch ex As ThreadAbortException
+                Throw ex
+            Catch ex As Exception
+            End Try
+        Next
+    End Sub
+
+#Region "IDisposable Support"
+    Private disposedValue As Boolean ' To detect redundant calls
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(disposing As Boolean)
+        If Not Me.disposedValue Then
+            If disposing Then
+                ' dispose managed state (managed objects).
+                [Stop]()
+                If Not tcpListener Is Nothing Then
+                    Try
+                        tcpListener.Stop()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not tcpServer Is Nothing Then
+                    Try
+                        tcpServer.Close()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not tcpServerNetStream Is Nothing Then
+                    Try
+                        tcpServerNetStream.Dispose()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                For Each cltd As clientobj In clients
+                    cltd.Dispose()
+                Next
+            End If
+
+            ' free unmanaged resources (unmanaged objects) and override Finalize() below.
+            ' set large fields to null.
+            tcpListener = Nothing
+            tcpServer = Nothing
+            tcpServerNetStream = Nothing
+            clients = Nothing
+            serverData = Nothing
+        End If
+        Me.disposedValue = True
+    End Sub
+
+    ' override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
+    'Protected Overrides Sub Finalize()
+    '    ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '    Dispose(False)
+    '    MyBase.Finalize()
+    'End Sub
+
+    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+#End Region
+
 End Class
 ''' <summary>
 ''' Provides parameters for server construction.
 ''' </summary>
 ''' <remarks></remarks>
-Public Structure server_constructor
+Public Structure ServerConstructor
     ''' <summary>
     ''' The IP Address for the server to bind to.
     ''' </summary>
     ''' <remarks></remarks>
-    Public ip_address As IPAddress
+    Public IpAddress As IPAddress
     ''' <summary>
     ''' The port for the server to bind to.
     ''' </summary>
     ''' <remarks></remarks>
-    Public port As Integer
+    Public Port As Integer
     ''' <summary>
     ''' Creates a new server_constructor to be used in making a new server object.
     ''' </summary>
@@ -865,8 +1023,8 @@ Public Structure server_constructor
     ''' <param name="_port">The port for the server to bind to.</param>
     ''' <remarks></remarks>
     Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
-        ip_address = ipaddress
-        port = _port
+        IpAddress = ipaddress
+        Port = _port
     End Sub
 End Structure
 ''' <summary>
@@ -933,5 +1091,33 @@ Public Structure ServerStart
         internal_message_passing = internalmsgpass
         no_delay = _no_delay
         allow_clients_with_the_same_name_to_connect = acwtsntc
+    End Sub
+End Structure
+
+''' <summary>
+''' Provides parameters for server construction.
+''' </summary>
+''' <remarks></remarks>
+<Obsolete("Use ServerConstructor.")>
+Public Structure server_constructor
+    ''' <summary>
+    ''' The IP Address for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public ip_address As IPAddress
+    ''' <summary>
+    ''' The port for the server to bind to.
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public port As Integer
+    ''' <summary>
+    ''' Creates a new server_constructor to be used in making a new server object.
+    ''' </summary>
+    ''' <param name="ipaddress">The IP Address for the server to bind to.</param>
+    ''' <param name="_port">The port for the server to bind to.</param>
+    ''' <remarks></remarks>
+    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
+        ip_address = ipaddress
+        port = _port
     End Sub
 End Structure
