@@ -96,17 +96,32 @@ Public Class Server
     ''' <remarks></remarks>
     Public Event ServerStopped()
     ''' <summary>
+    ''' The count of currently stored packet fragments.
+    ''' </summary>
+    ''' <value>Number of stored packet fragments.</value>
+    ''' <returns>Integer</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property PacketFragmentCount As Integer
+        Get
+            Dim toret As Integer = 0
+            For Each clfpfc As clientobj In clients
+                toret += clfpfc.pfc
+            Next
+            Return toret
+        End Get
+    End Property
+    ''' <summary>
     ''' Creates a new instance of server with the specified ServerConstructor.
     ''' </summary>
     ''' <param name="constructor">The ServerConstructor to use.</param>
     ''' <remarks></remarks>
     Public Sub New(ByVal constructor As ServerConstructor)
-        If constructor.ip_address IsNot Nothing Then
-            _ip = constructor.ip_address
+        If constructor.IpAddress IsNot Nothing Then
+            _ip = constructor.IpAddress
         Else
             _ip = Me.Ip
         End If
-        _port = validate_port(constructor.port)
+        _port = validate_port(constructor.Port)
         tcpListener = New TcpListener(_ip, _port)
     End Sub
     ''' <summary>
@@ -467,16 +482,10 @@ Public Class Server
             Try
                 Dim frame As New packet_frame(packet)
                 Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
-                For i As Integer = 0 To f_p.Length - 1 Step 1
-                    Dim bytes() As Byte = f_p(i)
-                    Dim b_l As Integer = bytes.Length
-                    Dim b_l_b As Byte() = Utils.Convert2Ascii(b_l)
-                    Dim data_byt(0) As Byte
-                    data_byt(0) = 1
-                    data_byt = JoinBytes(data_byt, b_l_b)
-                    Dim bts As Byte() = JoinBytes(data_byt, bytes)
+                Dim blst As List(Of Byte()) = createsendablebytes(f_p)
+                For Each cbm As Byte() In blst
                     For Each c As clientobj In clients
-                        c.SendData(bts)
+                        c.SendData(cbm)
                     Next
                     Thread.Sleep(_packet_delay)
                 Next
@@ -548,15 +557,9 @@ Public Class Server
                 Else
                     Dim frame As New packet_frame(message)
                     Dim f_p As packet_frame_part() = frame.ToParts(tcpListener.Server.SendBufferSize, _no_packet_splitting)
-                    For i As Integer = 0 To f_p.Length - 1 Step 1
-                        Dim bytes() As Byte = f_p(i)
-                        Dim b_l As Integer = bytes.Length
-                        Dim b_l_b As Byte() = Utils.Convert2Ascii(b_l)
-                        Dim data_byt(0) As Byte
-                        data_byt(0) = 1
-                        data_byt = JoinBytes(data_byt, b_l_b)
-                        Dim bts As Byte() = JoinBytes(data_byt, bytes)
-                        client.SendData(bts)
+                    Dim blst As List(Of Byte()) = createsendablebytes(f_p)
+                    For Each cbm As Byte() In blst
+                        client.SendData(cbm)
                         Thread.Sleep(_packet_delay)
                     Next
                     result = True
@@ -1007,12 +1010,12 @@ Public Structure ServerConstructor
     ''' The IP Address for the server to bind to.
     ''' </summary>
     ''' <remarks></remarks>
-    Public ip_address As IPAddress
+    Public IpAddress As IPAddress
     ''' <summary>
     ''' The port for the server to bind to.
     ''' </summary>
     ''' <remarks></remarks>
-    Public port As Integer
+    Public Port As Integer
     ''' <summary>
     ''' Creates a new server_constructor to be used in making a new server object.
     ''' </summary>
@@ -1020,8 +1023,8 @@ Public Structure ServerConstructor
     ''' <param name="_port">The port for the server to bind to.</param>
     ''' <remarks></remarks>
     Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
-        ip_address = ipaddress
-        port = _port
+        IpAddress = ipaddress
+        Port = _port
     End Sub
 End Structure
 ''' <summary>

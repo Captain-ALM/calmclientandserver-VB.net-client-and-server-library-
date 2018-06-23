@@ -144,9 +144,19 @@ Public Class Client
             _auto_msg_pass = True
         End If
     End Sub
-
     ''' <summary>
-    ''' Gets or Sets the name of the client.
+    ''' The count of currently stored packet fragments.
+    ''' </summary>
+    ''' <value>Number of stored packet fragments.</value>
+    ''' <returns>Integer</returns>
+    ''' <remarks></remarks>
+    Public ReadOnly Property PacketFragmentCount As Integer
+        Get
+            Return _packet_frame_part_dict.Count
+        End Get
+    End Property
+    ''' <summary>
+    ''' Gets the name of the client.
     ''' </summary>
     ''' <value>the name of the client.</value>
     ''' <returns>the name of the client.</returns>
@@ -396,15 +406,9 @@ Public Class Client
                 tcpClientNetStream = tcpClient.GetStream()
 
                 Dim p2 As New packet_frame(New Packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
-                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
-                Dim bytes2() As Byte = pfp(0)
-                Dim b_l2 As Integer = bytes2.Length
-                Dim b_l_b2 As Byte() = Utils.Convert2Ascii(b_l2)
-                Dim data_byt(0) As Byte
-                data_byt(0) = 1
-                data_byt = JoinBytes(data_byt, b_l_b2)
-                Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
-                tcpClientNetStream.Write(bts2, 0, bts2.Length)
+                Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part
+                Dim cbs As Byte() = createsendablebytes(pfp)(0)
+                tcpClientNetStream.Write(cbs, 0, cbs.Length)
 
                 Dim packet As Packet = Nothing
                 Dim cdatarr2(-1) As Byte
@@ -949,15 +953,9 @@ Public Class Client
                 Else
                     Dim frame As New packet_frame(message)
                     Dim f_p As packet_frame_part() = frame.ToParts(tcpClient.SendBufferSize, _no_packet_splitting)
-                    For i As Integer = 0 To f_p.Length - 1 Step 1
-                        Dim bytes As Byte() = f_p(i)
-                        Dim b_l As Integer = bytes.Length
-                        Dim b_l_b As Byte() = Utils.Convert2Ascii(b_l)
-                        Dim data_byt(0) As Byte
-                        data_byt(0) = 1
-                        data_byt = JoinBytes(data_byt, b_l_b)
-                        Dim bts As Byte() = JoinBytes(data_byt, bytes)
-                        tcpClientNetStream.Write(bts, 0, bts.Length)
+                    Dim blst As List(Of Byte()) = createsendablebytes(f_p)
+                    For Each cbm As Byte() In blst
+                        tcpClientNetStream.Write(cbm, 0, cbm.Length)
                         tcpClientNetStream.Flush()
                         Thread.Sleep(_packet_delay)
                     Next

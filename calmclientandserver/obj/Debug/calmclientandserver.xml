@@ -225,6 +225,13 @@ calmclientandserver
  Raised when the Server Stops.
  </summary>
 	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.Server.PacketFragmentCount">
+	<summary>
+ The count of currently stored packet fragments.
+ </summary>
+	<value>Number of stored packet fragments.</value>
+	<returns>Integer</returns>
+	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.Server.#ctor(captainalm.calmclientandserver.ServerConstructor)">
 	<summary>
  Creates a new instance of server with the specified ServerConstructor.
@@ -405,12 +412,12 @@ calmclientandserver
  Provides a server class.
  </summary>
 	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerConstructor.ip_address">
+</member><member name="F:captainalm.calmclientandserver.ServerConstructor.IpAddress">
 	<summary>
  The IP Address for the server to bind to.
  </summary>
 	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerConstructor.port">
+</member><member name="F:captainalm.calmclientandserver.ServerConstructor.Port">
 	<summary>
  The port for the server to bind to.
  </summary>
@@ -500,7 +507,7 @@ calmclientandserver
  Utilities Module {Access Internal}
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.StringPpacket(System.String)">
+</member><member name="M:captainalm.calmclientandserver.Utils.String2Packet(System.String)">
 	<summary>
  Converts a string to a packet.
  </summary>
@@ -615,9 +622,16 @@ calmclientandserver
  Cleans this instance of client.
  </summary>
 	<remarks></remarks>
+</member><member name="P:captainalm.calmclientandserver.Client.PacketFragmentCount">
+	<summary>
+ The count of currently stored packet fragments.
+ </summary>
+	<value>Number of stored packet fragments.</value>
+	<returns>Integer</returns>
+	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.Client.Name">
 	<summary>
- Gets or Sets the name of the client.
+ Gets the name of the client.
  </summary>
 	<value>the name of the client.</value>
 	<returns>the name of the client.</returns>

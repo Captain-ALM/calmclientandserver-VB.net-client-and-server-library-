@@ -52,6 +52,12 @@ Friend Class clientobj
         listenthread.Start()
     End Sub
 
+    Public ReadOnly Property pfc As Integer
+        Get
+            Return _packet_frame_part_dict.Count
+        End Get
+    End Property
+
     Private Function tcpcon() As Boolean
         If Not tcpClient Is Nothing Then
             Try
