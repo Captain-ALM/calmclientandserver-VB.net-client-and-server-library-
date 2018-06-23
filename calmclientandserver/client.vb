@@ -314,35 +314,39 @@ Public Class Client
             If connected Then
                 result = True
             Else
-                thisClient = starter.client_name
-                If thisClient Is Nothing Or thisClient = "" Then
-                    Throw New InvalidOperationException()
-                End If
-                If starter.buffer_size >= 4096 Then
-                    _buffer_size = starter.buffer_size
+                If Client.CheckServer(starter.ip_address, starter.port) Then
+                    thisClient = starter.client_name
+                    If thisClient Is Nothing Or thisClient = "" Then
+                        Throw New InvalidOperationException()
+                    End If
+                    If starter.buffer_size >= 4096 Then
+                        _buffer_size = starter.buffer_size
+                    Else
+                        _buffer_size = 4096
+                    End If
+                    tcpClient.ReceiveBufferSize = _buffer_size
+                    tcpClient.SendBufferSize = _buffer_size
+                    If Not IsNothing(starter.encrypt_param) Then
+                        encryptmethod = starter.encrypt_param.encrypt_method
+                        password = starter.encrypt_param.password
+                    Else
+                        encryptmethod = EncryptionMethod.none
+                        password = ""
+                    End If
+                    _auto_msg_pass = starter.internal_message_passing
+                    tcpClient.NoDelay = starter.no_delay
+                    _port = validate_port(starter.port)
+                    _ip = starter.ip_address.ToString
+                    updatethread = New Thread(New ThreadStart(AddressOf updatedata))
+                    updatethread.IsBackground = True
+                    listenthread = New Thread(New ThreadStart(AddressOf Listen))
+                    listenthread.IsBackground = True
+                    listenthread.Start()
+                    result = True
                 Else
-                    _buffer_size = 4096
+                    result = False
                 End If
-                tcpClient.ReceiveBufferSize = _buffer_size
-                tcpClient.SendBufferSize = _buffer_size
-                If Not IsNothing(starter.encrypt_param) Then
-                    encryptmethod = starter.encrypt_param.encrypt_method
-                    password = starter.encrypt_param.password
-                Else
-                    encryptmethod = EncryptionMethod.none
-                    password = ""
                 End If
-                _auto_msg_pass = starter.internal_message_passing
-                tcpClient.NoDelay = starter.no_delay
-                _port = validate_port(starter.port)
-                _ip = starter.ip_address.ToString
-                updatethread = New Thread(New ThreadStart(AddressOf updatedata))
-                updatethread.IsBackground = True
-                listenthread = New Thread(New ThreadStart(AddressOf Listen))
-                listenthread.IsBackground = True
-                listenthread.Start()
-                result = True
-            End If
         Catch ex As ThreadAbortException
             Throw ex
         Catch ex As Exception
@@ -852,13 +856,13 @@ Public Class Client
     ''' <summary>
     ''' Check if a server is up.
     ''' </summary>
-    ''' <param name="ipadress">The server IP address.</param>
+    ''' <param name="ipaddress">The server IP address.</param>
     ''' <param name="port">The server port.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Shared Function CheckServer(ipadress As String, port As Integer) As Boolean
+    Public Shared Function CheckServer(ipaddress As IPAddress, port As Integer) As Boolean
         Try
-            Dim tcpClientc As TcpClient = New TcpClient(ipadress, validate_port(port))
+            Dim tcpClientc As TcpClient = New TcpClient(ipaddress.ToString, validate_port(port))
             If tcpClientc.Connected Then
                 Dim optionValue As LingerOption = New LingerOption(False, 0)
                 tcpClientc.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, optionValue)

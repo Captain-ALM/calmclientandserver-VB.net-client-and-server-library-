@@ -734,11 +734,11 @@ calmclientandserver
 	<value>the currently connected clients on the server.</value>
 	<returns>the currently connected clients on the server.</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.CheckServer(System.String,System.Int32)">
+</member><member name="M:captainalm.calmclientandserver.Client.CheckServer(System.Net.IPAddress,System.Int32)">
 	<summary>
  Check if a server is up.
  </summary>
-	<param name="ipadress">The server IP address.</param>
+	<param name="ipaddress">The server IP address.</param>
 	<param name="port">The server port.</param>
 	<returns></returns>
 	<remarks></remarks>

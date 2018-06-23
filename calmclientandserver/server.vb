@@ -389,7 +389,6 @@ Public Class Server
             Return True
         End If
         Try
-            listening = True
             If Not IsNothing(starter.encrypt_param) Then
                 encryptmethod = starter.encrypt_param.encrypt_method
                 password = starter.encrypt_param.password
@@ -415,6 +414,7 @@ Public Class Server
             listenthread = New Thread(New ThreadStart(AddressOf Listen))
             listenthread.IsBackground = True
             listenthread.Start()
+            listening = True
             result = True
         Catch ex As ThreadAbortException
             Throw ex
