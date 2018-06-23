@@ -8,6 +8,8 @@ Imports System.Runtime.Serialization.Formatters.Binary
 ''' </summary>
 ''' <remarks></remarks>
 Friend Class clientobj
+    Implements IDisposable
+
     Private tcpClient As TcpClient
     Private networkStream As NetworkStream
     Private _cdelay As Integer = 0
@@ -334,4 +336,52 @@ Friend Class clientobj
         Catch ex As Exception
         End Try
     End Sub
+
+#Region "IDisposable Support"
+    Private disposedValue As Boolean ' To detect redundant calls
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(disposing As Boolean)
+        If Not Me.disposedValue Then
+            If disposing Then
+                ' dispose managed state (managed objects).
+                Disconnect(Not discon_invoked)
+                If Not tcpClient Is Nothing Then
+                    Try
+                        tcpClient.Close()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not networkStream Is Nothing Then
+                    Try
+                        networkStream.Dispose()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+            End If
+
+            ' free unmanaged resources (unmanaged objects) and override Finalize() below.
+            ' set large fields to null.
+            tcpClient = Nothing
+            networkStream = Nothing
+            _packet_frame_part_dict = Nothing
+            sent_bytes = Nothing
+        End If
+        Me.disposedValue = True
+    End Sub
+
+    ' override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
+    'Protected Overrides Sub Finalize()
+    '    ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '    Dispose(False)
+    '    MyBase.Finalize()
+    'End Sub
+
+    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+#End Region
 End Class

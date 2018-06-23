@@ -10,6 +10,7 @@ Imports System.Threading
 ''' </summary>
 ''' <remarks></remarks>
 Public Class Client
+    Implements IDisposable
     Private tcpClient As TcpClient = Nothing
 
     Private tcpClientNetStream As NetworkStream = Nothing
@@ -981,7 +982,7 @@ Public Class Client
                 Dim clientnolst As New List(Of String)
                 If message.Header.ToLower.StartsWith("system") Then
                     If message.Header.ToLower.StartsWith("system:clients") Then
-                        clientData = DirectCast(message.objectdata(password), List(Of String))
+                        clientData = DirectCast(message.ObjectData(password), List(Of String))
                     ElseIf message.Header.ToLower.StartsWith("system:name") Then
                         thisClient = message.StringData(password)
                     End If
@@ -1083,6 +1084,56 @@ Public Class Client
         Catch ex As Exception
         End Try
     End Sub
+
+#Region "IDisposable Support"
+    Private disposedValue As Boolean ' To detect redundant calls
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(disposing As Boolean)
+        If Not Me.disposedValue Then
+            If disposing Then
+                ' dispose managed state (managed objects).
+                Disconnect()
+                If Not tcpClient Is Nothing Then
+                    Try
+                        tcpClient.Close()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not tcpClientNetStream Is Nothing Then
+                    Try
+                        tcpClientNetStream.Dispose()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+            End If
+
+            ' free unmanaged resources (unmanaged objects) and override Finalize() below.
+            ' set large fields to null.
+            tcpClient = Nothing
+            tcpClientNetStream = Nothing
+            _packet_frame_part_dict = Nothing
+            packets = Nothing
+            clientData = Nothing
+        End If
+        Me.disposedValue = True
+    End Sub
+
+    ' override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
+    'Protected Overrides Sub Finalize()
+    '    ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '    Dispose(False)
+    '    MyBase.Finalize()
+    'End Sub
+
+    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+#End Region
+
 End Class
 ''' <summary>
 ''' Gives a reason for a failed connection.

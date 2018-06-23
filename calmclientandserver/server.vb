@@ -10,6 +10,8 @@ Imports System.Threading
 ''' </summary>
 ''' <remarks></remarks>
 Public Class Server
+    Implements IDisposable
+
     Private _ip As IPAddress = IPAddress.None
 
     Private _port As Integer = 100
@@ -936,6 +938,65 @@ Public Class Server
             End Try
         Next
     End Sub
+
+#Region "IDisposable Support"
+    Private disposedValue As Boolean ' To detect redundant calls
+
+    ' IDisposable
+    Protected Overridable Sub Dispose(disposing As Boolean)
+        If Not Me.disposedValue Then
+            If disposing Then
+                ' dispose managed state (managed objects).
+                [Stop]()
+                If Not tcpListener Is Nothing Then
+                    Try
+                        tcpListener.Stop()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not tcpServer Is Nothing Then
+                    Try
+                        tcpServer.Close()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                If Not tcpServerNetStream Is Nothing Then
+                    Try
+                        tcpServerNetStream.Dispose()
+                    Catch ex As System.Net.Sockets.SocketException
+                    End Try
+                End If
+                For Each cltd As clientobj In clients
+                    cltd.Dispose()
+                Next
+            End If
+
+            ' free unmanaged resources (unmanaged objects) and override Finalize() below.
+            ' set large fields to null.
+            tcpListener = Nothing
+            tcpServer = Nothing
+            tcpServerNetStream = Nothing
+            clients = Nothing
+            serverData = Nothing
+        End If
+        Me.disposedValue = True
+    End Sub
+
+    ' override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
+    'Protected Overrides Sub Finalize()
+    '    ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+    '    Dispose(False)
+    '    MyBase.Finalize()
+    'End Sub
+
+    ' This code added by Visual Basic to correctly implement the disposable pattern.
+    Public Sub Dispose() Implements IDisposable.Dispose
+        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+#End Region
+
 End Class
 ''' <summary>
 ''' Provides parameters for server construction.
