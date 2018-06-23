@@ -117,7 +117,7 @@ Friend Class clientobj
                         ElseIf in_number And Not c_byte = 2 Then
                             cnumarr.Add(c_byte)
                         ElseIf in_number And c_byte = 2 Then
-                            length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                            length_left = Utils.ConvertFromAscii(cnumarr.ToArray)
                             in_number = False
                             If c_index + length_left - 1 > sent_bytes.Length - 1 Then
                                 Dim rr(length_left - 1) As Byte
@@ -193,7 +193,7 @@ Friend Class clientobj
                             ElseIf in_number And Not c_byte = 2 Then
                                 cnumarr.Add(c_byte)
                             ElseIf in_number And c_byte = 2 Then
-                                length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                                length_left = Utils.ConvertFromAscii(cnumarr.ToArray)
                                 in_number = False
                                 If c_index + length_left - 1 > Bytes.Length - 1 Then
                                     Dim rr(length_left - 1) As Byte

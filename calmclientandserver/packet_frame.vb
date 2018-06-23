@@ -6,9 +6,9 @@ Friend Structure packet_frame
     Dim data As Byte()
     Dim refnum As Integer
 
-    Public Sub New(ByVal pckt As packet)
+    Public Sub New(ByVal pckt As Packet)
         data = pckt.ToBytes
-        refnum = pckt.referencenumber
+        refnum = pckt.ReferenceNumber
     End Sub
 
     Public Sub New(ByVal rn As Integer, ByVal dat As Byte())
@@ -108,7 +108,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        refnum = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        refnum = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -120,7 +120,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        partnum = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        partnum = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -132,7 +132,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        totalparts = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        totalparts = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -143,9 +143,9 @@ Friend Structure packet_frame_part
     End Sub
 
     Public Function ToBytes() As Byte()
-        Dim ascii_refnum As Byte() = utils.Convert2Ascii(refnum)
-        Dim ascii_partnum As Byte() = utils.Convert2Ascii(partnum)
-        Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(totalparts)
+        Dim ascii_refnum As Byte() = Utils.Convert2Ascii(refnum)
+        Dim ascii_partnum As Byte() = Utils.Convert2Ascii(partnum)
+        Dim ascii_totalpnum As Byte() = Utils.Convert2Ascii(totalparts)
 
         Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + data.Length - 1) As Byte
 
@@ -163,9 +163,9 @@ Friend Structure packet_frame_part
     End Function
 
     Public Shared Widening Operator CType(ByVal pfp As packet_frame_part) As Byte()
-        Dim ascii_refnum As Byte() = utils.Convert2Ascii(pfp.refnum)
-        Dim ascii_partnum As Byte() = utils.Convert2Ascii(pfp.partnum)
-        Dim ascii_totalpnum As Byte() = utils.Convert2Ascii(pfp.totalparts)
+        Dim ascii_refnum As Byte() = Utils.Convert2Ascii(pfp.refnum)
+        Dim ascii_partnum As Byte() = Utils.Convert2Ascii(pfp.partnum)
+        Dim ascii_totalpnum As Byte() = Utils.Convert2Ascii(pfp.totalparts)
 
         Dim byte_arr(2 + ascii_refnum.Length + 1 + ascii_partnum.Length + 1 + ascii_totalpnum.Length + 1 + pfp.data.Length - 1) As Byte
 
@@ -197,7 +197,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        Dim refnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        Dim refnum As Integer = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -209,7 +209,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        Dim partnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        Dim partnum As Integer = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -221,7 +221,7 @@ Friend Structure packet_frame_part
             c_index += 1
         End While
 
-        Dim totalpnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        Dim totalpnum As Integer = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1

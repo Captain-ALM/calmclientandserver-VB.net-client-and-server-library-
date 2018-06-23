@@ -9,7 +9,7 @@ Imports System.Threading
 ''' Provide a client class.
 ''' </summary>
 ''' <remarks></remarks>
-Public Class client
+Public Class Client
     Private tcpClient As TcpClient = Nothing
 
     Private tcpClientNetStream As NetworkStream = Nothing
@@ -24,7 +24,7 @@ Public Class client
 
     Private clientData As New List(Of String)
 
-    Private packets As New List(Of packet)
+    Private packets As New List(Of Packet)
 
     Private thisClient As String = ""
 
@@ -65,9 +65,9 @@ Public Class client
     ''' <summary>
     ''' Raised when a connection fails
     ''' </summary>
-    ''' <param name="reason">The reason the connection failed</param>
+    ''' <param name="reason">The reason the connection failed.</param>
     ''' <remarks></remarks>
-    Public Event ServerConnectFailed(ByVal reason As failed_connection_reason)
+    Public Event ServerConnectFailed(ByVal reason As FailedConnectionReason)
     ''' <summary>
     ''' Raised when disconnected by the server.
     ''' </summary>
@@ -78,19 +78,19 @@ Public Class client
     ''' </summary>
     ''' <param name="message">The packet received.</param>
     ''' <remarks></remarks>
-    Public Event ServerMessage(ByVal message As packet)
+    Public Event ServerMessage(ByVal message As Packet)
     ''' <summary>
     ''' Raised everytime an error occurs.
     ''' </summary>
     ''' <param name="ex">The exception that occured.</param>
     ''' <remarks></remarks>
-    Public Event errEncounter(ByVal ex As Exception)
+    Public Event ErrorOccured(ByVal ex As Exception)
 
     ''' <summary>
-    ''' Flushes this instance of client (Cleaning).
+    ''' Cleans this instance of client.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub Flush()
+    Public Sub Clean()
         If Not connected And Not synclockcheckl And Not synclockchecks Then
             tcpClient = Nothing
 
@@ -108,7 +108,7 @@ Public Class client
 
             clientData = New List(Of String)
 
-            packets = New List(Of packet)
+            packets = New List(Of Packet)
 
             thisClient = ""
 
@@ -220,11 +220,11 @@ Public Class client
         End Set
     End Property
     ''' <summary>
-    ''' Creates a new instance of client with the specified client_constructor.
+    ''' Creates a new instance of client with the specified ClientConstructor.
     ''' </summary>
-    ''' <param name="constructor">The client_constructor to use.</param>
+    ''' <param name="constructor">The ClientConstructor to use.</param>
     ''' <remarks></remarks>
-    Public Sub New(ByVal constructor As client_constructor)
+    Public Sub New(ByVal constructor As ClientConstructor)
         tcpClient = New TcpClient()
     End Sub
     ''' <summary>
@@ -336,11 +336,17 @@ Public Class client
             Throw ex
         Catch ex As Exception
             result = False
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Return result
     End Function
-
+    ''' <summary>
+    ''' Sets the name of the client.
+    ''' Can only be used if internalmessagepassing is enabled.
+    ''' </summary>
+    ''' <param name="name">The new Name.</param>
+    ''' <remarks></remarks>
     Public Sub SetName(ByVal name As String)
         If connected And tcpcon() Then
             If _auto_msg_pass Then
@@ -354,7 +360,7 @@ Public Class client
                 If Not (arex) Then
                     clientData.Remove(thisClient)
                     clientData.Add(name)
-                    Dim retyt As String = send_int(New packet(0, thisClient, New List(Of String), "system", "client:" & name, New EncryptionParameter(encryptmethod, password)))
+                    Dim retyt As String = send_int(New Packet(0, thisClient, New List(Of String), "system", "client:" & name, New EncryptionParameter(encryptmethod, password)))
                     If retyt.ToLower = True Then
                         thisClient = name
                     End If
@@ -388,18 +394,18 @@ Public Class client
                 'Send the client name
                 tcpClientNetStream = tcpClient.GetStream()
 
-                Dim p2 As New packet_frame(New packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
+                Dim p2 As New packet_frame(New Packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
                 Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part currently
                 Dim bytes2() As Byte = pfp(0)
                 Dim b_l2 As Integer = bytes2.Length
-                Dim b_l_b2 As Byte() = utils.Convert2Ascii(b_l2)
+                Dim b_l_b2 As Byte() = Utils.Convert2Ascii(b_l2)
                 Dim data_byt(0) As Byte
                 data_byt(0) = 1
                 data_byt = JoinBytes(data_byt, b_l_b2)
                 Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
                 tcpClientNetStream.Write(bts2, 0, bts2.Length)
 
-                Dim packet As packet = Nothing
+                Dim packet As Packet = Nothing
                 Dim cdatarr2(-1) As Byte
                 Dim cnumarr2 As New List(Of Byte)
                 Dim more_dat2 As Boolean = False
@@ -449,7 +455,7 @@ Public Class client
                             ElseIf in_number2 And Not c_byte2 = 2 Then
                                 cnumarr2.Add(c_byte2)
                             ElseIf in_number2 And c_byte2 = 2 Then
-                                length_left2 = utils.ConvertFromAscii(cnumarr2.ToArray)
+                                length_left2 = Utils.ConvertFromAscii(cnumarr2.ToArray)
                                 in_number2 = False
                                 If c_index2 + length_left2 - 1 > Bytes.Length - 1 Then
                                     Dim rr(length_left2 - 1) As Byte
@@ -484,9 +490,9 @@ Public Class client
                     Thread.Sleep(150)
                 Loop
 
-                Dim sd As String = packet.stringdata(password)
+                Dim sd As String = packet.StringData(password)
                 If sd = "" Then
-                    thisClient = packet.receivers(0)
+                    thisClient = packet.Receivers(0)
 
                     connected = True
 
@@ -495,7 +501,7 @@ Public Class client
                     End If
 
                     RaiseEvent ServerConnectSuccess()
-                ElseIf sd = failed_connection_reason.name_taken Then
+                ElseIf sd = FailedConnectionReason.NameTaken Then
                     Dim SBufferSize, RBufferSize As Integer
                     SBufferSize = tcpClient.SendBufferSize
                     RBufferSize = tcpClient.ReceiveBufferSize
@@ -505,8 +511,8 @@ Public Class client
                     tcpClient.SendBufferSize = SBufferSize
                     tcpClient.ReceiveBufferSize = RBufferSize
                     tcpClient.NoDelay = NDelay
-                    RaiseEvent ServerConnectFailed(failed_connection_reason.name_taken)
-                ElseIf sd = failed_connection_reason.too_many_clients Then
+                    RaiseEvent ServerConnectFailed(FailedConnectionReason.NameTaken)
+                ElseIf sd = FailedConnectionReason.TooManyClients Then
                     Dim SBufferSize, RBufferSize As Integer
                     SBufferSize = tcpClient.SendBufferSize
                     RBufferSize = tcpClient.ReceiveBufferSize
@@ -516,7 +522,7 @@ Public Class client
                     tcpClient.SendBufferSize = SBufferSize
                     tcpClient.ReceiveBufferSize = RBufferSize
                     tcpClient.NoDelay = NDelay
-                    RaiseEvent ServerConnectFailed(failed_connection_reason.too_many_clients)
+                    RaiseEvent ServerConnectFailed(FailedConnectionReason.TooManyClients)
                 Else
                     Dim SBufferSize, RBufferSize As Integer
                     SBufferSize = tcpClient.SendBufferSize
@@ -527,12 +533,13 @@ Public Class client
                     tcpClient.SendBufferSize = SBufferSize
                     tcpClient.ReceiveBufferSize = RBufferSize
                     tcpClient.NoDelay = NDelay
-                    RaiseEvent ServerConnectFailed(failed_connection_reason.unknown)
+                    RaiseEvent ServerConnectFailed(FailedConnectionReason.Unknown)
                 End If
             End If
         Catch ex As ThreadAbortException
             Throw ex
         Catch ex As Exception
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Dim cdatarr(-1) As Byte
@@ -584,7 +591,7 @@ Public Class client
                         ElseIf in_number And Not c_byte = 2 Then
                             cnumarr.Add(c_byte)
                         ElseIf in_number And c_byte = 2 Then
-                            length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                            length_left = Utils.ConvertFromAscii(cnumarr.ToArray)
                             in_number = False
                             If c_index + length_left - 1 > bts.Length - 1 Then
                                 Dim rr(length_left - 1) As Byte
@@ -666,7 +673,7 @@ Public Class client
                             ElseIf in_number And Not c_byte = 2 Then
                                 cnumarr.Add(c_byte)
                             ElseIf in_number And c_byte = 2 Then
-                                length_left = utils.ConvertFromAscii(cnumarr.ToArray)
+                                length_left = Utils.ConvertFromAscii(cnumarr.ToArray)
                                 in_number = False
                                 If c_index + length_left - 1 > bytes.Length - 1 Then
                                     Dim rr(length_left - 1) As Byte
@@ -714,6 +721,7 @@ Public Class client
             Disconnect()
             Throw ex
         Catch ex As Exception
+            RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Disconnect()
@@ -787,8 +795,8 @@ Public Class client
                 Thread.Sleep(_clientrefreshdelay)
                 If tcpClient.Connected Then
                     If _auto_msg_pass Then
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                        send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                        send_int(New Packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                        send_int(New Packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                     End If
                 End If
             Catch ex As ThreadAbortException
@@ -807,8 +815,8 @@ Public Class client
         If connected Then
             If tcpClient.Connected Then
                 If _auto_msg_pass Then
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New Packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
+                    send_int(New Packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
                 Else
                     Throw New InvalidOperationException("UpdateClientData can only be used if InternalMessagePassing is enabled")
                 End If
@@ -899,10 +907,10 @@ Public Class client
         End If
     End Sub
     ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' Cleans accumalated packet_frames.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Sub FlushPacketFrames()
+    Public Sub CleanPacketFrames()
         Try
             _packet_frame_part_dict.Clear()
         Catch ex As ThreadAbortException
@@ -916,9 +924,9 @@ Public Class client
     ''' <param name="message">The packet to send.</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function Send(message As packet) As Boolean
+    Public Function Send(message As Packet) As Boolean
         Dim result As Boolean = False
-        If Not message.header.ToLower.StartsWith("system") Then
+        If Not message.Header.ToLower.StartsWith("system") Then
             result = send_int(message)
         Else
             If _auto_msg_pass Then
@@ -930,7 +938,7 @@ Public Class client
         Return result
     End Function
 
-    Private Function send_int(message As packet) As Boolean
+    Private Function send_int(message As Packet) As Boolean
         Dim result As Boolean = False
         SyncLock lockSend
             synclockchecks = True
@@ -943,7 +951,7 @@ Public Class client
                     For i As Integer = 0 To f_p.Length - 1 Step 1
                         Dim bytes As Byte() = f_p(i)
                         Dim b_l As Integer = bytes.Length
-                        Dim b_l_b As Byte() = utils.Convert2Ascii(b_l)
+                        Dim b_l_b As Byte() = Utils.Convert2Ascii(b_l)
                         Dim data_byt(0) As Byte
                         data_byt(0) = 1
                         data_byt = JoinBytes(data_byt, b_l_b)
@@ -958,6 +966,7 @@ Public Class client
                 Throw ex
             Catch ex As Exception
                 result = False
+                RaiseEvent ErrorOccured(ex)
                 RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
@@ -965,31 +974,16 @@ Public Class client
         Return result
     End Function
 
-    Private Sub servermsgpr(message As packet)
+    Private Sub servermsgpr(message As Packet)
         SyncLock lockListen
             synclockcheckl = True
             If _auto_msg_pass Then
                 Dim clientnolst As New List(Of String)
-                If message.header.ToLower.StartsWith("system") Then
-                    'If message.stringdata(password).ToLower = "disconnect" Then
-                    '    RaiseEvent ServerDisconnect()
-                    'ElseIf message.stringdata(password).ToLower.EndsWith(":connected") Then
-                    '    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    '    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                    '    clientData.Add(cilname)
-                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                    'ElseIf message.stringdata(password).ToLower.EndsWith(":disconnected") Then
-                    '    Dim colonindx As Integer = message.stringdata(password).ToLower.IndexOf(":")
-                    '    Dim cilname As String = message.stringdata(password).Substring(0, colonindx - 1)
-                    '    clientData.Remove(cilname)
-                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "clients", New EncryptionParameter(encryptmethod, password)))
-                    '    send_int(New packet(0, thisClient, New List(Of String), "system", "client", New EncryptionParameter(encryptmethod, password)))
-                    'ElseIf message.header.ToLower.StartsWith("system:clients") Then
-                    If message.header.ToLower.StartsWith("system:clients") Then
+                If message.Header.ToLower.StartsWith("system") Then
+                    If message.Header.ToLower.StartsWith("system:clients") Then
                         clientData = DirectCast(message.objectdata(password), List(Of String))
-                    ElseIf message.header.ToLower.StartsWith("system:name") Then
-                        thisClient = message.stringdata(password)
+                    ElseIf message.Header.ToLower.StartsWith("system:name") Then
+                        thisClient = message.StringData(password)
                     End If
                 Else
                     RaiseEvent ServerMessage(message)
@@ -1000,38 +994,127 @@ Public Class client
             synclockcheckl = False
         End SyncLock
     End Sub
+    ''' <summary>
+    ''' Creates a new instance of client with the specified client_constructor.
+    ''' </summary>
+    ''' <param name="constructor">The client_constructor to use.</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use new with ClientConstructor object instead.")>
+    Public Sub New(ByVal constructor As client_constructor)
+        tcpClient = New TcpClient()
+    End Sub
+    ''' <summary>
+    ''' Raised everytime an error occurs.
+    ''' </summary>
+    ''' <param name="ex">The exception that occured.</param>
+    ''' <remarks></remarks>
+    <Obsolete("Use ErrorOccured")>
+    Public Event errEncounter(ByVal ex As Exception)
+
+    ''' <summary>
+    ''' Flushes this instance of client (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use Clean instead.")>
+    Public Sub Flush()
+        If Not connected And Not synclockcheckl And Not synclockchecks Then
+            tcpClient = Nothing
+
+            tcpClient = New TcpClient()
+            tcpClient.SendBufferSize = 8192
+            tcpClient.ReceiveBufferSize = 8192
+
+            connected = False
+
+            _closeDelay = 100
+
+            lockListen = New Object()
+
+            lockSend = New Object()
+
+            clientData = New List(Of String)
+
+            packets = New List(Of Packet)
+
+            thisClient = ""
+
+            encryptmethod = EncryptionMethod.none
+
+            _clientrefreshdelay = 15000
+
+            password = ""
+
+            listenthread = Nothing
+
+            updatethread = Nothing
+
+            synclockcheckl = False
+
+            synclockchecks = False
+
+            _ip = ""
+
+            _port = 0
+
+            _packet_delay = 50
+
+            _packet_frame_part_dict = New Dictionary(Of Integer, packet_frame_part())
+
+            _disconnect_on_invalid_packet = False
+
+            _no_packet_splitting = False
+
+            _buffer_size = 8192
+
+            _auto_msg_pass = True
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Cleans accumalated packet_frames (Cleaning).
+    ''' </summary>
+    ''' <remarks></remarks>
+    <Obsolete("Use CleanPacketFrames Instead.")>
+    Public Sub FlushPacketFrames()
+        Try
+            _packet_frame_part_dict.Clear()
+        Catch ex As ThreadAbortException
+            Throw ex
+        Catch ex As Exception
+        End Try
+    End Sub
 End Class
 ''' <summary>
 ''' Gives a reason for a failed connection.
 ''' </summary>
 ''' <remarks></remarks>
-Public Enum failed_connection_reason As Integer
+Public Enum FailedConnectionReason As Integer
     ''' <summary>
     ''' The Reason for the failed connection is not specified.
     ''' </summary>
     ''' <remarks></remarks>
-    unknown = 0
+    Unknown = 0
     ''' <summary>
     ''' The server is unavailable.
     ''' </summary>
     ''' <remarks></remarks>
-    server_unavailable = 1
+    ServerUnavailable = 1
     ''' <summary>
     ''' The client name is already in use on the server.
     ''' </summary>
     ''' <remarks></remarks>
-    name_taken = 2
+    NameTaken = 2
     ''' <summary>
     ''' The server has the maximum amount of clients connected to it.
     ''' </summary>
     ''' <remarks></remarks>
-    too_many_clients = 3
+    TooManyClients = 3
 End Enum
 ''' <summary>
 ''' Provides parameters for client construction.
 ''' </summary>
 ''' <remarks></remarks>
-Public Structure client_constructor
+Public Structure ClientConstructor
 End Structure
 ''' <summary>
 ''' The ClientStart structure for connecting to a server.
@@ -1102,3 +1185,39 @@ Public Structure ClientStart
         no_delay = _no_delay
     End Sub
 End Structure
+
+''' <summary>
+''' Provides parameters for client construction.
+''' </summary>
+''' <remarks></remarks>
+<Obsolete("Use ClientConstructor")>
+Public Structure client_constructor
+End Structure
+
+''' <summary>
+''' Gives a reason for a failed connection.
+''' </summary>
+''' <remarks></remarks>
+<Obsolete("Use FailedConnectionReason")>
+Public Enum failed_connection_reason As Integer
+    ''' <summary>
+    ''' The Reason for the failed connection is not specified.
+    ''' </summary>
+    ''' <remarks></remarks>
+    unknown = 0
+    ''' <summary>
+    ''' The server is unavailable.
+    ''' </summary>
+    ''' <remarks></remarks>
+    server_unavailable = 1
+    ''' <summary>
+    ''' The client name is already in use on the server.
+    ''' </summary>
+    ''' <remarks></remarks>
+    name_taken = 2
+    ''' <summary>
+    ''' The server has the maximum amount of clients connected to it.
+    ''' </summary>
+    ''' <remarks></remarks>
+    too_many_clients = 3
+End Enum

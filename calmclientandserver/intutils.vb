@@ -112,22 +112,22 @@ End Module
 ''' Utilities Module {Access public}
 ''' </summary>
 ''' <remarks></remarks>
-Public Module utils
+Public Module Utils
     ''' <summary>
     ''' Converts a string to a packet.
     ''' </summary>
     ''' <param name="str">The string to convert.</param>
     ''' <returns>The converted packet.</returns>
     ''' <remarks></remarks>
-    Public Function string2packet(str As String) As packet
+    Public Function StringPpacket(str As String) As Packet
         Try
-            Dim returned As packet = CType(convertstringtoobject(str), packet)
+            Dim returned As Packet = CType(ConvertStringToObject(str), Packet)
             Return returned
         Catch ex As ThreadAbortException
             Throw ex
         Catch ex As Exception
         End Try
-        Return New packet()
+        Return New Packet()
     End Function
     ''' <summary>
     ''' Converts a packet to a string.
@@ -135,7 +135,7 @@ Public Module utils
     ''' <param name="str">The packet to convert.</param>
     ''' <returns>The converted string.</returns>
     ''' <remarks></remarks>
-    Public Function packet2string(str As packet) As String
+    Public Function Packet2String(str As Packet) As String
         Try
             Dim returned As String = convertobjecttostring(str)
             Return returned
@@ -151,7 +151,7 @@ Public Module utils
     ''' <param name="obj">The object to convert.</param>
     ''' <returns>The converted object.</returns>
     ''' <remarks></remarks>
-    Public Function convertobjecttostring(obj As Object) As String
+    Public Function ConvertObjectToString(obj As Object) As String
         Try
             Dim memorysteam As New MemoryStream
             Dim formatter As New BinaryFormatter()
@@ -173,7 +173,7 @@ Public Module utils
     ''' <param name="str">The string to convert.</param>
     ''' <returns>The converted string.</returns>
     ''' <remarks></remarks>
-    Public Function convertstringtoobject(str As String) As Object
+    Public Function ConvertStringToObject(str As String) As Object
         Try
             Dim memorysteam As MemoryStream = New MemoryStream(Convert.FromBase64String(str))
             Dim formatter As BinaryFormatter = New BinaryFormatter()

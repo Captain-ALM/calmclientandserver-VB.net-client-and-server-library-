@@ -15,7 +15,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 <Serializable()>
-Public Class packet
+Public Class Packet
     Private _refnumber As Integer = 0
     Private _sender As String = ""
     Private _receivers As New List(Of String)
@@ -70,14 +70,14 @@ Public Class packet
     ''' <param name="header">The Header Data.</param>
     ''' <param name="data">The Data to Send [Encapsulation].</param>
     ''' <remarks></remarks>
-    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation)
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As Encapsulation)
         Try
             _refnumber = refnumber
             _ispacketvalid = True
             _sender = sender
             _receivers = receivers
             _header = header
-            _data = data.data
+            _data = data.Data
             _isobj = True
         Catch ex As ThreadAbortException
             Throw ex
@@ -148,14 +148,14 @@ Public Class packet
     ''' <param name="data">The Data to Send [Encapsulation].</param>
     ''' <param name="encry_param">The encryption parameter to use.</param>
     ''' <remarks></remarks>
-    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As encapsulation, encry_param As EncryptionParameter)
+    Public Sub New(refnumber As Integer, sender As String, receivers As List(Of String), header As String, data As Encapsulation, encry_param As EncryptionParameter)
         Try
             _refnumber = refnumber
             _ispacketvalid = True
             _sender = sender
             _receivers = receivers
             _header = header
-            _data = data.data
+            _data = data.Data
             _isobj = True
             _encryptmethod = EncryptionMethod.none
             _isencrypted = False
@@ -195,28 +195,28 @@ Public Class packet
     ''' </summary>
     ''' <param name="packet">The packet to duplicate.</param>
     ''' <remarks></remarks>
-    Public Sub New(packet As packet)
+    Public Sub New(packet As Packet)
         Try
-            If packet.isvalidpacket Then
+            If packet.IsValidPacket Then
                 _ispacketvalid = True
-                _sender = packet.sender
-                _receivers = packet.receivers
-                _header = packet.header
-                _data = packet.data
-                If packet.encryptmethod = 0 Then
+                _sender = packet.Sender
+                _receivers = packet.Receivers
+                _header = packet.Header
+                _data = packet.Data
+                If packet.EncryptMethod = 0 Then
                     _isencrypted = False
                     _encryptmethod = EncryptionMethod.none
                 Else
-                    If packet.encryptmethod > 0 And packet.encryptmethod < 4 Then
-                        _encryptmethod = packet.encryptmethod
+                    If packet.EncryptMethod > 0 And packet.EncryptMethod < 4 Then
+                        _encryptmethod = packet.EncryptMethod
                         _isencrypted = True
                     Else
                         _isencrypted = False
                         _encryptmethod = EncryptionMethod.none
                     End If
                 End If
-                _refnumber = packet.referencenumber
-                _isobj = packet.hasobject
+                _refnumber = packet.ReferenceNumber
+                _isobj = packet.HasObject
             Else
                 _ispacketvalid = False
             End If
@@ -231,7 +231,7 @@ Public Class packet
     ''' <value>Returns if the packet is valid.</value>
     ''' <returns>Returns if the packet is valid.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property isvalidpacket As Boolean
+    Public ReadOnly Property IsValidPacket As Boolean
         Get
             Return _ispacketvalid
         End Get
@@ -242,7 +242,7 @@ Public Class packet
     ''' <value>Returns the sender's name.</value>
     ''' <returns>Returns the sender's name.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property sender As String
+    Public ReadOnly Property Sender As String
         Get
             Return _sender
         End Get
@@ -253,7 +253,7 @@ Public Class packet
     ''' <value>Returns the names of the receivers.</value>
     ''' <returns>Returns the names of the receivers.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property receivers As List(Of String)
+    Public ReadOnly Property Receivers As List(Of String)
         Get
             Return _receivers
         End Get
@@ -264,7 +264,7 @@ Public Class packet
     ''' <value>Gets the header of the packet.</value>
     ''' <returns>Gets the header of the packet.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property header As String
+    Public ReadOnly Property Header As String
         Get
             Return _header
         End Get
@@ -275,7 +275,7 @@ Public Class packet
     ''' <value>Returns the encryption method.</value>
     ''' <returns>Returns the encryption method.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property encryptmethod As Integer
+    Public ReadOnly Property EncryptMethod As Integer
         Get
             Return _encryptmethod
         End Get
@@ -286,7 +286,7 @@ Public Class packet
     ''' <value>Returns the packet's reference number.</value>
     ''' <returns>Returns the packet's reference number.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property referencenumber As Integer
+    Public ReadOnly Property ReferenceNumber As Integer
         Get
             Return _refnumber
         End Get
@@ -297,7 +297,7 @@ Public Class packet
     ''' <value>Returns the data of the packet [string form].</value>
     ''' <returns>Returns the data of the packet [string form].</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property data As String
+    Public ReadOnly Property Data As String
         Get
             Return _data
         End Get
@@ -308,7 +308,7 @@ Public Class packet
     ''' <value>Returns if the packet contains an object.</value>
     ''' <returns>Returns if the packet contains an object.</returns>
     ''' <remarks></remarks>
-    Public ReadOnly Property hasobject As Boolean
+    Public ReadOnly Property HasObject As Boolean
         Get
             Return _isobj
         End Get
@@ -319,9 +319,9 @@ Public Class packet
     ''' <param name="password">The password (If the data is encrypted with ase or unicodease).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function stringdata(Optional password As String = "") As String
+    Public Function StringData(Optional password As String = "") As String
         Try
-            If isvalidpacket Then
+            If IsValidPacket Then
                 Dim data As String = ""
                 If _encryptmethod = EncryptionMethod.unicode Or _encryptmethod = EncryptionMethod.unicodease Then
                     Dim chars As String = ""
@@ -365,9 +365,9 @@ Public Class packet
     ''' <param name="password">The password (If the data is encrypted with ase or unicodease).</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function objectdata(Optional password As String = "") As Object
+    Public Function ObjectData(Optional password As String = "") As Object
         Try
-            If _isobj And isvalidpacket Then
+            If _isobj And IsValidPacket Then
                 Dim data As String = ""
                 If _encryptmethod = EncryptionMethod.unicode Or _encryptmethod = EncryptionMethod.unicodease Then
                     Dim chars As String = ""
@@ -397,7 +397,7 @@ Public Class packet
                 Else
                     returned = data
                 End If
-                Dim retobj As Object = convertstringtoobject(returned)
+                Dim retobj As Object = ConvertStringToObject(returned)
                 Return retobj
             End If
         Catch ex As ThreadAbortException
@@ -422,7 +422,7 @@ Public Class packet
         payload_meta_barr(5) = _encryptmethod
         payload_meta_barr(6) = 8
 
-        Dim ascii_data As Byte() = utils.Convert2Ascii(convertobjecttostring(_data))
+        Dim ascii_data As Byte() = Utils.Convert2Ascii(convertobjecttostring(_data))
 
         Dim payload_barr(2 + payload_meta_barr.Length + 1 + ascii_data.Length - 1) As Byte
 
@@ -432,10 +432,10 @@ Public Class packet
         System.Buffer.BlockCopy(ascii_data, 0, payload_barr, 2 + payload_meta_barr.Length, ascii_data.Length)
         payload_barr(payload_barr.Length - 1) = 6
 
-        Dim ascii_refnum As Byte() = utils.Convert2Ascii(_refnumber)
-        Dim ascii_sender As Byte() = utils.Convert2Ascii(convertobjecttostring(_sender))
-        Dim ascii_recievers As Byte() = utils.Convert2Ascii(convertobjecttostring(_receivers))
-        Dim ascii_header As Byte() = utils.Convert2Ascii(convertobjecttostring(_header))
+        Dim ascii_refnum As Byte() = Utils.Convert2Ascii(_refnumber)
+        Dim ascii_sender As Byte() = Utils.Convert2Ascii(convertobjecttostring(_sender))
+        Dim ascii_recievers As Byte() = Utils.Convert2Ascii(convertobjecttostring(_receivers))
+        Dim ascii_header As Byte() = Utils.Convert2Ascii(convertobjecttostring(_header))
 
         Dim barrret(2 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1 + payload_barr.Length - 1) As Byte
 
@@ -454,7 +454,7 @@ Public Class packet
         Return barrret
     End Function
 
-    Public Shared Narrowing Operator CType(ByVal data As Byte()) As packet
+    Public Shared Narrowing Operator CType(ByVal data As Byte()) As Packet
         Dim packetdat(data.Length - 3) As Byte
         System.Buffer.BlockCopy(data, 1, packetdat, 0, data.Length - 2)
 
@@ -469,7 +469,7 @@ Public Class packet
             c_index += 1
         End While
 
-        Dim refnum As Integer = utils.ConvertFromAscii(dat_arr_lst.ToArray)
+        Dim refnum As Integer = Utils.ConvertFromAscii(dat_arr_lst.ToArray)
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -481,7 +481,7 @@ Public Class packet
             c_index += 1
         End While
 
-        Dim sender As String = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        Dim sender As String = ConvertStringToObject(Utils.ConvertFromAscii(dat_arr_lst.ToArray))
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -493,7 +493,7 @@ Public Class packet
             c_index += 1
         End While
 
-        Dim recievers As List(Of String) = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        Dim recievers As List(Of String) = ConvertStringToObject(Utils.ConvertFromAscii(dat_arr_lst.ToArray))
         dat_arr_lst.Clear()
 
         c_byte = 1
@@ -505,7 +505,7 @@ Public Class packet
             c_index += 1
         End While
 
-        Dim header As String = convertstringtoobject(utils.ConvertFromAscii(dat_arr_lst.ToArray))
+        Dim header As String = ConvertStringToObject(Utils.ConvertFromAscii(dat_arr_lst.ToArray))
         dat_arr_lst.Clear()
 
         c_index += 1
@@ -522,9 +522,9 @@ Public Class packet
 
         Dim data_arr(payloaddat.Length - 8 - 1) As Byte
         Buffer.BlockCopy(payloaddat, 8, data_arr, 0, payloaddat.Length - 8)
-        Dim t_data As String = convertstringtoobject(utils.ConvertFromAscii(data_arr))
+        Dim t_data As String = ConvertStringToObject(Utils.ConvertFromAscii(data_arr))
 
-        Dim p_t_ret As packet = New packet()
+        Dim p_t_ret As Packet = New Packet()
         p_t_ret._ispacketvalid = True
         p_t_ret._data = t_data
         p_t_ret._encryptmethod = encrymeth
@@ -538,7 +538,7 @@ Public Class packet
         Return p_t_ret
     End Operator
 
-    Public Shared Widening Operator CType(ByVal packt As packet) As Byte()
+    Public Shared Widening Operator CType(ByVal packt As Packet) As Byte()
         Dim payload_meta_barr((2 + 3 + 2) - 1) As Byte
 
         payload_meta_barr(0) = 8
@@ -549,7 +549,7 @@ Public Class packet
         payload_meta_barr(5) = packt._encryptmethod
         payload_meta_barr(6) = 8
 
-        Dim ascii_data As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._data))
+        Dim ascii_data As Byte() = Utils.Convert2Ascii(convertobjecttostring(packt._data))
 
         Dim payload_barr(2 + payload_meta_barr.Length + 1 + ascii_data.Length - 1) As Byte
 
@@ -559,10 +559,10 @@ Public Class packet
         System.Buffer.BlockCopy(ascii_data, 0, payload_barr, 2 + payload_meta_barr.Length, ascii_data.Length)
         payload_barr(payload_barr.Length - 1) = 6
 
-        Dim ascii_refnum As Byte() = utils.Convert2Ascii(packt._refnumber)
-        Dim ascii_sender As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._sender))
-        Dim ascii_recievers As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._receivers))
-        Dim ascii_header As Byte() = utils.Convert2Ascii(convertobjecttostring(packt._header))
+        Dim ascii_refnum As Byte() = Utils.Convert2Ascii(packt._refnumber)
+        Dim ascii_sender As Byte() = Utils.Convert2Ascii(convertobjecttostring(packt._sender))
+        Dim ascii_recievers As Byte() = Utils.Convert2Ascii(convertobjecttostring(packt._receivers))
+        Dim ascii_header As Byte() = Utils.Convert2Ascii(convertobjecttostring(packt._header))
 
         Dim barrret(2 + ascii_refnum.Length + 1 + ascii_sender.Length + 1 + ascii_recievers.Length + 1 + ascii_header.Length + 1 + payload_barr.Length - 1) As Byte
 
