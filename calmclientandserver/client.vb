@@ -407,8 +407,9 @@ Public Class Client
 
                 Dim p2 As New packet_frame(New Packet(0, thisClient, New List(Of String), "", thisClient, New EncryptionParameter(encryptmethod, password)))
                 Dim pfp As packet_frame_part() = p2.ToParts(_buffer_size, True) 'send with one part only as the name reciever only supports 1 part
-                Dim cbs As Byte() = createsendablebytes(pfp)(0)
-                tcpClientNetStream.Write(cbs, 0, cbs.Length)
+                Dim cbs As List(Of Byte()) = createsendablebytes(pfp)
+                tcpClientNetStream.Write(cbs(0), 0, cbs(0).Length)
+                tcpClientNetStream.Flush()
 
                 Dim packet As Packet = Nothing
                 Dim cdatarr2(-1) As Byte

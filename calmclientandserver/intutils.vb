@@ -23,8 +23,6 @@ Friend Module intutils
 
     Private synclockdecrypt As New Object()
 
-    Private synclockbyteman As New Object()
-
     Public Function DecryptString(ciphertext As String, passphrase As String) As String
         Try
             SyncLock synclockdecrypt
@@ -112,7 +110,6 @@ Friend Module intutils
 
     Public Function createsendablebytes(ByVal ppframes As packet_frame_part()) As List(Of Byte())
         Dim toret As New List(Of Byte())
-        SyncLock synclockbyteman
             For i As Integer = 0 To ppframes.Length - 1 Step 1
                 Dim bytes() As Byte = ppframes(i)
                 Dim b_l As Integer = bytes.Length
@@ -123,7 +120,6 @@ Friend Module intutils
                 Dim bts As Byte() = JoinBytes(data_byt, bytes)
                 toret.Add(bts)
             Next
-        End SyncLock
         Return toret
     End Function
 
