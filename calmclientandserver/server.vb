@@ -1019,11 +1019,11 @@ Public Structure ServerConstructor
     ''' <summary>
     ''' Creates a new server_constructor to be used in making a new server object.
     ''' </summary>
-    ''' <param name="ipaddress">The IP Address for the server to bind to.</param>
+    ''' <param name="_ipaddress">The IP Address for the server to bind to.</param>
     ''' <param name="_port">The port for the server to bind to.</param>
     ''' <remarks></remarks>
-    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
-        IpAddress = ipaddress
+    Public Sub New(ByVal _ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
+        IpAddress = _ipaddress
         Port = _port
     End Sub
 End Structure

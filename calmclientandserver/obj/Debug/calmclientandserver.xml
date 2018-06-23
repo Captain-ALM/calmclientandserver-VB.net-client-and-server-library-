@@ -426,7 +426,7 @@ calmclientandserver
 	<summary>
  Creates a new server_constructor to be used in making a new server object.
  </summary>
-	<param name="ipaddress">The IP Address for the server to bind to.</param>
+	<param name="_ipaddress">The IP Address for the server to bind to.</param>
 	<param name="_port">The port for the server to bind to.</param>
 	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.ServerConstructor">
