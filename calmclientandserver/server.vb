@@ -731,7 +731,12 @@ Public Class Server
                     data_byt(0) = 1
                     data_byt = JoinBytes(data_byt, b_l_b2)
                     Dim bts2 As Byte() = JoinBytes(data_byt, bytes2)
-                    tcpServerNetStream.Write(bts2, 0, bts2.Length)
+                    SyncLock lockSend
+                        synclockchecks = True
+                        tcpServerNetStream.Write(bts2, 0, bts2.Length)
+                        tcpServerNetStream.Flush()
+                        synclockchecks = False
+                    End SyncLock
 
                     If allow_cl Then
                         clients.Add(clobj)

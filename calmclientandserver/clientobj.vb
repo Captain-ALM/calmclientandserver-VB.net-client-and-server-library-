@@ -19,6 +19,7 @@ Friend Class clientobj
     Private _packet_frame_part_dict As New Dictionary(Of Integer, packet_frame_part())
     Private _dis_on_i_pa As Boolean = False
     Private sent_bytes As Byte()
+    Private sndslock As New Object()
 
     Public Event DataReceived(ByVal cname As String, ByVal Msg As packet_frame)
     Public Event errEncounter(ByVal ex As Exception)
@@ -315,8 +316,10 @@ Friend Class clientobj
 
     Public Sub SendData(ByVal Data() As Byte)
         Try
-            networkStream.Write(Data, 0, Data.Length)
-            networkStream.Flush()
+            SyncLock sndslock
+                networkStream.Write(Data, 0, Data.Length)
+                networkStream.Flush()
+            End SyncLock
         Catch ex As ThreadAbortException
             Throw ex
         Catch ex As Exception
