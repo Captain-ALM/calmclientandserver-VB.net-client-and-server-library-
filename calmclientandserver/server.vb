@@ -437,13 +437,7 @@ Public Class Server
     ''' <remarks></remarks>
     Public Sub [Stop]()
         On Error Resume Next
-        listening = False
-        If Not tcpServer Is Nothing Then tcpServer.Close()
-        For Each c As clientobj In clients
-            c.Disconnect(False)
-        Next
-        If Not tcpServerNetStream Is Nothing Then tcpServerNetStream.Close(0)
-        tcpListener.Stop()
+        stp()
         RaiseEvent ServerStopped()
     End Sub
     ''' <summary>
@@ -865,6 +859,18 @@ Public Class Server
         serverData.Remove(name)
         RemoveHandler Handler.lostConnection, AddressOf lostConnectionHandler
     End Sub
+
+    Private Sub stp()
+        On Error Resume Next
+        listening = False
+        If Not tcpServer Is Nothing Then tcpServer.Close()
+        For Each c As clientobj In clients
+            c.Disconnect(False)
+        Next
+        If Not tcpServerNetStream Is Nothing Then tcpServerNetStream.Close(0)
+        tcpListener.Stop()
+    End Sub
+
     ''' <summary>
     ''' Creates a new instance of server with the specified server_constructor.
     ''' </summary>
@@ -967,7 +973,7 @@ Public Class Server
         If Not Me.disposedValue Then
             If disposing Then
                 ' dispose managed state (managed objects).
-                [Stop]()
+                stp()
                 If Not tcpListener Is Nothing Then
                     Try
                         tcpListener.Stop()

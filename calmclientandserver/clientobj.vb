@@ -225,6 +225,7 @@ Friend Class clientobj
                                 End If
                             ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
                                 Connected = False
+                                Exit While
                             End If
                             c_index += 1
                         End While

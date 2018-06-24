@@ -721,6 +721,7 @@ Public Class Client
                                 End If
                             ElseIf c_byte = 0 And Not in_packet And c_index = 0 Then
                                 connected = False
+                                Exit While
                             End If
                             c_index += 1
                         End While
@@ -744,12 +745,14 @@ Public Class Client
             End If
         Catch ex As ThreadAbortException
             Disconnect()
+            RaiseEvent ServerDisconnect()
             Throw ex
         Catch ex As Exception
             RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
         Disconnect()
+        RaiseEvent ServerDisconnect()
     End Sub
 
     Private Sub DecryptBytes(ByVal Message() As Byte)
@@ -905,7 +908,6 @@ Public Class Client
         tcpClient.SendBufferSize = SBufferSize
         tcpClient.ReceiveBufferSize = RBufferSize
         tcpClient.NoDelay = NDelay
-        RaiseEvent ServerDisconnect()
     End Sub
     ''' <summary>
     ''' Kill the operating threads if they are still alive.
