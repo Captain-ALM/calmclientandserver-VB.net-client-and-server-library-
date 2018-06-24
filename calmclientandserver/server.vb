@@ -58,6 +58,7 @@ Public Class Server
 
     Private _client_num_limit As Integer = 0
 
+    Private _starting As Boolean = False
     ''' <summary>
     ''' Raised everytime a packet is received.
     ''' </summary>
@@ -188,6 +189,8 @@ Public Class Server
             _auto_msg_pass = True
 
             _increment_client_names = True
+
+            _starting = False
         End If
     End Sub
     ''' <summary>
@@ -411,10 +414,13 @@ Public Class Server
             tcpListener.Server.NoDelay = starter.no_delay
             tcpListener.Server.ReceiveBufferSize = _buffer_size
             tcpListener.Server.SendBufferSize = _buffer_size
+            _starting = True
             listenthread = New Thread(New ThreadStart(AddressOf Listen))
             listenthread.IsBackground = True
             listenthread.Start()
-            listening = True
+            While _starting
+                Thread.Sleep(_closeDelay)
+            End While
             result = True
         Catch ex As ThreadAbortException
             Throw ex
@@ -579,6 +585,8 @@ Public Class Server
     Private Sub Listen()
         Try
             tcpListener.Start()
+            listening = True
+            _starting = False
             Do
                 Try
                     tcpServer = tcpListener.AcceptTcpClient()
@@ -744,10 +752,12 @@ Public Class Server
                 Thread.Sleep(150)
             Loop Until listening = False
         Catch ex As ThreadAbortException
+            _starting = False
             listening = False
             RaiseEvent ServerStopped()
             Throw ex
         Catch ex As Exception
+            _starting = False
             listening = False
             RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
@@ -924,6 +934,8 @@ Public Class Server
             _auto_msg_pass = True
 
             _increment_client_names = True
+
+            _starting = False
         End If
     End Sub
     ''' <summary>

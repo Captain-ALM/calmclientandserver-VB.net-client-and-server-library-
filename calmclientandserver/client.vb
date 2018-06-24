@@ -58,6 +58,8 @@ Public Class Client
     Private _buffer_size As Integer = 8192
 
     Private _auto_msg_pass As Boolean = True
+
+    Private _starting As Boolean = False
     ''' <summary>
     ''' Raised when a connection is successful.
     ''' </summary>
@@ -142,6 +144,8 @@ Public Class Client
             _buffer_size = 8192
 
             _auto_msg_pass = True
+
+            _starting = False
         End If
     End Sub
     ''' <summary>
@@ -337,11 +341,15 @@ Public Class Client
                     tcpClient.NoDelay = starter.no_delay
                     _port = validate_port(starter.port)
                     _ip = starter.ip_address.ToString
+                    _starting = True
                     updatethread = New Thread(New ThreadStart(AddressOf updatedata))
                     updatethread.IsBackground = True
                     listenthread = New Thread(New ThreadStart(AddressOf Listen))
                     listenthread.IsBackground = True
                     listenthread.Start()
+                    While _starting
+                        Thread.Sleep(_closeDelay)
+                    End While
                     result = True
                 Else
                     result = False
@@ -405,6 +413,7 @@ Public Class Client
         Dim bts(-1) As Byte
         Try
             tcpClient.Connect(_ip, _port)
+            _starting = False
             If tcpClient.Connected Then
                 'Send the client name
                 tcpClientNetStream = tcpClient.GetStream()
@@ -547,8 +556,10 @@ Public Class Client
                 End If
             End If
         Catch ex As ThreadAbortException
+            _starting = False
             Throw ex
         Catch ex As Exception
+            _starting = False
             RaiseEvent ErrorOccured(ex)
             RaiseEvent errEncounter(ex)
         End Try
@@ -1071,6 +1082,8 @@ Public Class Client
             _buffer_size = 8192
 
             _auto_msg_pass = True
+
+            _starting = False
         End If
     End Sub
 
