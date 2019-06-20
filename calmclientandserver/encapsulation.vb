@@ -39,14 +39,4 @@ Public Class Encapsulation
     Public Function GetObject() As Object
         Return ConvertStringToObject(_data)
     End Function
-
-    ''' <summary>
-    ''' Gets the object held by the encapsulation object.
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    <Obsolete("Use GetObject Instead")>
-    Public Function get_object() As Object
-        Return ConvertStringToObject(_data)
-    End Function
 End Class

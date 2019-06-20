@@ -385,28 +385,6 @@ calmclientandserver
  Cleans accumalated packet_frames.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.#ctor(captainalm.calmclientandserver.server_constructor)">
-	<summary>
- Creates a new instance of server with the specified server_constructor.
- </summary>
-	<param name="constructor">The server_constructor to use.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.errEncounter">
-	<summary>
- Raised when an error occurs.
- </summary>
-	<param name="ex">The exception occured.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Flush">
-	<summary>
- Flushes this instance of server (Cleaning).
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.FlushPacketFrames">
-	<summary>
- Cleans accumalated packet_frames (Cleaning).
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.Server">
 	<summary>
  Provides a server class.
@@ -480,28 +458,6 @@ calmclientandserver
  The ServerStart structure for starting a server.
  </summary>
 	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.server_constructor.ip_address">
-	<summary>
- The IP Address for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.server_constructor.port">
-	<summary>
- The port for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.server_constructor.#ctor(System.Net.IPAddress,System.Int32)">
-	<summary>
- Creates a new server_constructor to be used in making a new server object.
- </summary>
-	<param name="ipaddress">The IP Address for the server to bind to.</param>
-	<param name="_port">The port for the server to bind to.</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.server_constructor">
-	<summary>
- Provides parameters for server construction.
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.intutils">
 	<summary>
  Utilities Module {Access Internal}
@@ -573,12 +529,6 @@ calmclientandserver
 	<returns>The data of the encapsulation object.</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.Encapsulation.GetObject">
-	<summary>
- Gets the object held by the encapsulation object.
- </summary>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Encapsulation.get_object">
 	<summary>
  Gets the object held by the encapsulation object.
  </summary>
@@ -764,28 +714,6 @@ calmclientandserver
 	<param name="message">The packet to send.</param>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.#ctor(captainalm.calmclientandserver.client_constructor)">
-	<summary>
- Creates a new instance of client with the specified client_constructor.
- </summary>
-	<param name="constructor">The client_constructor to use.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.errEncounter">
-	<summary>
- Raised everytime an error occurs.
- </summary>
-	<param name="ex">The exception that occured.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.Flush">
-	<summary>
- Flushes this instance of client (Cleaning).
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.FlushPacketFrames">
-	<summary>
- Cleans accumalated packet_frames (Cleaning).
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.Client">
 	<summary>
  Provide a client class.
@@ -871,36 +799,6 @@ calmclientandserver
 </member><member name="T:captainalm.calmclientandserver.ClientStart">
 	<summary>
  The ClientStart structure for connecting to a server.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.client_constructor">
-	<summary>
- Provides parameters for client construction.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.unknown">
-	<summary>
- The Reason for the failed connection is not specified.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.server_unavailable">
-	<summary>
- The server is unavailable.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.name_taken">
-	<summary>
- The client name is already in use on the server.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.failed_connection_reason.too_many_clients">
-	<summary>
- The server has the maximum amount of clients connected to it.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.failed_connection_reason">
-	<summary>
- Gives a reason for a failed connection.
  </summary>
 	<remarks></remarks>
 </member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.ResourceManager">

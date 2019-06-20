@@ -427,7 +427,6 @@ Public Class Server
         Catch ex As Exception
             result = False
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
         End Try
         Return result
     End Function
@@ -495,7 +494,6 @@ Public Class Server
             Catch ex As Exception
                 result = False
                 RaiseEvent ErrorOccured(ex)
-                RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
         End SyncLock
@@ -519,7 +517,6 @@ Public Class Server
         Catch ex As Exception
             result = False
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
         End Try
         Return result
     End Function
@@ -569,7 +566,6 @@ Public Class Server
             Catch ex As Exception
                 result = False
                 RaiseEvent ErrorOccured(ex)
-                RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
         End SyncLock
@@ -746,7 +742,6 @@ Public Class Server
                     Throw ex
                 Catch ex As Exception
                     RaiseEvent ErrorOccured(ex)
-                    RaiseEvent errEncounter(ex)
                 End Try
                 Thread.Sleep(150)
             Loop Until listening = False
@@ -759,7 +754,6 @@ Public Class Server
             _starting = False
             listening = False
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
             RaiseEvent ServerStopped()
         End Try
     End Sub
@@ -847,7 +841,6 @@ Public Class Server
 
     Private Sub errEncounterHandler(ByVal ex As Exception)
         RaiseEvent ErrorOccured(ex)
-        RaiseEvent errEncounter(ex)
     End Sub
 
     Private Sub lostConnectionHandler(ByVal name As String)
@@ -869,100 +862,6 @@ Public Class Server
         Next
         If Not tcpServerNetStream Is Nothing Then tcpServerNetStream.Close(0)
         tcpListener.Stop()
-    End Sub
-
-    ''' <summary>
-    ''' Creates a new instance of server with the specified server_constructor.
-    ''' </summary>
-    ''' <param name="constructor">The server_constructor to use.</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use New with ServerConstructor Instead.")>
-    Public Sub New(ByVal constructor As server_constructor)
-        If constructor.ip_address IsNot Nothing Then
-            _ip = constructor.ip_address
-        Else
-            _ip = Me.Ip
-        End If
-        _port = validate_port(constructor.port)
-        tcpListener = New TcpListener(_ip, _port)
-    End Sub
-    ''' <summary>
-    ''' Raised when an error occurs.
-    ''' </summary>
-    ''' <param name="ex">The exception occured.</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use ErrorOcurred")>
-    Public Event errEncounter(ByVal ex As Exception)
-    ''' <summary>
-    ''' Flushes this instance of server (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use Clean Instead.")>
-    Public Sub Flush()
-        If Not listening And Not synclockcheckl And Not synclockchecks Then
-            _ip = IPAddress.None
-
-            _port = 100
-
-            tcpListener = Nothing
-
-            tcpListener = New TcpListener(IPAddress.None, _port)
-
-            tcpServer = Nothing
-
-            tcpServerNetStream = Nothing
-
-            listening = False
-
-            _closeDelay = 100
-
-            lockSend = New Object()
-
-            lockListen = New Object()
-
-            clients = New List(Of clientobj)
-
-            serverData = New List(Of String)
-
-            encryptmethod = EncryptionMethod.none
-
-            password = ""
-
-            listenthread = Nothing
-
-            synclockcheckl = False
-
-            synclockchecks = False
-
-            _packet_delay = 50
-
-            _disconnect_on_invalid_packet = False
-
-            _no_packet_splitting = False
-
-            _buffer_size = 8192
-
-            _auto_msg_pass = True
-
-            _increment_client_names = True
-
-            _starting = False
-        End If
-    End Sub
-    ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use CleanPacketFrames Instead.")>
-    Public Sub FlushPacketFrames()
-        For Each cl As clientobj In clients
-            Try
-                cl.purge_msgs()
-            Catch ex As ThreadAbortException
-                Throw ex
-            Catch ex As Exception
-            End Try
-        Next
     End Sub
 
 #Region "IDisposable Support"
@@ -1114,33 +1013,5 @@ Public Structure ServerStart
         internal_message_passing = internalmsgpass
         no_delay = _no_delay
         allow_clients_with_the_same_name_to_connect = acwtsntc
-    End Sub
-End Structure
-
-''' <summary>
-''' Provides parameters for server construction.
-''' </summary>
-''' <remarks></remarks>
-<Obsolete("Use ServerConstructor.")>
-Public Structure server_constructor
-    ''' <summary>
-    ''' The IP Address for the server to bind to.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public ip_address As IPAddress
-    ''' <summary>
-    ''' The port for the server to bind to.
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public port As Integer
-    ''' <summary>
-    ''' Creates a new server_constructor to be used in making a new server object.
-    ''' </summary>
-    ''' <param name="ipaddress">The IP Address for the server to bind to.</param>
-    ''' <param name="_port">The port for the server to bind to.</param>
-    ''' <remarks></remarks>
-    Public Sub New(ByVal ipaddress As IPAddress, Optional ByVal _port As Integer = 100)
-        ip_address = ipaddress
-        port = _port
     End Sub
 End Structure

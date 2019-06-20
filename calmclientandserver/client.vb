@@ -360,7 +360,6 @@ Public Class Client
         Catch ex As Exception
             result = False
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
         End Try
         Return result
     End Function
@@ -565,7 +564,6 @@ Public Class Client
         Catch ex As Exception
             _starting = False
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
         End Try
         Dim cdatarr(-1) As Byte
         Dim cnumarr As New List(Of Byte)
@@ -749,7 +747,6 @@ Public Class Client
             Throw ex
         Catch ex As Exception
             RaiseEvent ErrorOccured(ex)
-            RaiseEvent errEncounter(ex)
         End Try
         Disconnect()
         RaiseEvent ServerDisconnect()
@@ -988,7 +985,6 @@ Public Class Client
             Catch ex As Exception
                 result = False
                 RaiseEvent ErrorOccured(ex)
-                RaiseEvent errEncounter(ex)
             End Try
             synclockchecks = False
         End SyncLock
@@ -1014,97 +1010,6 @@ Public Class Client
             End If
             synclockcheckl = False
         End SyncLock
-    End Sub
-    ''' <summary>
-    ''' Creates a new instance of client with the specified client_constructor.
-    ''' </summary>
-    ''' <param name="constructor">The client_constructor to use.</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use new with ClientConstructor object instead.")>
-    Public Sub New(ByVal constructor As client_constructor)
-        tcpClient = New TcpClient()
-    End Sub
-    ''' <summary>
-    ''' Raised everytime an error occurs.
-    ''' </summary>
-    ''' <param name="ex">The exception that occured.</param>
-    ''' <remarks></remarks>
-    <Obsolete("Use ErrorOccured")>
-    Public Event errEncounter(ByVal ex As Exception)
-
-    ''' <summary>
-    ''' Flushes this instance of client (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use Clean instead.")>
-    Public Sub Flush()
-        If Not connected And Not synclockcheckl And Not synclockchecks Then
-            tcpClient = Nothing
-
-            tcpClient = New TcpClient()
-            tcpClient.SendBufferSize = 8192
-            tcpClient.ReceiveBufferSize = 8192
-
-            connected = False
-
-            _closeDelay = 100
-
-            lockListen = New Object()
-
-            lockSend = New Object()
-
-            clientData = New List(Of String)
-
-            packets = New List(Of Packet)
-
-            thisClient = ""
-
-            encryptmethod = EncryptionMethod.none
-
-            _clientrefreshdelay = 15000
-
-            password = ""
-
-            listenthread = Nothing
-
-            updatethread = Nothing
-
-            synclockcheckl = False
-
-            synclockchecks = False
-
-            _ip = ""
-
-            _port = 0
-
-            _packet_delay = 50
-
-            _packet_frame_part_dict = New Dictionary(Of Integer, packet_frame_part())
-
-            _disconnect_on_invalid_packet = False
-
-            _no_packet_splitting = False
-
-            _buffer_size = 8192
-
-            _auto_msg_pass = True
-
-            _starting = False
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Cleans accumalated packet_frames (Cleaning).
-    ''' </summary>
-    ''' <remarks></remarks>
-    <Obsolete("Use CleanPacketFrames Instead.")>
-    Public Sub FlushPacketFrames()
-        Try
-            _packet_frame_part_dict.Clear()
-        Catch ex As ThreadAbortException
-            Throw ex
-        Catch ex As Exception
-        End Try
     End Sub
 
 #Region "IDisposable Support"
@@ -1258,39 +1163,3 @@ Public Structure ClientStart
         no_delay = _no_delay
     End Sub
 End Structure
-
-''' <summary>
-''' Provides parameters for client construction.
-''' </summary>
-''' <remarks></remarks>
-<Obsolete("Use ClientConstructor")>
-Public Structure client_constructor
-End Structure
-
-''' <summary>
-''' Gives a reason for a failed connection.
-''' </summary>
-''' <remarks></remarks>
-<Obsolete("Use FailedConnectionReason")>
-Public Enum failed_connection_reason As Integer
-    ''' <summary>
-    ''' The Reason for the failed connection is not specified.
-    ''' </summary>
-    ''' <remarks></remarks>
-    unknown = 0
-    ''' <summary>
-    ''' The server is unavailable.
-    ''' </summary>
-    ''' <remarks></remarks>
-    server_unavailable = 1
-    ''' <summary>
-    ''' The client name is already in use on the server.
-    ''' </summary>
-    ''' <remarks></remarks>
-    name_taken = 2
-    ''' <summary>
-    ''' The server has the maximum amount of clients connected to it.
-    ''' </summary>
-    ''' <remarks></remarks>
-    too_many_clients = 3
-End Enum

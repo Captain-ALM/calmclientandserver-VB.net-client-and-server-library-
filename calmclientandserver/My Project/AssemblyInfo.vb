@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Captain ALM Client and Server Library")> 
 <Assembly: AssemblyCompany("Captain ALM")> 
 <Assembly: AssemblyProduct("calmclientandserver")> 
-<Assembly: AssemblyCopyright("Copyright © Captain ALM 2018")> 
+<Assembly: AssemblyCopyright("Copyright © Captain ALM 2019")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(True)> 
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.1.6.5")> 
-<Assembly: AssemblyFileVersion("0.1.6.5")> 
+<Assembly: AssemblyVersion("0.1.6.6")> 
+<Assembly: AssemblyFileVersion("0.1.6.6")> 
