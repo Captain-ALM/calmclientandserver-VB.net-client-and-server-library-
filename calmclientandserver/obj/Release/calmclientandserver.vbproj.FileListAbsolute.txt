@@ -11,8 +11,8 @@ C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Rel
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.pdb
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.xml
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.vbprojResolveAssemblyReference.cache
-C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\captainalm.calmclientandserver.Resources.resources
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.vbproj.GenerateResource.Cache
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.dll
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.xml
 C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.pdb
+C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Release\captainalm.Resources.resources

@@ -510,6 +510,10 @@ calmclientandserver
  Utilities Module {Access public}
  </summary>
 	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.NetLibException">
+	<summary>
+ Desctiption of NetLibException.
+ </summary>
 </member><member name="M:captainalm.calmclientandserver.Encapsulation.#ctor">
 	<summary>
  Creates a new Encapsulation Instance with a New Empty Object.
@@ -801,16 +805,16 @@ calmclientandserver
  The ClientStart structure for connecting to a server.
  </summary>
 	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.ResourceManager">
+</member><member name="P:captainalm.My.Resources.Resources.ResourceManager">
 	<summary>
   Returns the cached ResourceManager instance used by this class.
 </summary>
-</member><member name="P:captainalm.calmclientandserver.My.Resources.Resources.Culture">
+</member><member name="P:captainalm.My.Resources.Resources.Culture">
 	<summary>
   Overrides the current thread's CurrentUICulture property for all
   resource lookups using this strongly typed resource class.
 </summary>
-</member><member name="T:captainalm.calmclientandserver.My.Resources.Resources">
+</member><member name="T:captainalm.My.Resources.Resources">
 	<summary>
   A strongly-typed resource class, for looking up localized strings, etc.
 </summary>

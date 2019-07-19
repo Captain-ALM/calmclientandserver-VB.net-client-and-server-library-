@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{35B7E4A0-A3DF-4CE0-91D8-ABAF5CFAEB87}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>captainalm.calmclientandserver</RootNamespace>
+    <RootNamespace>captainalm</RootNamespace>
     <AssemblyName>calmclientandserver</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -91,6 +91,20 @@
     <Compile Include="packet.vb" />
     <Compile Include="packet_frame.vb" />
     <Compile Include="server.vb" />
+    <Compile Include="CALMNetLib\ByteInt16ArrayEncapsulation.vb" />
+    <Compile Include="CALMNetLib\ByteInt32ArrayEncapsulation.vb" />
+    <Compile Include="CALMNetLib\ByteInt8ArrayEncapsulation.vb" />
+    <Compile Include="CALMNetLib\EncapsulatedObject.vb" />
+    <Compile Include="CALMNetLib\IEncapsulation.vb" />
+    <Compile Include="CALMNetLib\INetConfig.vb" />
+    <Compile Include="CALMNetLib\INetSocket.vb" />
+    <Compile Include="CALMNetLib\INetSocketConnectionless.vb" />
+    <Compile Include="CALMNetLib\NetLibException.vb" />
+    <Compile Include="CALMNetLib\NetSocketConfig.vb" />
+    <Compile Include="CALMNetLib\NetTCPClient.vb" />
+    <Compile Include="CALMNetLib\NetTCPListener.vb" />
+    <Compile Include="CALMNetLib\NetUDPClient.vb" />
+    <Compile Include="CALMNetLib\Utilities.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -110,6 +124,9 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CALMNetMarshall\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

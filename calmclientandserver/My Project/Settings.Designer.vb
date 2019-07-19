@@ -63,10 +63,10 @@ Namespace My
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
     Friend Module MySettingsProperty
         
-        <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.captainalm.calmclientandserver.My.MySettings
+        <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")> _
+        Friend ReadOnly Property Settings() As Global.captainalm.My.MySettings
             Get
-                Return Global.captainalm.calmclientandserver.My.MySettings.Default
+                Return Global.captainalm.My.MySettings.Default
             End Get
         End Property
     End Module
