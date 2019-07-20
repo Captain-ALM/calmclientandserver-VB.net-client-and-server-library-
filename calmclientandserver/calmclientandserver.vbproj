@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CALMNetMarshall\IMessage.vb" />
-    <Compile Include="CALMNetMarshall\NetMarshalBase.vb" />
     <Compile Include="client.vb" />
     <Compile Include="clientobj.vb" />
     <Compile Include="encapsulation.vb" />

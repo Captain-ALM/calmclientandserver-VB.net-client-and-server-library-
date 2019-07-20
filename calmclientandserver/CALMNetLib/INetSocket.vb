@@ -23,7 +23,7 @@ Namespace CALMNetLib
         ''' Returns whether the Socket is Listening.
         ''' </summary>
         ''' <value>Boolean</value>
-        ''' <returns>Whether the Socket is Connected</returns>
+        ''' <returns>Whether the Socket is Listening</returns>
         ''' <remarks></remarks>
         ReadOnly Property listening As Boolean
         ''' <summary>
