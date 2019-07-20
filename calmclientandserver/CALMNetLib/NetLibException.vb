@@ -11,26 +11,42 @@ Imports System.Runtime.Serialization
 
 Namespace CALMNetLib
 	''' <summary>
-	''' Desctiption of NetLibException.
+    ''' The CALMNetLib NetLibException.
 	''' </summary>
 	Public Class NetLibException
 		Inherits Exception
 		Implements ISerializable
 		
 		Protected _inexcnom As String = ""
-
+        ''' <summary>
+        ''' Constructs a new instance of a NetLibException.
+        ''' </summary>
+        ''' <remarks></remarks>
 		Public Sub New()
 		End Sub
-
+        ''' <summary>
+        ''' Constructs a new instance of a NetLibException with the specified message.
+        ''' </summary>
+        ''' <param name="message">The message to store</param>
+        ''' <remarks></remarks>
 		Public Sub New(message As String)
 			MyBase.New(message)
 		End Sub
-
+        ''' <summary>
+        ''' Constructs a new instance of a NetLibException with the specified message and inner Exception.
+        ''' </summary>
+        ''' <param name="message">The message to store</param>
+        ''' <param name="innerException">The inner Exception to store</param>
+        ''' <remarks></remarks>
 		Public Sub New(message As String, innerException As Exception)
 			MyBase.New(message, innerException)
 			_inexcnom = innerException.GetType().Name
 		End Sub
-		
+        ''' <summary>
+        ''' Constructs a new instance of a NetLibException with an inner Exception.
+        ''' </summary>
+        ''' <param name="innerException">The inner Exception to store</param>
+        ''' <remarks></remarks>
 		Public Sub New(innerException As Exception)
 			MyBase.New(innerException.Message, innerException)
 			_inexcnom = innerException.GetType().Name
@@ -40,7 +56,12 @@ Namespace CALMNetLib
 		Protected Sub New(info As SerializationInfo, context As StreamingContext)
 			MyBase.New(info, context)
 		End Sub
-		
+        ''' <summary>
+        ''' Returns the Name of the InnerException.
+        ''' </summary>
+        ''' <value>String</value>
+        ''' <returns>The Name of the inner Exception</returns>
+        ''' <remarks></remarks>
 		Public ReadOnly Overridable Property innerExceptionName As String
 			Get
 				Return _inexcnom
