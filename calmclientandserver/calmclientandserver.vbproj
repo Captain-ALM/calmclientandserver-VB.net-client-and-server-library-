@@ -72,6 +72,7 @@
     <Compile Include="CALMNetMarshall\IPacket.vb" />
     <Compile Include="CALMNetMarshall\Message.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalBase.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
     <Compile Include="client.vb" />
     <Compile Include="clientobj.vb" />
     <Compile Include="encapsulation.vb" />

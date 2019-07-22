@@ -10,6 +10,7 @@ Namespace CALMNetMarshal
         Protected _cl As INetSocket
         Protected _t As Thread = New Thread(AddressOf t_exec)
         Protected _bout As Integer = 0
+        Protected _beated As Boolean = False
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -104,6 +105,35 @@ Namespace CALMNetMarshal
 
         Protected MustOverride Sub t_exec()
 
+        Protected _slockthrob As New Object()
+        Protected Overridable Function throb() As Boolean
+            Dim toret As Boolean = False
+            SyncLock _slockthrob
+                If (Not _cl Is Nothing) And (_bout > 0) Then
+                    _beated = False
+                    Dim b As New Beat
+                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
+                    toret = Me.sendMessage(b)
+                    b = Nothing
+                    If toret Then
+                        Thread.Sleep(_bout)
+                        toret = _beated
+                        If _beated Then _beated = False Else raiseBeatTimedOut()
+                    Else
+                        raiseBeatTimedOut()
+                    End If
+                Else
+                    toret = True
+                End If
+            End SyncLock
+            Return toret
+        End Function
+        Protected Overridable Sub throbbed()
+            SyncLock _slockthrob
+                _beated = True
+            End SyncLock
+        End Sub
+
         Protected Sub raiseExceptionRaised(ex As Exception)
             RaiseEvent exceptionRaised(ex)
         End Sub
@@ -119,17 +149,20 @@ Namespace CALMNetMarshal
         Protected Structure Beat
             Implements IPacket
 
+            Public valid As Boolean
+
             Public Property data As Object Implements IPacket.data
                 Get
-                    Return Nothing
+                    Return valid
                 End Get
                 Set(value As Object)
+                    valid = value
                 End Set
             End Property
 
             Public ReadOnly Property dataType As Type Implements IPacket.dataType
                 Get
-                    Return GetType(Object)
+                    Return GetType(Boolean)
                 End Get
             End Property
 
@@ -141,6 +174,9 @@ Namespace CALMNetMarshal
 
             Public WriteOnly Property setData As Byte() Implements IPacket.setData
                 Set(value As Byte())
+                    Dim b As Beat = New Serializer().deSerializeObject(Of Beat)(value)
+                    Me.valid = b.valid
+                    b = Nothing
                 End Set
             End Property
 
