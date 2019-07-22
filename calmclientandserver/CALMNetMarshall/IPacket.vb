@@ -2,7 +2,7 @@
 
 Namespace CALMNetMarshal
     ''' <summary>
-    ''' The packet Interface.
+    ''' The Packet Interface.
     ''' </summary>
     ''' <remarks></remarks>
     Public Interface IPacket

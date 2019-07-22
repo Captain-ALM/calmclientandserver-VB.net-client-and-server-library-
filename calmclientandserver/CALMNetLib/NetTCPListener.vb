@@ -100,7 +100,7 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-        Public Overridable Function recieveBytes() As Byte() Implements INetSocket.recieveBytes
+        Public Overridable Function receiveBytes() As Byte() Implements INetSocket.receiveBytes
             Throw New NetLibException( New InvalidOperationException("Not a TCP Client."))
         End Function
         ''' <summary>

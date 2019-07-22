@@ -167,7 +167,7 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-        Public Overridable Function recieveBytes() As Byte() Implements INetSocket.recieveBytes
+        Public Overridable Function receiveBytes() As Byte() Implements INetSocket.receiveBytes
             Dim bts(-1) As Byte
             If Not pollConnection() Then Return bts
             SyncLock slockreceive

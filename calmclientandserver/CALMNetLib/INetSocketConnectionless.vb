@@ -25,7 +25,7 @@ Namespace CALMNetLib
         ''' <param name="remotePort">The remote Port</param>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-        Function recieveBytesFrom(remoteIP As String, remotePort As Integer) As Byte()
+        Function receiveBytesFrom(remoteIP As String, remotePort As Integer) As Byte()
         ''' <summary>
         ''' Reassociates a dedicated connectionless connection.
         ''' </summary>

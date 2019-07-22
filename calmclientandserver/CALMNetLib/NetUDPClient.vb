@@ -192,7 +192,7 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-		Public Overridable Function recieveBytes() As Byte() Implements INetSocketConnectionless.recieveBytes
+		Public Overridable Function receiveBytes() As Byte() Implements INetSocketConnectionless.receiveBytes
 			If Not _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client does not have a dedicated connection."))
             Dim bts(_sock.ReceiveBufferSize - 1) As Byte
             Dim btstr(-1) As Byte
@@ -248,7 +248,7 @@ Namespace CALMNetLib
         ''' <param name="remotePort">The remote Port</param>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-		Public Overridable Function recieveBytesFrom(remoteIP As String, remotePort As Integer) As Byte() Implements INetSocketConnectionless.recieveBytesFrom
+		Public Overridable Function receiveBytesFrom(remoteIP As String, remotePort As Integer) As Byte() Implements INetSocketConnectionless.receiveBytesFrom
 			If _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client has a dedicated connection."))
 			Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
             Dim bts(_sock.ReceiveBufferSize - 1) As Byte

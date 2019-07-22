@@ -38,7 +38,7 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-        Function recieveBytes() As Byte()
+        Function receiveBytes() As Byte()
         ''' <summary>
         ''' Returns whether a client is waiting to connect.
         ''' </summary>

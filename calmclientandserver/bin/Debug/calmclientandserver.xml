@@ -6,7 +6,203 @@ calmclientandserver
 </name>
 </assembly>
 <members>
-<member name="T:captainalm.calmclientandserver.packet_frame">
+<member name="P:captainalm.CALMNetMarshal.IPacket.senderIP">
+	<summary>
+ The sender's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The sender's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderPort">
+	<summary>
+ The sender's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The sender's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverIP">
+	<summary>
+ The receiver's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The receiver's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverPort">
+	<summary>
+ The receiver's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The receiver's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.getData">
+	<summary>
+ Allows data to be taken from the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<returns>Packet Interface Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.setData">
+	<summary>
+ Allows data to be written to the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.data">
+	<summary>
+ Allows to get or set the internally held packet data generically.
+ </summary>
+	<value>Object</value>
+	<returns>Held Packet Data.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.dataType">
+	<summary>
+ Gets the Type of the internally held packet data.
+ </summary>
+	<value>Type</value>
+	<returns>Type Of Internal Data</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.IPacket">
+	<summary>
+ The Packet Interface.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.CALMNetMarshal.Message.header">
+	<summary>
+ The header of the message.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.CALMNetMarshal.Message.message">
+	<summary>
+ The message.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.data">
+	<summary>
+ Allows to get or set the internally held packet data generically.
+ </summary>
+	<value>Object</value>
+	<returns>Held Packet Data.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.dataType">
+	<summary>
+ Gets the Type of the internally held packet data.
+ </summary>
+	<value>Type</value>
+	<returns>Type Of Internal Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.getData">
+	<summary>
+ Allows data to be taken from the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<returns>Packet Interface Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.setData">
+	<summary>
+ Allows data to be written to the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.receiverIP">
+	<summary>
+ The receiver's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The receiver's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.receiverPort">
+	<summary>
+ The receiver's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The receiver's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.senderIP">
+	<summary>
+ The sender's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The sender's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.senderPort">
+	<summary>
+ The sender's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The sender's Port.</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.Message">
+	<summary>
+ A Message Class that Implements IPacket.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.exceptionRaised">
+	<summary>
+ This event is raised when an exception is thrown.
+ </summary>
+	<param name="ex">The exception thrown</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.MessageReceived">
+	<summary>
+ This event is raised when a message is received.
+ </summary>
+	<param name="msg">The message received</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.beatTimedOut">
+	<summary>
+ This event is raised when the beat times out.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.#ctor(captainalm.CALMNetLib.INetSocket)">
+	<summary>
+ Public constructor to create the base class.
+ </summary>
+	<param name="cl">The INetSocket to use</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.start">
+	<summary>
+ Starts the Marshal's main Thread.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.close">
+	<summary>
+ Stops the Marshal's main Thread.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.beatTimeout">
+	<summary>
+ Gets or sets the timeout of beat messages to test sockets.
+ </summary>
+	<value>Integer</value>
+	<returns>The timeout of beat messages to test sockets</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.internalSocket">
+	<summary>
+ Gets the internal socket.
+ </summary>
+	<value>Boolean</value>
+	<returns>The internal socket</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalBase">
+	<summary>
+ The Net Marshal Base Class.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.calmclientandserver.packet_frame">
 	<summary>
  Packet Frame {Internal Access Only}
  </summary>
@@ -743,7 +939,7 @@ calmclientandserver
 	<param name="bytes">The byte array to send</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.recieveBytes">
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.receiveBytes">
 	<summary>
  Receives a byte array from the network.
  </summary>
@@ -918,7 +1114,7 @@ calmclientandserver
  Disassociates the current dedicated connectionless connection.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.recieveBytesFrom(System.String,System.Int32)">
+</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.receiveBytesFrom(System.String,System.Int32)">
 	<summary>
  Receives a byte array from the specified address and port on the network.
  </summary>
@@ -1520,66 +1716,6 @@ calmclientandserver
  The ClientStart structure for connecting to a server.
  </summary>
 	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderIP">
-	<summary>
- The sender's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The sender's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderPort">
-	<summary>
- The sender's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The sender's Port.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverIP">
-	<summary>
- The receiver's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The receiver's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverPort">
-	<summary>
- The receiver's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The receiver's Port.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.getData">
-	<summary>
- Allows data to be taken from the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<returns>Packet Interface Data</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.setData">
-	<summary>
- Allows data to be written to the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.data">
-	<summary>
- Allows to get or set the internally held packet data generically.
- </summary>
-	<value>Object</value>
-	<returns>Held Packet Data.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.dataType">
-	<summary>
- Gets the Type of the internally held packet data.
- </summary>
-	<value>Type</value>
-	<returns>Type Of Internal Data</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.IPacket">
-	<summary>
- The packet Interface.
- </summary>
-	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor">
 	<summary>
  Constructs an Empty ByteInt16ArrayEncapsualtion.
@@ -1754,7 +1890,7 @@ calmclientandserver
 	<param name="bytes">The byte array to send</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.recieveBytes">
+</member><member name="M:captainalm.CALMNetLib.INetSocket.receiveBytes">
 	<summary>
  Receives a byte array from the network.
  </summary>
@@ -1848,7 +1984,7 @@ calmclientandserver
 	<param name="bytes">The byte array to send</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.recieveBytes">
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.receiveBytes">
 	<summary>
  Receives a byte array from the network.
  </summary>
@@ -2022,7 +2158,7 @@ calmclientandserver
 	<param name="bytes">The byte array to send</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetUDPClient.recieveBytes">
+</member><member name="M:captainalm.CALMNetLib.NetUDPClient.receiveBytes">
 	<summary>
  Receives a byte array from the network.
  </summary>
@@ -2037,7 +2173,7 @@ calmclientandserver
 	<param name="remotePort">The remote Port</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetUDPClient.recieveBytesFrom(System.String,System.Int32)">
+</member><member name="M:captainalm.CALMNetLib.NetUDPClient.receiveBytesFrom(System.String,System.Int32)">
 	<summary>
  Receives a byte array from the specified address and port on the network.
  </summary>
