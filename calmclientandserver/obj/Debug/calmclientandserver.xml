@@ -947,6 +947,35 @@ calmclientandserver
  Defines a Connectionless Socket Interface.
  </summary>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCPClient">
+	<summary>
+ This class can be retrieved from the NetMarshalTCP and represents a separate client.
+ </summary>
+	<remarks></remarks>
 </member><member name="T:captainalm.calmclientandserver.intutils">
 	<summary>
  Utilities Module {Access Internal}
@@ -1088,35 +1117,6 @@ calmclientandserver
 	<summary>
  The CALMNetLib NetLibException.
  </summary>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.start">
-	<summary>
- Starts the Marshal and Opens the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.close">
-	<summary>
- Stops the Marshal and Closes the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCPClient">
-	<summary>
- This class can be retrieved from the NetMarshalTCP.
- </summary>
-	<remarks></remarks>
 </member><member name="M:captainalm.calmclientandserver.Encapsulation.#ctor">
 	<summary>
  Creates a new Encapsulation Instance with a New Empty Object.
@@ -1615,6 +1615,108 @@ calmclientandserver
  The Net Marshal Base Class.
  </summary>
 	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientConnected">
+	<summary>
+ This event is raised when a client connects.
+ </summary>
+	<param name="ip">The IP Address</param>
+	<param name="port">The Port</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientDisconnected">
+	<summary>
+ This event is raised when a client disconnects.
+ </summary>
+	<param name="ip">The IP Address</param>
+	<param name="port">The Port</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean)">
+	<summary>
+ Constructs a new instance of NetMarshalTCP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="cbl">The connection backlog</param>
+	<param name="del">Whether nagle's algorithm is enabled</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Constructs a new instance of NetMarshalTCP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="conf">The Net Socket configuration to use</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.connect(System.String,System.String)">
+	<summary>
+ Connect to a remote listener.
+ </summary>
+	<param name="lip">The remote listener IP Address</param>
+	<param name="lport">The remote listener Port</param>
+	<returns>If the remote listener accepted the connection</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.disconnect(System.String,System.String)">
+	<summary>
+ Disconnect's a Connected Client.
+ </summary>
+	<param name="rip">The remote IP Address</param>
+	<param name="rport">The remote Port</param>
+	<returns>If the client was disconnected</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.beatTimeout">
+	<summary>
+ Gets or sets the timeout of beat messages to test sockets.
+ </summary>
+	<value>Integer</value>
+	<returns>The timeout of beat messages to test sockets</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready(System.String,System.Int32)">
+	<summary>
+ States whether a contained marshal is ready.
+ </summary>
+	<param name="rip">The Remote IP Address</param>
+	<param name="rport">The Remote Port</param>
+	<value>Boolean</value>
+	<returns>Whether a contained marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.client(System.String,System.Int32)">
+	<summary>
+ Retrieves the client specified by the remote IP Address and remote Port.
+ </summary>
+	<param name="rip">The remote IP Address</param>
+	<param name="rport">The remote Port</param>
+	<value>NetMarshalTCPClient</value>
+	<returns>The specified NetMarshalTCPClient</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCP">
+	<summary>
+ This class provides a TCP Socket Marshal.
+ The buffer size is 16MB.
+ </summary>
+	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor">
 	<summary>
  Constructs an Empty ByteInt16ArrayEncapsualtion.
@@ -2071,6 +2173,22 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>The send timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerIPAddress">
+	<summary>
+ Returns the IP Address of the listener.
+ This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+ </summary>
+	<value>String</value>
+	<returns>The listener IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerPort">
+	<summary>
+ Returns the listener IP Port.
+ This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+ </summary>
+	<value>String</value>
+	<returns>The listener IP Port</returns>
 	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetLib.NetTCPClient.remoteIPAddress">
 	<summary>
