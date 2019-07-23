@@ -38,10 +38,10 @@ Namespace CALMNetLib
             _port = port
         End Sub
 
-        Friend Sub New(sock As Socket)
+        Friend Sub New(sock As Socket, lip As IPAddress, lport As Integer)
             _sock = sock
-            _ip = CType(sock.RemoteEndPoint, IPEndPoint).Address
-            _port = CType(sock.RemoteEndPoint, IPEndPoint).Port
+            _ip = lip
+            _port = lport
         End Sub
         ''' <summary>
         ''' Opens the socket for network connection.
@@ -325,6 +325,30 @@ Namespace CALMNetLib
             End Set
         End Property
         ''' <summary>
+        ''' Returns the IP Address of the listener.
+        ''' This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+        ''' </summary>
+        ''' <value>String</value>
+        ''' <returns>The listener IP Address</returns>
+        ''' <remarks></remarks>
+        Public Overridable ReadOnly Property listenerIPAddress As String
+            Get
+                Return _ip.ToString()
+            End Get
+        End Property
+        ''' <summary>
+        ''' Returns the listener IP Port.
+        ''' This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+        ''' </summary>
+        ''' <value>String</value>
+        ''' <returns>The listener IP Port</returns>
+        ''' <remarks></remarks>
+        Public Overridable ReadOnly Property listenerPort As Integer
+            Get
+                Return _port
+            End Get
+        End Property
+        ''' <summary>
         ''' Returns the remote IP Address.
         ''' </summary>
         ''' <value>String</value>
@@ -332,7 +356,9 @@ Namespace CALMNetLib
         ''' <remarks></remarks>
         Public Overridable ReadOnly Property remoteIPAddress As String Implements INetConfig.remoteIPAddress
             Get
-                Return _ip.ToString()
+                If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
+                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                Return CType(_sock.RemoteEndPoint, IPEndPoint).Address.ToString()
             End Get
         End Property
         ''' <summary>
@@ -343,7 +369,9 @@ Namespace CALMNetLib
         ''' <remarks></remarks>
         Public Overridable ReadOnly Property remotePort As Integer Implements INetConfig.remotePort
             Get
-                Return _port
+                If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
+                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                Return CType(_sock.RemoteEndPoint, IPEndPoint).Port
             End Get
         End Property
         ''' <summary>

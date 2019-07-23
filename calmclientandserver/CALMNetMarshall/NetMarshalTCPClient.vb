@@ -3,7 +3,7 @@ Imports System.Threading
 
 Namespace CALMNetMarshal
     ''' <summary>
-    ''' This class can be retrieved from the NetMarshalTCP.
+    ''' This class can be retrieved from the NetMarshalTCP and represents a separate client.
     ''' </summary>
     ''' <remarks></remarks>
     Public Class NetMarshalTCPClient
@@ -42,7 +42,7 @@ Namespace CALMNetMarshal
         Protected Overrides Sub t_exec()
             While _cl IsNot Nothing AndAlso _cl.connected
                 Try
-                    While _cl IsNot Nothing AndAlso _cl.listening
+                    While _cl IsNot Nothing AndAlso _cl.connected
                         Dim bts As Byte() = _cl.receiveBytes()
                         If bts.Length > 0 Then
                             Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
@@ -67,7 +67,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Sub start()
             If Not _cl Is Nothing Then
-                _cl.open()
+                If Not _cl.connected Then _cl.open()
                 MyBase.start()
             End If
         End Sub
@@ -76,8 +76,8 @@ Namespace CALMNetMarshal
         ''' </summary>
         ''' <remarks></remarks>
         Public Overrides Sub close()
+            MyBase.close()
             If Not _cl Is Nothing Then
-                MyBase.close()
                 _cl.close()
                 _cl = Nothing
             End If

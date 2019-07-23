@@ -131,7 +131,7 @@ Namespace CALMNetLib
             Dim toret As INetSocket = Nothing
             SyncLock slockaccept
                 Try
-                    toret = New NetTCPClient(_sock.Accept())
+                    toret = New NetTCPClient(_sock.Accept(), _ip, _port)
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
                 End Try
