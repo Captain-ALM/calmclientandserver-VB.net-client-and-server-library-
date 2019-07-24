@@ -7,7 +7,10 @@
 ' To change this template use Tools | Options | Coding | Edit Standard Headers.
 '
 Namespace CALMNetLib
-
+    ''' <summary>
+    ''' 8-Bit Indexed Byte Array Encapsulation.
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Class ByteInt8ArrayEncapsulation
         Implements IEncapsulation
 
@@ -23,31 +26,57 @@ Namespace CALMNetLib
         '[...+1-...+9] Check Sum (8 Bytes) [Always 8 bytes]
 
         Protected _arr(-1) As Byte
-
+        ''' <summary>
+        ''' Constructs an Empty ByteInt8ArrayEncapsualtion.
+        ''' </summary>
+        ''' <remarks></remarks>
         Public Sub New()
-            ReDim _arr(1)
+            ReDim _arr(0)
         End Sub
-
+        ''' <summary>
+        ''' Constructs an Empty ByteInt8ArrayEncapsualtion with the specified capacity.
+        ''' <param name="length">Capacity</param>
+        ''' </summary>
+        ''' <remarks></remarks>
         Public Sub New(length As Integer)
             ReDim _arr(length)
         End Sub
-
+        ''' <summary>
+        ''' Constructs a ByteInt8ArrayEncapsualtion with the specified byte array.
+        ''' <param name="bytes">Inital Byte Array</param>
+        ''' </summary>
+        ''' <remarks></remarks>
         Public Sub New(ByVal bytes As Byte())
             _arr = bytes
         End Sub
-
+        ''' <summary>
+        ''' Returns the length of the Encapsulated Array.
+        ''' </summary>
+        ''' <value>Long</value>
+        ''' <returns>The Length of The Array</returns>
+        ''' <remarks></remarks>
         Public ReadOnly Overridable Property Length As Long Implements IEncapsulation.Length
             Get
                 Return _arr.Length - 1
             End Get
         End Property
-
+        ''' <summary>
+        ''' Returns the Data type of the Pure Encapsulation.
+        ''' </summary>
+        ''' <value>Type</value>
+        ''' <returns>The data type of the pure encapsulation</returns>
+        ''' <remarks></remarks>
         Public ReadOnly Overridable Property dataType As Type Implements IEncapsulation.dataType
             Get
-                Return GetType(Byte)
+                Return GetType(Byte())
             End Get
         End Property
-
+        ''' <summary>
+        ''' Returns the data of the object.
+        ''' </summary>
+        ''' <value>Object</value>
+        ''' <returns>Pure Encapsulated Object Data</returns>
+        ''' <remarks></remarks>
         Public Overridable Property data As Object Implements IEncapsulation.data
             Get
                 Return removeDataLength(_arr)
@@ -56,7 +85,13 @@ Namespace CALMNetLib
                 _arr = addDataLength(_arr)
             End Set
         End Property
-
+        ''' <summary>
+        ''' Returns the data of the object at a specified index.
+        ''' </summary>
+        ''' <param name="index">The Index as a Long Value</param>
+        ''' <value>Object</value>
+        ''' <returns>Pure Encapsulated Object data at the specified index</returns>
+        ''' <remarks></remarks>
         Public Overridable Property data(index As Long) As Object Implements IEncapsulation.data
             Get
                 Return _arr(index + 1)
@@ -143,7 +178,12 @@ Namespace CALMNetLib
             Dim id As Long = Utilities.BytesToInt64(idarr)
             Return id
         End Function
-
+        ''' <summary>
+        ''' Splits the Encapsulated Object into an array of an array of bytes.
+        ''' </summary>
+        ''' <param name="size">The size of each split array</param>
+        ''' <returns>The Array of Array of Bytes of the Encapsulated Object</returns>
+        ''' <remarks></remarks>
         Public Overridable Function splitParts(size As Long) As Byte()() Implements IEncapsulation.splitParts
             If (size - 17) > _arr.Length Then Throw New NetLibException( New ArgumentOutOfRangeException("The size is larger than the length of the data."))
             Dim cntp As Long = _arr.Length \ size
@@ -168,7 +208,11 @@ Namespace CALMNetLib
             Next
             Return toret
         End Function
-
+        ''' <summary>
+        ''' Combines the split parts into the Encapsulated Object.
+        ''' </summary>
+        ''' <param name="parts">The Array of Array of Bytes of the Encapsulated Object</param>
+        ''' <remarks></remarks>
         Public Overridable Sub combineParts(parts As Byte()()) Implements IEncapsulation.combineParts
             Dim pnumapind As New List(Of Tuple(Of Long, Byte()))
             Dim lengthd As Integer = 4

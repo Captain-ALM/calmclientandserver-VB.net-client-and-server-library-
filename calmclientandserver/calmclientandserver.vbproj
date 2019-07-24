@@ -69,6 +69,12 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CALMNetMarshall\IPacket.vb" />
+    <Compile Include="CALMNetMarshall\Message.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalBase.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalTCP.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalUDP.vb" />
     <Compile Include="client.vb" />
     <Compile Include="clientobj.vb" />
     <Compile Include="encapsulation.vb" />
@@ -125,9 +131,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CALMNetMarshall\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
