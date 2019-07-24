@@ -5,13 +5,11 @@ Imports System.Threading
 Namespace CALMNetMarshal
     ''' <summary>
     ''' This class provides a TCP Socket Marshal.
-    ''' The buffer size is 16MB.
     ''' </summary>
     ''' <remarks></remarks>
     Public Class NetMarshalTCP
         Inherits NetMarshalBase
 
-        Protected Const buffersize As Integer = 16777216 '65536
         Protected _clcol As New List(Of NetMarshalTCPClient)
         Protected _slockcolman As New Object()
         Protected _delay As Boolean
@@ -36,10 +34,12 @@ Namespace CALMNetMarshal
         ''' <param name="ptb">The Port to bind to</param>
         ''' <param name="cbl">The connection backlog</param>
         ''' <param name="del">Whether nagle's algorithm is enabled</param>
+        ''' <param name="bufsiz">The buffer size for the sockets</param>
         ''' <remarks></remarks>
-        Public Sub New(iptb As IPAddress, ptb As Integer, Optional cbl As Integer = 1, Optional del As Boolean = False)
-            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = buffersize, .receiveBufferSize = buffersize, .noDelay = Not del, .connectionBacklog = cbl})
+        Public Sub New(iptb As IPAddress, ptb As Integer, Optional cbl As Integer = 1, Optional del As Boolean = False, Optional bufsiz As Integer = 16777216)
+            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .connectionBacklog = cbl})
             _delay = del
+            _buffer = bufsiz
         End Sub
         ''' <summary>
         ''' Constructs a new instance of NetMarshalTCP.
@@ -55,8 +55,10 @@ Namespace CALMNetMarshal
             confs.setLocalPort(ptb)
             confs.setRemoteIPAddress("")
             confs.setRemotePort(0)
+            confs.sendBufferSize = confs.receiveBufferSize
             confs.DuplicateConfigTo(_cl)
             _delay = Not conf.noDelay
+            _buffer = confs.receiveBufferSize
         End Sub
         ''' <summary>
         ''' Starts the Marshal and Opens the Connection.
@@ -64,7 +66,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Sub start()
             If _cl Is Nothing Then Return
-            _cl.open()
+            If Not _cl.listening Then _cl.open()
             MyBase.start()
         End Sub
         ''' <summary>
@@ -155,7 +157,7 @@ Namespace CALMNetMarshal
             Dim toret As Boolean = False
             If Not Me.ready(lip, lport) Then
                 Try
-                    Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = buffersize, .sendBufferSize = buffersize, .noDelay = Not _delay}
+                    Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = _buffer, .sendBufferSize = _buffer, .noDelay = Not _delay}
                     Dim ct As New NetMarshalTCPClient(cs)
                     AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                     AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
@@ -291,6 +293,31 @@ Namespace CALMNetMarshal
                 Next
                 Return toret
             End Get
+        End Property
+        ''' <summary>
+        ''' Sets the buffer size of the net marshal.
+        ''' </summary>
+        ''' <value>Integer</value>
+        ''' <returns>The buffer size of the net marshal</returns>
+        ''' <remarks></remarks>
+        Public Overrides Property bufferSize As Integer
+            Get
+                Return MyBase.bufferSize
+            End Get
+            Set(value As Integer)
+                MyBase.bufferSize = value
+                For i As Integer = _clcol.Count - 1 To 0 Step -1
+                    Try
+                        Dim ct As NetMarshalTCPClient = Nothing
+                        SyncLock _slockcolman
+                            ct = _clcol(i)
+                        End SyncLock
+                        ct.bufferSize = value
+                    Catch ex As Exception When (TypeOf ex Is ArgumentOutOfRangeException Or TypeOf ex Is IndexOutOfRangeException)
+                        raiseExceptionRaised(ex)
+                    End Try
+                Next
+            End Set
         End Property
 
         Protected Overrides Sub t_exec()

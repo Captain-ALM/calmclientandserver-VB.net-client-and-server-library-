@@ -11,6 +11,8 @@ Namespace CALMNetMarshal
         Protected _t As Thread = New Thread(AddressOf t_exec)
         Protected _bout As Integer = 0
         Protected _beated As Boolean = False
+        Protected _awaitbeat As Boolean = False
+        Protected _buffer As Integer = 0
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -102,6 +104,20 @@ Namespace CALMNetMarshal
         ''' <returns>Whether the message sending succeeded</returns>
         ''' <remarks></remarks>
         Public MustOverride Function sendMessage(msg As IPacket) As Boolean
+        ''' <summary>
+        ''' Sets the buffer size of the net marshal.
+        ''' </summary>
+        ''' <value>Integer</value>
+        ''' <returns>The buffer size of the net marshal</returns>
+        ''' <remarks></remarks>
+        Public Overridable Property bufferSize As Integer
+            Get
+                Return _buffer
+            End Get
+            Set(value As Integer)
+                _buffer = value
+            End Set
+        End Property
 
         Protected MustOverride Sub t_exec()
 
@@ -110,13 +126,14 @@ Namespace CALMNetMarshal
             Dim toret As Boolean = False
             SyncLock _slockthrob
                 If (Not _cl Is Nothing) And (_bout > 0) Then
-                    _beated = False
+                    _awaitbeat = True
                     Dim b As New Beat
                     'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
                     toret = Me.sendMessage(b)
                     b = Nothing
                     If toret Then
                         Thread.Sleep(_bout)
+                        _awaitbeat = False
                         toret = _beated
                         If _beated Then _beated = False Else raiseBeatTimedOut()
                     Else
@@ -130,7 +147,15 @@ Namespace CALMNetMarshal
         End Function
         Protected Overridable Sub throbbed()
             SyncLock _slockthrob
-                _beated = True
+                If _awaitbeat Then
+                    _beated = True
+                    _awaitbeat = False
+                Else
+                    Dim b As New Beat
+                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
+                    Me.sendMessage(b)
+                    b = Nothing
+                End If
             End SyncLock
         End Sub
 

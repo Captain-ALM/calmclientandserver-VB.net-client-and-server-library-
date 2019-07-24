@@ -82,6 +82,22 @@ Namespace CALMNetMarshal
                 _cl = Nothing
             End If
         End Sub
+        ''' <summary>
+        ''' Sets the buffer size of the net marshal.
+        ''' </summary>
+        ''' <value>Integer</value>
+        ''' <returns>The buffer size of the net marshal</returns>
+        ''' <remarks></remarks>
+        Public Overrides Property bufferSize As Integer
+            Get
+                Return MyBase.bufferSize
+            End Get
+            Set(value As Integer)
+                MyBase.bufferSize = value
+                CType(_cl, INetConfig).receiveBufferSize = value
+                CType(_cl, INetConfig).sendBufferSize = value
+            End Set
+        End Property
     End Class
 
 End Namespace

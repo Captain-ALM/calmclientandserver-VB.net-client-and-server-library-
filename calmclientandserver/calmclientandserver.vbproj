@@ -74,6 +74,7 @@
     <Compile Include="CALMNetMarshall\NetMarshalBase.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalTCP.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
+    <Compile Include="CALMNetMarshall\NetMarshalUDP.vb" />
     <Compile Include="client.vb" />
     <Compile Include="clientobj.vb" />
     <Compile Include="encapsulation.vb" />
