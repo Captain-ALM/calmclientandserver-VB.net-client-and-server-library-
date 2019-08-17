@@ -321,9 +321,9 @@ Namespace CALMNetMarshal
         End Property
 
         Protected Overrides Sub t_exec()
-            While _cl IsNot Nothing AndAlso _cl.connected
+            While _cl IsNot Nothing AndAlso _cl.listening
                 Try
-                    While _cl IsNot Nothing AndAlso _cl.connected
+                    While _cl IsNot Nothing AndAlso _cl.listening
                         If _cl.clientWaiting Then
                             Dim [as] As INetSocket = _cl.acceptClient()
                             Dim ct As New NetMarshalTCPClient([as])

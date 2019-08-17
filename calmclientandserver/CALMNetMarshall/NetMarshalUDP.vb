@@ -43,7 +43,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Function sendMessage(msg As IPacket) As Boolean
             Dim toret As Boolean = False
-            If (Not _cl Is Nothing) AndAlso _cl.connected Then
+            If (Not _cl Is Nothing) AndAlso _cl.listening Then
                 toret = CType(_cl, INetSocketConnectionless).sendBytesTo(msg.getData, msg.receiverIP, msg.receiverPort)
             End If
             Return toret
@@ -54,7 +54,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Sub start()
             If Not _cl Is Nothing Then
-                If Not _cl.connected Then _cl.open()
+                If Not _cl.listening Then _cl.open()
                 MyBase.start()
             End If
         End Sub
