@@ -6,51 +6,7 @@ calmclientandserver
 </name>
 </assembly>
 <members>
-<member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
-	<summary>
- Constructs a new instance of NetMarshalUDP.
- </summary>
-	<param name="iptb">The IP Address to bind to</param>
-	<param name="ptb">The Port to bind to</param>
-	<param name="bufsiz">The buffer size for the sockets</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.start">
-	<summary>
- Starts the Marshal and Opens the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.close">
-	<summary>
- Stops the Marshal and Closes the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.bufferSize">
-	<summary>
- Sets the buffer size of the net marshal.
- </summary>
-	<value>Integer</value>
-	<returns>The buffer size of the net marshal</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalUDP">
-	<summary>
- This class provides a UDP Socket Marshal.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.packet_frame">
+<member name="T:captainalm.calmclientandserver.packet_frame">
 	<summary>
  Packet Frame {Internal Access Only}
  </summary>
@@ -1780,6 +1736,50 @@ calmclientandserver
 </member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCP">
 	<summary>
  This class provides a TCP Socket Marshal.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
+	<summary>
+ Constructs a new instance of NetMarshalUDP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="bufsiz">The buffer size for the sockets</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.bufferSize">
+	<summary>
+ Sets the buffer size of the net marshal.
+ </summary>
+	<value>Integer</value>
+	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalUDP">
+	<summary>
+ This class provides a UDP Socket Marshal.
  </summary>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor">

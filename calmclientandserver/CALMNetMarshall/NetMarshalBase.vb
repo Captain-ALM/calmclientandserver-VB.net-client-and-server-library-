@@ -170,7 +170,7 @@ Namespace CALMNetMarshal
         Protected Sub raiseBeatTimedOut()
             RaiseEvent beatTimedOut()
         End Sub
-
+        <Serializable>
         Protected Structure Beat
             Implements IPacket
 
