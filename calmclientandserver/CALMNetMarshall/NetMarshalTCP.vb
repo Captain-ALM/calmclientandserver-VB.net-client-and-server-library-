@@ -100,7 +100,7 @@ Namespace CALMNetMarshal
                         raiseExceptionRaised(ex)
                     End Try
                 Next
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
             SyncLock _slockcolman
                 _clcol.Clear()
@@ -358,12 +358,12 @@ Namespace CALMNetMarshal
                                 raiseExceptionRaised(ex)
                             End Try
                         Next
-                        Thread.Sleep(250)
+                        Thread.Sleep(125)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
         End Sub
 

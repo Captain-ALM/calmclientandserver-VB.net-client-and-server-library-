@@ -107,12 +107,12 @@ Namespace CALMNetMarshal
                                 End If
                             End If
                         End If
-                        Thread.Sleep(250)
+                        Thread.Sleep(125)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
         End Sub
     End Class

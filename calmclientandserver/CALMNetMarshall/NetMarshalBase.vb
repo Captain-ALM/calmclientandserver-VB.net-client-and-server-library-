@@ -156,8 +156,8 @@ Namespace CALMNetMarshal
                     If toret Then
                         Dim blft As Integer = _bout
                         While blft > 0
-                            Thread.Sleep(10)
-                            blft -= 10
+                            Thread.Sleep(125)
+                            blft -= 125
                         End While
                         _awaitbeat = False
                         toret = _beated
