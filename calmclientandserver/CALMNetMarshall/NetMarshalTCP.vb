@@ -86,8 +86,8 @@ Namespace CALMNetMarshal
                         SyncLock _slockcolman
                             ct = _clcol(i)
                         End SyncLock
-                        Dim rip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                        Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                        Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                        Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                         RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                         RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
                         ct.close()
@@ -100,7 +100,7 @@ Namespace CALMNetMarshal
                         raiseExceptionRaised(ex)
                     End Try
                 Next
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
             SyncLock _slockcolman
                 _clcol.Clear()
@@ -132,8 +132,8 @@ Namespace CALMNetMarshal
                     SyncLock _slockcolman
                         ct = _clcol(i)
                     End SyncLock
-                    Dim rip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                    Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                    Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                    Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                     If rip = msg.receiverIP And rp = msg.receiverPort Then
                         toret = ct.sendMessage(msg)
                         ct = Nothing
@@ -166,7 +166,7 @@ Namespace CALMNetMarshal
                     SyncLock _slockcolman
                         _clcol.Add(ct)
                     End SyncLock
-                    raiseClientConnected(CType(ct.internalSocket, INetConfig).remoteIPAddress, CType(ct.internalSocket, INetConfig).remotePort)
+                    raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                     toret = True
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
@@ -189,8 +189,8 @@ Namespace CALMNetMarshal
                     SyncLock _slockcolman
                         ct = _clcol(i)
                     End SyncLock
-                    Dim reip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                    Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                    Dim reip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                    Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                     If rip = reip And rport = rp Then
                         RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                         RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
@@ -251,8 +251,8 @@ Namespace CALMNetMarshal
                         SyncLock _slockcolman
                             ct = _clcol(i)
                         End SyncLock
-                        Dim reip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                        Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                        Dim reip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                        Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                         If rip = reip And rport = rp Then
                             toret = ct.ready
                             Exit For
@@ -281,8 +281,8 @@ Namespace CALMNetMarshal
                         SyncLock _slockcolman
                             ct = _clcol(i)
                         End SyncLock
-                        Dim reip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                        Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                        Dim reip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                        Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                         If rip = reip And rport = rp Then
                             toret = ct
                             Exit For
@@ -321,9 +321,9 @@ Namespace CALMNetMarshal
         End Property
 
         Protected Overrides Sub t_exec()
-            While _cl IsNot Nothing AndAlso _cl.connected
+            While _cl IsNot Nothing AndAlso _cl.listening
                 Try
-                    While _cl IsNot Nothing AndAlso _cl.connected
+                    While _cl IsNot Nothing AndAlso _cl.listening
                         If _cl.clientWaiting Then
                             Dim [as] As INetSocket = _cl.acceptClient()
                             Dim ct As New NetMarshalTCPClient([as])
@@ -334,7 +334,7 @@ Namespace CALMNetMarshal
                             SyncLock _slockcolman
                                 _clcol.Add(ct)
                             End SyncLock
-                            raiseClientConnected(CType(ct.internalSocket, INetConfig).remoteIPAddress, CType(ct.internalSocket, INetConfig).remotePort)
+                            raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                         End If
                         For i As Integer = _clcol.Count - 1 To 0 Step -1
                             Try
@@ -342,8 +342,8 @@ Namespace CALMNetMarshal
                                 SyncLock _slockcolman
                                     ct = _clcol(i)
                                 End SyncLock
-                                Dim rip As String = CType(ct.internalSocket, INetConfig).remoteIPAddress
-                                Dim rp As Integer = CType(ct.internalSocket, INetConfig).remotePort
+                                Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                                Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                                 If Not ct.ready Then
                                     RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                                     RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
@@ -358,12 +358,12 @@ Namespace CALMNetMarshal
                                 raiseExceptionRaised(ex)
                             End Try
                         Next
-                        Thread.Sleep(250)
+                        Thread.Sleep(125)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
         End Sub
 

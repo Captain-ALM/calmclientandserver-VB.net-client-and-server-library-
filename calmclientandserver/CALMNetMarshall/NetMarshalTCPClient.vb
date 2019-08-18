@@ -11,6 +11,7 @@ Namespace CALMNetMarshal
 
         Protected Friend Sub New(asock As INetSocket)
             MyBase.New(asock)
+            updateDupConf()
         End Sub
         ''' <summary>
         ''' States whether the marshal is ready.
@@ -32,7 +33,6 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Function sendMessage(msg As IPacket) As Boolean
             Dim toret As Boolean = False
-            If Not (TypeOf msg Is Beat) Then throb()
             If (Not _cl Is Nothing) AndAlso _cl.connected Then
                 toret = _cl.sendBytes(msg.getData)
             End If
@@ -48,17 +48,19 @@ Namespace CALMNetMarshal
                             Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
                             If Not tbeat.valid Then
                                 Dim tmsg As IPacket = New Serializer().deSerializeObject(Of IPacket)(bts)
-                                raiseMessageReceived(tmsg)
+                                If Not (TypeOf tmsg Is Beat) Then
+                                    raiseMessageReceived(tmsg)
+                                End If
                             Else
                                 throbbed()
                             End If
                         End If
-                        Thread.Sleep(250)
+                        Thread.Sleep(125)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
         End Sub
         ''' <summary>
@@ -93,9 +95,11 @@ Namespace CALMNetMarshal
                 Return MyBase.bufferSize
             End Get
             Set(value As Integer)
-                MyBase.bufferSize = value
-                CType(_cl, INetConfig).receiveBufferSize = value
-                CType(_cl, INetConfig).sendBufferSize = value
+                If Not _cl Is Nothing Then
+                    MyBase.bufferSize = value
+                    CType(_cl, INetConfig).receiveBufferSize = value
+                    CType(_cl, INetConfig).sendBufferSize = value
+                End If
             End Set
         End Property
     End Class

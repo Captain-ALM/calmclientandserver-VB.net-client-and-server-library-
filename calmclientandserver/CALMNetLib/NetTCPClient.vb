@@ -253,11 +253,29 @@ Namespace CALMNetLib
         Public Overridable Property sendBufferSize As Integer Implements INetConfig.sendBufferSize
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.SendBufferSize
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.SendBufferSize
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.SendBufferSize = value
+                Try
+                    _sock.SendBufferSize = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>
@@ -269,11 +287,29 @@ Namespace CALMNetLib
         Public Overridable Property receiveBufferSize As Integer Implements INetConfig.receiveBufferSize
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ReceiveBufferSize
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.ReceiveBufferSize
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ReceiveBufferSize = value
+                Try
+                    _sock.ReceiveBufferSize = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>
@@ -285,11 +321,29 @@ Namespace CALMNetLib
         Public Overridable Property noDelay As Boolean Implements INetConfig.noDelay
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.NoDelay
+                Dim toret As Boolean = False
+                Try
+                    toret = _sock.NoDelay
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Boolean)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.NoDelay = value
+                Try
+                    _sock.NoDelay = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>
@@ -301,11 +355,29 @@ Namespace CALMNetLib
         Public Overridable Property receiveTimeout As Integer Implements INetConfig.receiveTimeout
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ReceiveTimeout
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.ReceiveTimeout
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ReceiveTimeout = value
+                Try
+                    _sock.ReceiveTimeout = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>
@@ -317,11 +389,29 @@ Namespace CALMNetLib
         Public Overridable Property sendTimeout As Integer Implements INetConfig.sendTimeout
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.SendTimeout
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.SendTimeout
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.SendTimeout = value
+                Try
+                    _sock.SendTimeout = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>
@@ -357,8 +447,24 @@ Namespace CALMNetLib
         Public Overridable ReadOnly Property remoteIPAddress As String Implements INetConfig.remoteIPAddress
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
-                Return CType(_sock.RemoteEndPoint, IPEndPoint).Address.ToString()
+                Dim toret As String = ""
+                Try
+                    If _sock.RemoteEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                    toret = CType(_sock.RemoteEndPoint, IPEndPoint).Address.ToString()
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As NullReferenceException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As ArgumentException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidCastException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
         End Property
         ''' <summary>
@@ -370,8 +476,24 @@ Namespace CALMNetLib
         Public Overridable ReadOnly Property remotePort As Integer Implements INetConfig.remotePort
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
-                Return CType(_sock.RemoteEndPoint, IPEndPoint).Port
+                Dim toret As Integer = 0
+                Try
+                    If _sock.RemoteEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                    toret = CType(_sock.RemoteEndPoint, IPEndPoint).Port
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As NullReferenceException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As ArgumentException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidCastException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
         End Property
         ''' <summary>
@@ -383,8 +505,24 @@ Namespace CALMNetLib
         Public Overridable ReadOnly Property localIPAddress As String Implements INetConfig.localIPAddress
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
-                Return CType(_sock.LocalEndPoint, IPEndPoint).Address.ToString()
+                Dim toret As String = ""
+                Try
+                    If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                    toret = CType(_sock.LocalEndPoint, IPEndPoint).Address.ToString()
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As NullReferenceException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As ArgumentException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidCastException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
         End Property
         ''' <summary>
@@ -396,8 +534,24 @@ Namespace CALMNetLib
         Public Overridable ReadOnly Property localPort As Integer Implements INetConfig.localPort
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
-                Return CType(_sock.LocalEndPoint, IPEndPoint).Port
+                Dim toret As Integer = 0
+                Try
+                    If _sock.LocalEndPoint Is Nothing Then Throw New NetLibException(New InvalidOperationException("socket not open"))
+                    toret = CType(_sock.LocalEndPoint, IPEndPoint).Port
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As NullReferenceException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As ArgumentException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidCastException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
         End Property
         ''' <summary>
@@ -409,11 +563,29 @@ Namespace CALMNetLib
         Public Overridable Property exclusiveAddressUse As Boolean Implements INetConfig.exclusiveAddressUse
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ExclusiveAddressUse
+                Dim toret As Boolean = False
+                Try
+                    toret = _sock.ExclusiveAddressUse
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Boolean)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ExclusiveAddressUse = value
+                Try
+                    _sock.ExclusiveAddressUse = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
         End Property
         ''' <summary>

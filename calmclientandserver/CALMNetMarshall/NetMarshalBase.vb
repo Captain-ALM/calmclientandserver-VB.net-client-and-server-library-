@@ -13,6 +13,7 @@ Namespace CALMNetMarshal
         Protected _beated As Boolean = False
         Protected _awaitbeat As Boolean = False
         Protected _buffer As Integer = 0
+        Protected _configdup As NetSocketConfig
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -43,6 +44,7 @@ Namespace CALMNetMarshal
         ''' </summary>
         ''' <remarks></remarks>
         Public Overridable Sub start()
+            updateDupConf()
             If _t IsNot Nothing Then
                 If _t.ThreadState = ThreadState.Unstarted Then
                     _t.IsBackground = True
@@ -89,12 +91,24 @@ Namespace CALMNetMarshal
         ''' <summary>
         ''' Gets the internal socket.
         ''' </summary>
-        ''' <value>Boolean</value>
+        ''' <value>INetSocket</value>
         ''' <returns>The internal socket</returns>
         ''' <remarks></remarks>
         Public Overridable ReadOnly Property internalSocket As INetSocket
             Get
                 Return _cl
+            End Get
+        End Property
+        ''' <summary>
+        ''' Gets the internal socket's duplicated static configuration.
+        ''' </summary>
+        ''' <value>NetSocketConfig</value>
+        ''' <returns>The duplicated static configuration</returns>
+        ''' <remarks></remarks>
+        Public Overridable ReadOnly Property duplicatedInternalSocketConfig As NetSocketConfig
+            Get
+                updateDupConf()
+                Return _configdup
             End Get
         End Property
         ''' <summary>
@@ -119,6 +133,14 @@ Namespace CALMNetMarshal
             End Set
         End Property
 
+        Protected Overridable Sub updateDupConf()
+            If Not _cl Is Nothing Then
+                If TypeOf _cl Is INetConfig Then
+                    _configdup = New NetSocketConfig(CType(_cl, INetConfig))
+                End If
+            End If
+        End Sub
+
         Protected MustOverride Sub t_exec()
 
         Protected _slockthrob As New Object()
@@ -127,12 +149,16 @@ Namespace CALMNetMarshal
             SyncLock _slockthrob
                 If (Not _cl Is Nothing) And (_bout > 0) Then
                     _awaitbeat = True
-                    Dim b As New Beat
+                    Dim b As New Beat(True)
                     'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
                     toret = Me.sendMessage(b)
                     b = Nothing
                     If toret Then
-                        Thread.Sleep(_bout)
+                        Dim blft As Integer = _bout
+                        While blft > 0
+                            Thread.Sleep(125)
+                            blft -= 125
+                        End While
                         _awaitbeat = False
                         toret = _beated
                         If _beated Then _beated = False Else raiseBeatTimedOut()
@@ -151,7 +177,7 @@ Namespace CALMNetMarshal
                     _beated = True
                     _awaitbeat = False
                 Else
-                    Dim b As New Beat
+                    Dim b As New Beat(True)
                     'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
                     Me.sendMessage(b)
                     b = Nothing
@@ -170,11 +196,15 @@ Namespace CALMNetMarshal
         Protected Sub raiseBeatTimedOut()
             RaiseEvent beatTimedOut()
         End Sub
-
+        <Serializable>
         Protected Structure Beat
             Implements IPacket
 
             Public valid As Boolean
+
+            Public Sub New(val As Boolean)
+                valid = val
+            End Sub
 
             Public Property data As Object Implements IPacket.data
                 Get

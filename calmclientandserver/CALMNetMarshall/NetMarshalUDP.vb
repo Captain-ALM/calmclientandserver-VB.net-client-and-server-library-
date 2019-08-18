@@ -43,7 +43,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Function sendMessage(msg As IPacket) As Boolean
             Dim toret As Boolean = False
-            If (Not _cl Is Nothing) AndAlso _cl.connected Then
+            If (Not _cl Is Nothing) AndAlso _cl.listening Then
                 toret = CType(_cl, INetSocketConnectionless).sendBytesTo(msg.getData, msg.receiverIP, msg.receiverPort)
             End If
             Return toret
@@ -54,7 +54,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public Overrides Sub start()
             If Not _cl Is Nothing Then
-                If Not _cl.connected Then _cl.open()
+                If Not _cl.listening Then _cl.open()
                 MyBase.start()
             End If
         End Sub
@@ -80,9 +80,11 @@ Namespace CALMNetMarshal
                 Return MyBase.bufferSize
             End Get
             Set(value As Integer)
-                MyBase.bufferSize = value
-                CType(_cl, INetConfig).receiveBufferSize = value
-                CType(_cl, INetConfig).sendBufferSize = value
+                If Not _cl Is Nothing Then
+                    MyBase.bufferSize = value
+                    CType(_cl, INetConfig).receiveBufferSize = value
+                    CType(_cl, INetConfig).sendBufferSize = value
+                End If
             End Set
         End Property
         Protected Overrides Sub t_exec()
@@ -100,15 +102,17 @@ Namespace CALMNetMarshal
                             Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
                             If Not tbeat.valid Then
                                 Dim tmsg As IPacket = New Serializer().deSerializeObject(Of IPacket)(bts)
-                                raiseMessageReceived(tmsg)
+                                If Not (TypeOf tmsg Is Beat) Then
+                                    raiseMessageReceived(tmsg)
+                                End If
                             End If
                         End If
-                        Thread.Sleep(250)
+                        Thread.Sleep(125)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(250)
+                Thread.Sleep(125)
             End While
         End Sub
     End Class
