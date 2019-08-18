@@ -344,32 +344,68 @@ Namespace CALMNetLib
         ''' <value>Integer</value>
         ''' <returns>The size of the send buffer</returns>
         ''' <remarks></remarks>
-		Public Overridable Property sendBufferSize As Integer Implements INetConfig.sendBufferSize
+        Public Overridable Property sendBufferSize As Integer Implements INetConfig.sendBufferSize
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.SendBufferSize
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.SendBufferSize
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.SendBufferSize = value
+                Try
+                    _sock.SendBufferSize = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
-		End Property
+        End Property
         ''' <summary>
         ''' Gets or Sets the size of the receive Buffer.
         ''' </summary>
         ''' <value>Integer</value>
         ''' <returns>The size of the receive buffer</returns>
         ''' <remarks></remarks>
-		Public Overridable Property receiveBufferSize As Integer Implements INetConfig.receiveBufferSize
+        Public Overridable Property receiveBufferSize As Integer Implements INetConfig.receiveBufferSize
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ReceiveBufferSize
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.ReceiveBufferSize
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ReceiveBufferSize = value
+                Try
+                    _sock.ReceiveBufferSize = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
-		End Property
+        End Property
         ''' <summary>
         ''' Gets or Sets the Disablement of Nagle's Algorithm.
         ''' </summary>
@@ -390,32 +426,68 @@ Namespace CALMNetLib
         ''' <value>Integer</value>
         ''' <returns>The receive timeout</returns>
         ''' <remarks></remarks>
-		Public Overridable Property receiveTimeout As Integer Implements INetConfig.receiveTimeout
+        Public Overridable Property receiveTimeout As Integer Implements INetConfig.receiveTimeout
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ReceiveTimeout
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.ReceiveTimeout
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ReceiveTimeout = value
+                Try
+                    _sock.ReceiveTimeout = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
-		End Property
+        End Property
         ''' <summary>
         ''' Gets or Sets the send Timeout.
         ''' </summary>
         ''' <value>Integer</value>
         ''' <returns>The send timeout</returns>
         ''' <remarks></remarks>
-		Public Overridable Property sendTimeout As Integer Implements INetConfig.sendTimeout
+        Public Overridable Property sendTimeout As Integer Implements INetConfig.sendTimeout
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.SendTimeout
+                Dim toret As Integer = 0
+                Try
+                    toret = _sock.SendTimeout
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Integer)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.SendTimeout = value
+                Try
+                    _sock.SendTimeout = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
-		End Property
+        End Property
         ''' <summary>
         ''' Returns the local IP Address.
         ''' </summary>
@@ -466,16 +538,34 @@ Namespace CALMNetLib
         ''' <value>Boolean</value>
         ''' <returns>Whether the address use is exclusive</returns>
         ''' <remarks></remarks>
-		Public Overridable Property exclusiveAddressUse As Boolean Implements INetConfig.exclusiveAddressUse
+        Public Overridable Property exclusiveAddressUse As Boolean Implements INetConfig.exclusiveAddressUse
             Get
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                Return _sock.ExclusiveAddressUse
+                Dim toret As Boolean = False
+                Try
+                    toret = _sock.ExclusiveAddressUse
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+                Return toret
             End Get
             Set(value As Boolean)
                 If _sock Is Nothing Then Throw New NetLibException(New NullReferenceException("socket is null"))
-                _sock.ExclusiveAddressUse = value
+                Try
+                    _sock.ExclusiveAddressUse = value
+                Catch ex As ObjectDisposedException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As SocketException
+                    Utilities.addException(New NetLibException(ex))
+                Catch ex As InvalidOperationException
+                    Utilities.addException(New NetLibException(ex))
+                End Try
             End Set
-		End Property
+        End Property
         ''' <summary>
         ''' Gets or sets the backlog of connections.
         ''' </summary>

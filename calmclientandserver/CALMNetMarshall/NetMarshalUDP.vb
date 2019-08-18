@@ -80,9 +80,11 @@ Namespace CALMNetMarshal
                 Return MyBase.bufferSize
             End Get
             Set(value As Integer)
-                MyBase.bufferSize = value
-                CType(_cl, INetConfig).receiveBufferSize = value
-                CType(_cl, INetConfig).sendBufferSize = value
+                If Not _cl Is Nothing Then
+                    MyBase.bufferSize = value
+                    CType(_cl, INetConfig).receiveBufferSize = value
+                    CType(_cl, INetConfig).sendBufferSize = value
+                End If
             End Set
         End Property
         Protected Overrides Sub t_exec()
@@ -100,7 +102,9 @@ Namespace CALMNetMarshal
                             Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
                             If Not tbeat.valid Then
                                 Dim tmsg As IPacket = New Serializer().deSerializeObject(Of IPacket)(bts)
-                                raiseMessageReceived(tmsg)
+                                If Not (TypeOf tmsg Is Beat) Then
+                                    raiseMessageReceived(tmsg)
+                                End If
                             End If
                         End If
                         Thread.Sleep(250)

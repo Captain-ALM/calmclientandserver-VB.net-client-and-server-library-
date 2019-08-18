@@ -1607,8 +1607,15 @@ calmclientandserver
 	<summary>
  Gets the internal socket.
  </summary>
-	<value>Boolean</value>
+	<value>INetSocket</value>
 	<returns>The internal socket</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.duplicatedInternalSocketConfig">
+	<summary>
+ Gets the internal socket's duplicated static configuration.
+ </summary>
+	<value>NetSocketConfig</value>
+	<returns>The duplicated static configuration</returns>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.sendMessage(captainalm.CALMNetMarshal.IPacket)">
 	<summary>
