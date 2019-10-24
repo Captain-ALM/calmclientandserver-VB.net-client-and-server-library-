@@ -51,8 +51,6 @@ Namespace CALMNetMarshal
                                 If Not (TypeOf tmsg Is Beat) Then
                                     raiseMessageReceived(tmsg)
                                 End If
-                            Else
-                                throbbed()
                             End If
                         End If
                         Thread.Sleep(125)

@@ -9,11 +9,15 @@ Namespace CALMNetMarshal
     Public MustInherit Class NetMarshalBase
         Protected _cl As INetSocket
         Protected _t As Thread = New Thread(AddressOf t_exec)
+        <Obsolete("Now Obsolete, use _bchk instead.")>
         Protected _bout As Integer = 0
+        <Obsolete("Now Obsolete, use _bchk instead.")>
         Protected _beated As Boolean = False
+        <Obsolete("Now Obsolete, use _bchk instead.")>
         Protected _awaitbeat As Boolean = False
         Protected _buffer As Integer = 0
         Protected _configdup As NetSocketConfig
+        Protected _bchk As Boolean = False
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -30,7 +34,13 @@ Namespace CALMNetMarshal
         ''' This event is raised when the beat times out.
         ''' </summary>
         ''' <remarks></remarks>
+        <Obsolete("Now Obsolete, use beatFailed instead.")>
         Public Event beatTimedOut()
+        ''' <summary>
+        ''' This event is raised when the beat fails.
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Event beatFailed()
         ''' <summary>
         ''' Public constructor to create the base class.
         ''' </summary>
@@ -80,12 +90,27 @@ Namespace CALMNetMarshal
         ''' <value>Integer</value>
         ''' <returns>The timeout of beat messages to test sockets</returns>
         ''' <remarks></remarks>
+        <Obsolete("Now Obsolete, use beatCheck instead.")>
         Public Overridable Property beatTimeout As Integer
             Get
                 Return _bout
             End Get
             Set(value As Integer)
                 _bout = value
+            End Set
+        End Property
+        ''' <summary>
+        ''' Gets or sets if the client ready status is updated via sending 'beat' messages.
+        ''' </summary>
+        ''' <value>Integer</value>
+        ''' <returns>If beat messages are used to test sockets</returns>
+        ''' <remarks></remarks>
+        Public Overridable Property beatCheck As Boolean
+            Get
+                Return _bchk
+            End Get
+            Set(value As Boolean)
+                _bchk = value
             End Set
         End Property
         ''' <summary>
@@ -147,23 +172,21 @@ Namespace CALMNetMarshal
         Protected Overridable Function throb() As Boolean
             Dim toret As Boolean = False
             SyncLock _slockthrob
-                If (Not _cl Is Nothing) And (_bout > 0) Then
-                    _awaitbeat = True
+                If (Not _cl Is Nothing) And (_bchk) Then
                     Dim b As New Beat(True)
-                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
+                    '*WARNING*: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
                     toret = Me.sendMessage(b)
                     b = Nothing
                     If toret Then
-                        Dim blft As Integer = _bout
-                        While blft > 0
-                            Thread.Sleep(125)
-                            blft -= 125
-                        End While
-                        _awaitbeat = False
-                        toret = _beated
-                        If _beated Then _beated = False Else raiseBeatTimedOut()
+                        If Me.ready Then '*NOTE*: - Make sure the ready property is properly defined.
+                            toret = True
+                        Else
+                            raiseBeatFailed()
+                            toret = False
+                        End If
                     Else
-                        raiseBeatTimedOut()
+                        raiseBeatFailed()
+                        toret = False
                     End If
                 Else
                     toret = True
@@ -171,18 +194,8 @@ Namespace CALMNetMarshal
             End SyncLock
             Return toret
         End Function
+        <Obsolete("Now Obsolete")>
         Protected Overridable Sub throbbed()
-            SyncLock _slockthrob
-                If _awaitbeat Then
-                    _beated = True
-                    _awaitbeat = False
-                Else
-                    Dim b As New Beat(True)
-                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
-                    Me.sendMessage(b)
-                    b = Nothing
-                End If
-            End SyncLock
         End Sub
 
         Protected Sub raiseExceptionRaised(ex As Exception)
@@ -193,6 +206,10 @@ Namespace CALMNetMarshal
             RaiseEvent MessageReceived(msg)
         End Sub
 
+        Protected Sub raiseBeatFailed()
+            RaiseEvent beatFailed()
+        End Sub
+        <Obsolete("Now Obsolete, use raiseBeatFailed instead.")>
         Protected Sub raiseBeatTimedOut()
             RaiseEvent beatTimedOut()
         End Sub
