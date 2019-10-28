@@ -89,6 +89,13 @@ Namespace CALMNetLib
         ''' <returns>Backlog of Connections</returns>
         ''' <remarks></remarks>
         Property connectionBacklog As Integer
+        ''' <summary>
+        ''' Gets or sets whether the socket sends and receives data using the length header.
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether the socket uses a length header</returns>
+        ''' <remarks></remarks>
+        Property hasLengthHeader As Boolean
     End Interface
 
 End Namespace

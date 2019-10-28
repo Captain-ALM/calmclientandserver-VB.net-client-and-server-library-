@@ -25,6 +25,7 @@ Namespace CALMNetLib
 		Private _rport As Integer
 		Private _lip As String
 		Private _lport As Integer
+		Private _hlh As Boolean
         ''' <summary>
         ''' Constructs a New NetSocketConfig Structure with the Specified addresses and ports.
         ''' </summary>
@@ -110,6 +111,11 @@ Namespace CALMNetLib
 				Catch ex As NetLibException
 					Utilities.addException(ex)
 				End Try
+				Try
+					_hlh = conf.hasLengthHeader
+				Catch ex As NetLibException
+					Utilities.addException(ex)
+				End Try
 			Else
 				_SendBufferSize = conf.sendBufferSize
 				_ReceiveBufferSize = conf.receiveBufferSize
@@ -122,6 +128,7 @@ Namespace CALMNetLib
 				_rport = conf.remotePort
 				_lip = conf.localIPAddress
 				_lport = conf.localPort
+				_hlh = conf.hasLengthHeader
 			End If
 		End Sub
         ''' <summary>
@@ -317,6 +324,11 @@ Namespace CALMNetLib
 				Catch ex As NetLibException
 					Utilities.addException(ex)
 				End Try
+				Try
+					conf.hasLengthHeader = _hlh
+				Catch ex As NetLibException
+					Utilities.addException(ex)
+				End Try
 			Else
 				conf.sendBufferSize = _SendBufferSize
 				conf.receiveBufferSize = _ReceiveBufferSize
@@ -325,6 +337,7 @@ Namespace CALMNetLib
 				conf.sendTimeout = _sendTimeout
 				conf.exclusiveAddressUse = _ExclusiveAddressUse
 				conf.connectionBacklog = _bl
+				conf.hasLengthHeader = _hlh
 			End If
 		End Sub
         ''' <summary>
@@ -359,6 +372,20 @@ Namespace CALMNetLib
 		Public Sub setRemotePort(remote_Port As Integer)
 			_rport = remote_Port
 		End Sub
+		''' <summary>
+        ''' Gets or sets whether the socket sends and receives data using the length header.
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether the socket uses a length header</returns>
+        ''' <remarks></remarks>
+        Public Property hasLengthHeader As Boolean Implements INetConfig.hasLengthHeader
+        	Get
+        		Return _hlh
+        	End Get
+        	Set(value As Boolean)
+        		_hlh = value
+        	End Set
+        End Property
 	End Structure
 	
 End Namespace 

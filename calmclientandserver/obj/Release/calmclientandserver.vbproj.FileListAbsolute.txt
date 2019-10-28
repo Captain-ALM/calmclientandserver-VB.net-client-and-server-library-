@@ -25,3 +25,12 @@ E:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.v
 E:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.dll
 E:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.xml
 E:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.pdb
+Y:\dev\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.dll
+Y:\dev\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.pdb
+Y:\dev\calmclientandserver\calmclientandserver\bin\Release\calmclientandserver.xml
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.vbprojResolveAssemblyReference.cache
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\captainalm.Resources.resources
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.vbproj.GenerateResource.Cache
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.dll
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.xml
+Y:\dev\calmclientandserver\calmclientandserver\obj\Release\calmclientandserver.pdb
