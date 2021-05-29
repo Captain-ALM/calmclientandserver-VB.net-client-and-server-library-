@@ -75,10 +75,6 @@
     <Compile Include="CALMNetMarshall\NetMarshalTCP.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalUDP.vb" />
-    <Compile Include="client.vb" />
-    <Compile Include="clientobj.vb" />
-    <Compile Include="encapsulation.vb" />
-    <Compile Include="intutils.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -94,9 +90,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="packet.vb" />
-    <Compile Include="packet_frame.vb" />
-    <Compile Include="server.vb" />
     <Compile Include="CALMNetLib\ByteInt16ArrayEncapsulation.vb" />
     <Compile Include="CALMNetLib\ByteInt32ArrayEncapsulation.vb" />
     <Compile Include="CALMNetLib\ByteInt8ArrayEncapsulation.vb" />

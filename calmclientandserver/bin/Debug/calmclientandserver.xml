@@ -6,633 +6,7 @@ calmclientandserver
 </name>
 </assembly>
 <members>
-<member name="T:captainalm.calmclientandserver.packet_frame">
-	<summary>
- Packet Frame {Internal Access Only}
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.packet_frame_part">
-	<summary>
- Part of a Packet Frame {Internal Access Only}
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.Int16ToBytes(System.Int16)">
-	<summary>
- Converts a 16 Bit Integer to a byte array.
- </summary>
-	<param name="intIn">The 16 Bit Integer</param>
-	<returns>A Byte Array</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt16(System.Byte[])">
-	<summary>
- Converts a byte array to a 16 Bit Integer.
- </summary>
-	<param name="bytesIn">A Byte Array</param>
-	<returns>The 16 Bit Integer it Represents</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.Int32ToBytes(System.Int32)">
-	<summary>
- Converts a 32 Bit Integer to a byte array.
- </summary>
-	<param name="intIn">The 32 Bit Integer</param>
-	<returns>A Byte Array</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt32(System.Byte[])">
-	<summary>
- Converts a byte array to a 32 Bit Integer.
- </summary>
-	<param name="bytesIn">A Byte Array</param>
-	<returns>The 32 Bit Integer it Represents</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.Int64ToBytes(System.Int64)">
-	<summary>
- Converts a 64 Bit Integer to a byte array.
- </summary>
-	<param name="intIn">The 64 Bit Integer</param>
-	<returns>A Byte Array</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt64(System.Byte[])">
-	<summary>
- Converts a byte array to a 64 Bit Integer.
- </summary>
-	<param name="bytesIn">A Byte Array</param>
-	<returns>The 64 Bit Integer it Represents</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.TCPPortOpen(System.Net.IPAddress,System.Int32)">
-	<summary>
- Checks if a TCP Port on the specified IP Address is accepting connections.
- </summary>
-	<param name="IPAddressIn">The IP Address to check</param>
-	<param name="portIn">The Port to check</param>
-	<returns>If the specified endpoint can be connected to</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.GetIPInterfaces">
-	<summary>
- Returns the IP Addresses of all the Network Interfaces on the machine.
- </summary>
-	<returns>An array of the IP Addresses of all the Network Interfaces</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.GetIPInterfacesAndNames">
-	<summary>
- Returns the IP Address and the Name of the Network Interface of all the Network Interfaces on the machine.
- </summary>
-	<returns>An array of a Two Type (Pair) Tuple containing the Name of the Network Interface and the IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.Utilities.logInternallyHandledNetLibExceptions">
-	<summary>
- Gets or sets whether internally handled NetLibExceptions are to be logged by this class.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.Utilities.getInternallyHandledNetLibExceptions">
-	<summary>
- Returns the Log array of the Internally Handled NetLibExceptions.
- </summary>
-	<value>An array of NetLibExceptions</value>
-	<returns>The Log of Internally Handled NetLibExceptions</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.clearInternallyHandledNetLibExceptions">
-	<summary>
- Clears the Internally Handled NetLibException Log.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.Utilities">
-	<summary>
- Defines a set of shared utility functions.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor">
-	<summary>
- Constructs a new instance of the Serializer Class.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor(System.Runtime.Serialization.ISurrogateSelector,System.Runtime.Serialization.StreamingContext)">
-	<summary>
- Constructs a new instance of the Serializer Class, with a Surrogate Selector and streaming context.
- </summary>
-	<param name="selector">The Surrogate Selector</param>
-	<param name="context">The Streaming Context</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)">
-	<summary>
- Constructs a new instance of the Serializer Class, with a Binary Formatter Instance.
- </summary>
-	<param name="format"></param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.serializeObject(System.Object)">
-	<summary>
- Serializes an Object to a Byte Array.
- </summary>
-	<param name="obj">The object to serialize</param>
-	<returns>A byte array</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.serializeObject``1(``0)">
-	<summary>
- Serializes an Object to a Byte Array.
- </summary>
-	<param name="obj">The object to serialize</param>
-	<returns>A byte array</returns>
-	<typeparam name="t">The Type of Object to Accept as a parameter</typeparam>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.serialize(System.Object)">
-	<summary>
- Serializes an Object to a String.
- </summary>
-	<param name="obj">The object to serialize</param>
-	<returns>A string</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.serialize``1(``0)">
-	<summary>
- Serializes an Object to a String.
- </summary>
-	<param name="obj">The object to serialize</param>
-	<returns>A string</returns>
-	<typeparam name="t">The Type of Object to Accept as a parameter</typeparam>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.deSerializeObject(System.Byte[])">
-	<summary>
- Deserializes an Object from a byte array.
- </summary>
-	<param name="bts">The Byte Array</param>
-	<returns>The Object</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.deSerializeObject``1(System.Byte[])">
-	<summary>
- Deserializes an Object from a byte array.
- </summary>
-	<param name="bts">The Byte Array</param>
-	<returns>The Object</returns>
-	<remarks></remarks>
-	<typeparam name="t">The Type of Object to Accept as a Return Value</typeparam>
-</member><member name="M:captainalm.CALMNetLib.Serializer.deSerialize(System.String)">
-	<summary>
- Deserializes an Object from a string.
- </summary>
-	<param name="str">A String</param>
-	<returns>The Object</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Serializer.deSerialize``1(System.String)">
-	<summary>
- Deserializes an Object from a string.
- </summary>
-	<param name="str">A String</param>
-	<returns>The Object</returns>
-	<remarks></remarks>
-	<typeparam name="t">The Type of Object to Accept as a Return Value</typeparam>
-</member><member name="M:captainalm.CALMNetLib.Serializer.Dispose">
-	<summary>
- Clears class instance resources.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.Serializer">
-	<summary>
- Defines the Serialization Class.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor">
-	<summary>
- Creates a new invalid packet.
- </summary>
-	<remarks>(Useful for ping packets)</remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,System.String)">
-	<summary>
- Creates a new valid packet with basic data and no encryption [string data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [String].</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,captainalm.calmclientandserver.Encapsulation)">
-	<summary>
- Creates a new valid packet with object data and no encryption [encapsulated data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [Encapsulation].</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,System.String,captainalm.calmclientandserver.EncryptionParameter)">
-	<summary>
- Creates a new valid packet with basic data and encryption [string data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [String].</param>
-	<param name="encrypt_param">The encryption parameter to use.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor(System.Int32,System.String,System.Collections.Generic.List{System.String},System.String,captainalm.calmclientandserver.Encapsulation,captainalm.calmclientandserver.EncryptionParameter)">
-	<summary>
- Creates a new valid packet with object data and encryption [encapsulated data].
- </summary>
-	<param name="refnumber">Reference Number.</param>
-	<param name="sender">The Sender Name.</param>
-	<param name="receivers">The Name(s) of the Receivers.</param>
-	<param name="header">The Header Data.</param>
-	<param name="data">The Data to Send [Encapsulation].</param>
-	<param name="encry_param">The encryption parameter to use.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.#ctor(captainalm.calmclientandserver.Packet)">
-	<summary>
- Creates a packet from another packet.
- </summary>
-	<param name="packet">The packet to duplicate.</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.IsValidPacket">
-	<summary>
- Returns if the packet is valid.
- </summary>
-	<value>Returns if the packet is valid.</value>
-	<returns>Returns if the packet is valid.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.Sender">
-	<summary>
- Returns the sender's name.
- </summary>
-	<value>Returns the sender's name.</value>
-	<returns>Returns the sender's name.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.Receivers">
-	<summary>
- Returns the names of the receivers.
- </summary>
-	<value>Returns the names of the receivers.</value>
-	<returns>Returns the names of the receivers.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.Header">
-	<summary>
- Gets the header of the packet.
- </summary>
-	<value>Gets the header of the packet.</value>
-	<returns>Gets the header of the packet.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.EncryptMethod">
-	<summary>
- Returns the encryption method.
- </summary>
-	<value>Returns the encryption method.</value>
-	<returns>Returns the encryption method.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.ReferenceNumber">
-	<summary>
- Returns the packet's reference number.
- </summary>
-	<value>Returns the packet's reference number.</value>
-	<returns>Returns the packet's reference number.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.Data">
-	<summary>
- Returns the data of the packet [string form].
- </summary>
-	<value>Returns the data of the packet [string form].</value>
-	<returns>Returns the data of the packet [string form].</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Packet.HasObject">
-	<summary>
- Returns if the packet contains an object.
- </summary>
-	<value>Returns if the packet contains an object.</value>
-	<returns>Returns if the packet contains an object.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.StringData(System.String)">
-	<summary>
- Returns the data held by the packet as a string.
- </summary>
-	<param name="password">The password (If the data is encrypted with ase or unicodease).</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.ObjectData(System.String)">
-	<summary>
- Returns the data held by the packet as an object.
- </summary>
-	<param name="password">The password (If the data is encrypted with ase or unicodease).</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Packet.ToBytes">
-	<summary>
- Returns the data in the packet as a converted byte array
- </summary>
-	<returns>byte array</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.Packet">
-	<summary>
- The packet class.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.EncryptionMethod">
-	<summary>
- Packet Encryption Method.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.EncryptionParameter.encrypt_method">
-	<summary>
- The held Encryption Method
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.EncryptionParameter.password">
-	<summary>
- The held Password
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.EncryptionParameter.#ctor(captainalm.calmclientandserver.EncryptionMethod)">
-	<summary>
- Creates a new instance of encryptionparameter with no password
- </summary>
-	<param name="em">Either none or unicode encryption methods.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.EncryptionParameter.#ctor(captainalm.calmclientandserver.EncryptionMethod,System.String)">
-	<summary>
- Creates a new instance of encryptionparameter with no password
- </summary>
-	<param name="em">Encryption Method.</param>
-	<param name="pass">The password.</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.EncryptionParameter">
-	<summary>
- Encryption Holder Structure
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.clientobj">
-	<summary>
- Internal Client Object (Used By Server for Client Communication) {Internal Access Only}
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ClientMessage">
-	<summary>
- Raised everytime a packet is received.
- </summary>
-	<param name="Data">Packet received.</param>
-	<param name="clientname">The name of sender.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ErrorOccured">
-	<summary>
- Raised when an error occurs.
- </summary>
-	<param name="ex">The exception occured.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ClientConnectSuccess">
-	<summary>
- Raised everytime a client connects successfully.
- </summary>
-	<param name="clientname">The client connected name.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ClientConnectFailed">
-	<summary>
- Raised everytime a client does not connect successfully.
- </summary>
-	<param name="clientname">The client connected name.</param>
-	<param name="reason">The reason that the connection failed.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ClientDisconnect">
-	<summary>
- Raised everytime a client disconnects.
- </summary>
-	<param name="clientname">The disconnected client name.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Server.ServerStopped">
-	<summary>
- Raised when the Server Stops.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.PacketFragmentCount">
-	<summary>
- The count of currently stored packet fragments.
- </summary>
-	<value>Number of stored packet fragments.</value>
-	<returns>Integer</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.#ctor(captainalm.calmclientandserver.ServerConstructor)">
-	<summary>
- Creates a new instance of server with the specified ServerConstructor.
- </summary>
-	<param name="constructor">The ServerConstructor to use.</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.InternalMessagePassing">
-	<summary>
- Is the client allowed to send and process internal messages, set it when starting the server in the ServerStart structure.
- If this is disabled, you will not be able to set the client name while connected.
- If this is disabled, you will not be able to get a list of clients connected to the server via the connected_clients property.
- </summary>
-	<value>Internal Message Passing</value>
-	<returns>True/False</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Clean">
-	<summary>
- Cleans this instance of server.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.IncrementClientNames">
-	<summary>
- Returns if client names are incremented if a client has already taken a name.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.SplitPacketsOnSend">
-	<summary>
- Split the Packets when they are sent
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.DisconnectOnInvalidPacket">
-	<summary>
- Disconnect if the packet could not be formatted correctly
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.BufferSize">
-	<summary>
- Get the buffer size of the client
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.MessageSendPacketDelay">
-	<summary>
- Gets or Sets the delay between packet parts sent.
- </summary>
-	<value>the delay between packet parts sent.</value>
-	<returns>the delay between packet parts sent.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.Ip">
-	<summary>
- Get the IP address of the server.
- </summary>
-	<value>IP address of the server.</value>
-	<returns>IP address of the server.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.Port">
-	<summary>
- Gets the port the server listens on.
- </summary>
-	<value>the port the server listens on.</value>
-	<returns>the port the server listens on.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.CloseDelay">
-	<summary>
- Gets or Sets the delay to recieve messages before the client is disconnected.
- </summary>
-	<value>the delay to recieve messages before the client is disconnected.</value>
-	<returns>the delay to recieve messages before the client is disconnected.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.NoDelay">
-	<summary>
- Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.ConnectedClients">
-	<summary>
- Gets the currently connected clients.
- </summary>
-	<value>the currently connected clients.</value>
-	<returns>the currently connected clients.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Server.IsListening">
-	<summary>
- Returns if the server is listening.
- </summary>
-	<value>if the server is listening.</value>
-	<returns>if the server is listening.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.GetClient(System.String)">
-	<summary>
- Gets a client by name.
- </summary>
-	<param name="name">The Client's Name to Find.</param>
-	<returns>The Client's Name or Nothing.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.RemoveClient(System.String)">
-	<summary>
- Removes a client from the server.
- </summary>
-	<param name="name">The client to remove.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Start(captainalm.calmclientandserver.ServerStart)">
-	<summary>
- Starts the server.
- </summary>
-	<param name="starter">The ServerStart Info</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Stop">
-	<summary>
- Stops listening to connections and stops the server.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.KillThreads">
-	<summary>
- Kill the operating threads if they are still alive.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Broadcast(captainalm.calmclientandserver.Packet)">
-	<summary>
- Sends a message to all of the connected clients.
- </summary>
-	<param name="message">The packet to send.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Disconnect(System.String)">
-	<summary>
- Disconnect a specific user.
- </summary>
-	<param name="clientName">The client name to disconnect.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.Send(System.String,captainalm.calmclientandserver.Packet)">
-	<summary>
- Sends a message to a client.
- </summary>
-	<param name="clientName">The client's name.</param>
-	<param name="message">The packet to send.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Server.CleanPacketFrames">
-	<summary>
- Cleans accumalated packet_frames.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.Server">
-	<summary>
- Provides a server class.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerConstructor.IpAddress">
-	<summary>
- The IP Address for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerConstructor.Port">
-	<summary>
- The port for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.ServerConstructor.#ctor(System.Net.IPAddress,System.Int32)">
-	<summary>
- Creates a new server_constructor to be used in making a new server object.
- </summary>
-	<param name="_ipaddress">The IP Address for the server to bind to.</param>
-	<param name="_port">The port for the server to bind to.</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.ServerConstructor">
-	<summary>
- Provides parameters for server construction.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.encrypt_param">
-	<summary>
- The Encryption Parameter to use in the client.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.internal_message_passing">
-	<summary>
- If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.buffer_size">
-	<summary>
- The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.no_delay">
-	<summary>
- If there is a delay before sending accumalated packets.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.allow_clients_with_the_same_name_to_connect">
-	<summary>
- Allow clients with the same name to connect and increment their names if a client with that name already exists.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ServerStart.client_limit_count">
-	<summary>
- The amount of clients the server is limited to, this can be set to 0 for any number.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.ServerStart.#ctor(captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Int32)">
-	<summary>
- Creates a new set of server start info to start the server with.
- </summary>
-	<param name="encryptparam">The Encryption Parameter to use in the client.</param>
-	<param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
-	<param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
-	<param name="_no_delay">If there is a delay before sending accumalated packets.</param>
-	<param name="acwtsntc">Allow clients with the same name to connect and increment their names if a client with that name already exists.</param>
-	<param name="clnumlmt">The amount of clients the server is limited to, this can be set to 0 for any number.</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.ServerStart">
-	<summary>
- The ServerStart structure for starting a server.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt32ArrayEncapsulation.#ctor">
+<member name="M:captainalm.CALMNetLib.ByteInt32ArrayEncapsulation.#ctor">
 	<summary>
  Constructs an Empty ByteInt32ArrayEncapsualtion.
  </summary>
@@ -703,152 +77,6 @@ calmclientandserver
  32-Bit Indexed Byte Array Encapsulation.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.#ctor(System.Net.IPAddress,System.Int32)">
-	<summary>
- Constructs a New NetTCPListener Instance bound to the specified IP Address interface and port.
- </summary>
-	<param name="ip">The IP Address to bind to</param>
-	<param name="port">The port to bind to</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.open">
-	<summary>
- Opens the socket for network connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.connected">
-	<summary>
- Returns whether the Socket is Connected.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Connected</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.listening">
-	<summary>
- Returns whether the Socket is Listening.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Listening</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.hasData">
-	<summary>
- Returns whether data is ready to be read from the network.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether there is data on the network</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.sendBytes(System.Byte[])">
-	<summary>
- Sends a byte array over the network.
- </summary>
-	<param name="bytes">The byte array to send</param>
-	<returns>Whether the send was successful</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.receiveBytes">
-	<summary>
- Receives a byte array from the network.
- </summary>
-	<returns>The Received Byte Array</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.clientWaiting">
-	<summary>
- Returns whether a client is waiting to connect.
- </summary>
-	<value>Boolean</value>
-	<returns>If a client is waiting to connect</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.acceptClient">
-	<summary>
- Accepts a client that is waiting to connect.
- </summary>
-	<returns>The Accepted Client's Socket</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPListener.close">
-	<summary>
- Close the socket stopping network connections.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.sendBufferSize">
-	<summary>
- Gets or Sets the size of the Send Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the send buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.receiveBufferSize">
-	<summary>
- Gets or Sets the size of the receive Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the receive buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.noDelay">
-	<summary>
- Gets or Sets the Disablement of Nagle's Algorithm.
- </summary>
-	<value>Boolean</value>
-	<returns>The Disablement of Nagle's Algorithm.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.receiveTimeout">
-	<summary>
- Gets or Sets the receive Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The receive timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.sendTimeout">
-	<summary>
- Gets or Sets the send Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The send timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.localIPAddress">
-	<summary>
- Returns the local IP Address.
- </summary>
-	<value>String</value>
-	<returns>The local IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.localPort">
-	<summary>
- Returns the local IP Port.
- </summary>
-	<value>String</value>
-	<returns>The local IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.remoteIPAddress">
-	<summary>
- Returns the remote IP Address.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.remotePort">
-	<summary>
- Returns the remote IP Port.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.exclusiveAddressUse">
-	<summary>
- Gets or Sets whether address use is exclusive.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the address use is exclusive</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPListener.connectionBacklog">
-	<summary>
- Gets or sets the backlog of connections.
- </summary>
-	<value>Integer</value>
-	<returns>Backlog of Connections</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.NetTCPListener">
-	<summary>
- This is a NetTCPListener socket.
- </summary>
-	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.ByteInt8ArrayEncapsulation.#ctor">
 	<summary>
  Constructs an Empty ByteInt8ArrayEncapsualtion.
@@ -913,128 +141,6 @@ calmclientandserver
  8-Bit Indexed Byte Array Encapsulation.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.disconnect">
-	<summary>
- Disassociates the current dedicated connectionless connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.receiveBytesFrom(System.String,System.Int32)">
-	<summary>
- Receives a byte array from the specified address and port on the network.
- </summary>
-	<param name="remoteIP">The remote IP</param>
-	<param name="remotePort">The remote Port</param>
-	<returns>The Received Byte Array</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.reconnect(System.String,System.Int32)">
-	<summary>
- Reassociates a dedicated connectionless connection.
- </summary>
-	<param name="remoteIP">The remote IP</param>
-	<param name="remotePort">The remote Port</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.sendBytesTo(System.Byte[],System.String,System.Int32)">
-	<summary>
- Sends a byte array over the network to the specified address and port.
- </summary>
-	<param name="bytes">The byte array to send</param>
-	<param name="remoteIP">The remote IP</param>
-	<param name="remotePort">The remote Port</param>
-	<returns>Whether the send was successful</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.INetSocketConnectionless">
-	<summary>
- Defines a Connectionless Socket Interface.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.start">
-	<summary>
- Starts the Marshal and Opens the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.close">
-	<summary>
- Stops the Marshal and Closes the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.bufferSize">
-	<summary>
- Sets the buffer size of the net marshal.
- </summary>
-	<value>Integer</value>
-	<returns>The buffer size of the net marshal</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCPClient">
-	<summary>
- This class can be retrieved from the NetMarshalTCP and represents a separate client.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.intutils">
-	<summary>
- Utilities Module {Access Internal}
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.String2Packet(System.String)">
-	<summary>
- Converts a string to a packet.
- </summary>
-	<param name="str">The string to convert.</param>
-	<returns>The converted packet.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.Packet2String(captainalm.calmclientandserver.Packet)">
-	<summary>
- Converts a packet to a string.
- </summary>
-	<param name="str">The packet to convert.</param>
-	<returns>The converted string.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.ConvertObjectToString(System.Object)">
-	<summary>
- Converts an object to a string.
- </summary>
-	<param name="obj">The object to convert.</param>
-	<returns>The converted object.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.ConvertStringToObject(System.String)">
-	<summary>
- Converts a string to an object.
- </summary>
-	<param name="str">The string to convert.</param>
-	<returns>The converted string.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.ConvertFromAscii(System.Byte[])">
-	<summary>
- Converts a set of bytes to a string.
- </summary>
-	<param name="bytes">The byte array to convert.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Utils.Convert2Ascii(System.String)">
-	<summary>
- Converts a string to a set of bytes.
- </summary>
-	<param name="str">The string to convert.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.Utils">
-	<summary>
- Utilities Module {Access public}
- </summary>
-	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetLib.IEncapsulation.Length">
 	<summary>
  Returns the Length of the Encapsulated Object.
@@ -1089,1224 +195,38 @@ calmclientandserver
  Defines an Encapsulation Interface.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor">
+</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.disconnect">
 	<summary>
- Constructs a new instance of a NetLibException.
+ Disassociates the current dedicated connectionless connection.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.String)">
+</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.receiveBytesFrom(System.String,System.Int32)">
 	<summary>
- Constructs a new instance of a NetLibException with the specified message.
+ Receives a byte array from the specified address and port on the network.
  </summary>
-	<param name="message">The message to store</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.String,System.Exception)">
-	<summary>
- Constructs a new instance of a NetLibException with the specified message and inner Exception.
- </summary>
-	<param name="message">The message to store</param>
-	<param name="innerException">The inner Exception to store</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.Exception)">
-	<summary>
- Constructs a new instance of a NetLibException with an inner Exception.
- </summary>
-	<param name="innerException">The inner Exception to store</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetLibException.innerExceptionName">
-	<summary>
- Returns the Name of the InnerException.
- </summary>
-	<value>String</value>
-	<returns>The Name of the inner Exception</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.NetLibException">
-	<summary>
- The CALMNetLib NetLibException.
- </summary>
-</member><member name="M:captainalm.calmclientandserver.Encapsulation.#ctor">
-	<summary>
- Creates a new Encapsulation Instance with a New Empty Object.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Encapsulation.#ctor(System.Object)">
-	<summary>
- Creates a new Encapsulation Instance with the passed object.
- </summary>
-	<param name="obj">The passed object to encapsulate.</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Encapsulation.Data">
-	<summary>
- Returns the data of the encapsulation object.
- </summary>
-	<value>The data of the encapsulation object.</value>
-	<returns>The data of the encapsulation object.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Encapsulation.GetObject">
-	<summary>
- Gets the object held by the encapsulation object.
- </summary>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.Encapsulation">
-	<summary>
- Object Encapsulation Class.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(System.String,System.Int32,System.String,System.Int32)">
-	<summary>
- Constructs a New NetSocketConfig Structure with the Specified addresses and ports.
- </summary>
-	<param name="local_IPAddress">The Local IP Address</param>
-	<param name="local_Port">The Local Port</param>
-	<param name="remote_IPAddress">The Remote IP Address</param>
-	<param name="remote_Port">The Remote Port</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig)">
-	<summary>
- Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
- </summary>
-	<param name="conf">The INetConfig Configuration</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig,System.Boolean)">
-	<summary>
- Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation and whether thrown NetLibExceptions are to be caught.
- </summary>
-	<param name="conf">The INetConfig Configuration</param>
-	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be caught</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.sendBufferSize">
-	<summary>
- Gets or Sets the size of the Send Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the send buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.receiveBufferSize">
-	<summary>
- Gets or Sets the size of the receive Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the receive buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.noDelay">
-	<summary>
- Gets or Sets the Disablement of Nagle's Algorithm.
- </summary>
-	<value>Boolean</value>
-	<returns>The Disablement of Nagle's Algorithm.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.receiveTimeout">
-	<summary>
- Gets or Sets the receive Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The receive timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.sendTimeout">
-	<summary>
- Gets or Sets the send Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The send timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.localIPAddress">
-	<summary>
- Returns the local IP Address.
- </summary>
-	<value>String</value>
-	<returns>The local IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.localPort">
-	<summary>
- Returns the local IP Port.
- </summary>
-	<value>String</value>
-	<returns>The local IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.remoteIPAddress">
-	<summary>
- Returns the remote IP Address.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.remotePort">
-	<summary>
- Returns the remote IP Port.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.exclusiveAddressUse">
-	<summary>
- Gets or Sets whether address use is exclusive.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the address use is exclusive</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.connectionBacklog">
-	<summary>
- Gets or sets the backlog of connections.
- </summary>
-	<value>Integer</value>
-	<returns>Backlog of Connections</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@)">
-	<summary>
- Duplicates the Structure's Configuration to another INetConfig interface implementation.
- </summary>
-	<param name="conf">The INetConfig configuration implementation</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@,System.Boolean)">
-	<summary>
- Duplicates the Structure's Configuration to another INetConfig interface implementation and whether thrown NetLibExceptions are to be caught.
- </summary>
-	<param name="conf">The INetConfig configuration implementation</param>
-	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be thrown</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setLocalIPAddress(System.String)">
-	<summary>
- Sets the Local IP Address.
- </summary>
-	<param name="local_IPAddress">The Local IP Address</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setRemoteIPAddress(System.String)">
-	<summary>
- Sets the Remote IP Address.
- </summary>
-	<param name="remote_IPAddress">The Remote IP Address</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setLocalPort(System.Int32)">
-	<summary>
- Sets the Local Port.
- </summary>
-	<param name="local_Port">The Local Port</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setRemotePort(System.Int32)">
-	<summary>
- Sets the Remote Port.
- </summary>
-	<param name="remote_Port">The Remote Port</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.NetSocketConfig">
-	<summary>
- Defines the NetSocketConfig Structure.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.ServerConnectSuccess">
-	<summary>
- Raised when a connection is successful.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.ServerConnectFailed">
-	<summary>
- Raised when a connection fails
- </summary>
-	<param name="reason">The reason the connection failed.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.ServerDisconnect">
-	<summary>
- Raised when disconnected by the server.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.ServerMessage">
-	<summary>
- Raised a message is received.
- </summary>
-	<param name="message">The packet received.</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.calmclientandserver.Client.ErrorOccured">
-	<summary>
- Raised everytime an error occurs.
- </summary>
-	<param name="ex">The exception that occured.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.Clean">
-	<summary>
- Cleans this instance of client.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.PacketFragmentCount">
-	<summary>
- The count of currently stored packet fragments.
- </summary>
-	<value>Number of stored packet fragments.</value>
-	<returns>Integer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.Name">
-	<summary>
- Gets the name of the client.
- </summary>
-	<value>the name of the client.</value>
-	<returns>the name of the client.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.IsConnected">
-	<summary>
- Returns the current connection state (True if connected).
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.CloseDelay">
-	<summary>
- Gets or Sets the delay to recieve messages before the client is disconnected.
- </summary>
-	<value>the delay to recieve messages before the client is disconnected.</value>
-	<returns>the delay to recieve messages before the client is disconnected.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.ClientRefreshDelay">
-	<summary>
- Gets or Sets the delay to refresh the local client list (If InternalMessagePassing is enabled).
- </summary>
-	<value>the delay to refresh the local client list.</value>
-	<returns>the delay to refresh the local client list.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.MessageSendPacketDelay">
-	<summary>
- Gets or Sets the delay between packet parts sent.
- </summary>
-	<value>the delay between packet parts sent.</value>
-	<returns>the delay between packet parts sent.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.#ctor(captainalm.calmclientandserver.ClientConstructor)">
-	<summary>
- Creates a new instance of client with the specified ClientConstructor.
- </summary>
-	<param name="constructor">The ClientConstructor to use.</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.SplitPacketsOnSend">
-	<summary>
- Split the Packets when they are sent
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.DisconnectOnInvalidPacket">
-	<summary>
- Disconnect if the packet could not be formatted correctly
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.BufferSize">
-	<summary>
- Get the buffer size of the client
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.NoDelay">
-	<summary>
- Determines if the server should wait an amount of time so more data will be added to the send data buffer, if set to true, the server will send the data immediatly.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.InternalMessagePassing">
-	<summary>
- Is the client allowed to send and process internal messages, set it when starting the client in the ClientStart structure.
- If this is disabled, you will not be able to set the client name while connected.
- If this is disabled, you will not be able to get a list of clients connected to the server via the connectedclients property.
- </summary>
-	<value>Internal Message Passing</value>
-	<returns>True/False</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.Connect(captainalm.calmclientandserver.ClientStart)">
-	<summary>
- Connect to a server.
- </summary>
-	<param name="starter">The ClientStart Information</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.SetName(System.String)">
-	<summary>
- Sets the name of the client.
- Can only be used if internalmessagepassing is enabled.
- </summary>
-	<param name="name">The new Name.</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.UpdateClientData">
-	<summary>
- Forces the client list to update.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.calmclientandserver.Client.ConnectedClients">
-	<summary>
- Gets the currently connected clients on the server.
- Throws an InvalidOperationException if InternalMessagePasing is not enabled.
- </summary>
-	<value>the currently connected clients on the server.</value>
-	<returns>the currently connected clients on the server.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.CheckServer(System.Net.IPAddress,System.Int32)">
-	<summary>
- Check if a server is up.
- </summary>
-	<param name="ipaddress">The server IP address.</param>
-	<param name="port">The server port.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.Disconnect">
-	<summary>
- Disconnect from the server.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.KillThreads">
-	<summary>
- Kill the operating threads if they are still alive.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.CleanPacketFrames">
-	<summary>
- Cleans accumalated packet_frames.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.Client.Send(captainalm.calmclientandserver.Packet)">
-	<summary>
- Sends a message the server.
- </summary>
-	<param name="message">The packet to send.</param>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.Client">
-	<summary>
- Provide a client class.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.FailedConnectionReason.Unknown">
-	<summary>
- The Reason for the failed connection is not specified.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.FailedConnectionReason.ServerUnavailable">
-	<summary>
- The server is unavailable.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.FailedConnectionReason.NameTaken">
-	<summary>
- The client name is already in use on the server.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.FailedConnectionReason.TooManyClients">
-	<summary>
- The server has the maximum amount of clients connected to it.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.FailedConnectionReason">
-	<summary>
- Gives a reason for a failed connection.
- </summary>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.ClientConstructor">
-	<summary>
- Provides parameters for client construction.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.client_name">
-	<summary>
- Specifies the connecting Client's Name
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.ip_address">
-	<summary>
- The IP Address for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.port">
-	<summary>
- The port for the server to bind to.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.encrypt_param">
-	<summary>
- The Encryption Parameter to use in the client.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.internal_message_passing">
-	<summary>
- If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.buffer_size">
-	<summary>
- The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.calmclientandserver.ClientStart.no_delay">
-	<summary>
- If there is a delay before sending accumalated packets.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.calmclientandserver.ClientStart.#ctor(System.Net.IPAddress,System.Int32,System.String,captainalm.calmclientandserver.EncryptionParameter,System.Int32,System.Boolean,System.Boolean)">
-	<summary>
- Creates a new set of client start info to start the client with.
- </summary>
-	<param name="ipaddress">The IP Address for the server to bind to.</param>
-	<param name="_port">The port for the server to bind to.</param>
-	<param name="name">Specifies the connecting Client's Name</param>
-	<param name="encryptparam">The Encryption Parameter to use in the client.</param>
-	<param name="buffersize">The buffer size that will be used for the Tcp send and recieve buffers (Minumum Size:4096).</param>
-	<param name="internalmsgpass">If internal message passing is enabled (allows for clients to have a list of clients and change its name while it is connected).</param>
-	<param name="_no_delay">If there is a delay before sending accumalated packets.</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.calmclientandserver.ClientStart">
-	<summary>
- The ClientStart structure for connecting to a server.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.exceptionRaised">
-	<summary>
- This event is raised when an exception is thrown.
- </summary>
-	<param name="ex">The exception thrown</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.MessageReceived">
-	<summary>
- This event is raised when a message is received.
- </summary>
-	<param name="msg">The message received</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.beatTimedOut">
-	<summary>
- This event is raised when the beat times out.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.#ctor(captainalm.CALMNetLib.INetSocket)">
-	<summary>
- Public constructor to create the base class.
- </summary>
-	<param name="cl">The INetSocket to use</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.start">
-	<summary>
- Starts the Marshal's main Thread.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.close">
-	<summary>
- Stops the Marshal's main Thread.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.beatTimeout">
-	<summary>
- Gets or sets the timeout of beat messages to test sockets.
- </summary>
-	<value>Integer</value>
-	<returns>The timeout of beat messages to test sockets</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.internalSocket">
-	<summary>
- Gets the internal socket.
- </summary>
-	<value>INetSocket</value>
-	<returns>The internal socket</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.duplicatedInternalSocketConfig">
-	<summary>
- Gets the internal socket's duplicated static configuration.
- </summary>
-	<value>NetSocketConfig</value>
-	<returns>The duplicated static configuration</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.bufferSize">
-	<summary>
- Sets the buffer size of the net marshal.
- </summary>
-	<value>Integer</value>
-	<returns>The buffer size of the net marshal</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalBase">
-	<summary>
- The Net Marshal Base Class.
- </summary>
-	<remarks></remarks>
-</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientConnected">
-	<summary>
- This event is raised when a client connects.
- </summary>
-	<param name="ip">The IP Address</param>
-	<param name="port">The Port</param>
-	<remarks></remarks>
-</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientDisconnected">
-	<summary>
- This event is raised when a client disconnects.
- </summary>
-	<param name="ip">The IP Address</param>
-	<param name="port">The Port</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean,System.Int32)">
-	<summary>
- Constructs a new instance of NetMarshalTCP.
- </summary>
-	<param name="iptb">The IP Address to bind to</param>
-	<param name="ptb">The Port to bind to</param>
-	<param name="cbl">The connection backlog</param>
-	<param name="del">Whether nagle's algorithm is enabled</param>
-	<param name="bufsiz">The buffer size for the sockets</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,captainalm.CALMNetLib.INetConfig)">
-	<summary>
- Constructs a new instance of NetMarshalTCP.
- </summary>
-	<param name="iptb">The IP Address to bind to</param>
-	<param name="ptb">The Port to bind to</param>
-	<param name="conf">The Net Socket configuration to use</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.start">
-	<summary>
- Starts the Marshal and Opens the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.close">
-	<summary>
- Stops the Marshal and Closes the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.connect(System.String,System.String)">
-	<summary>
- Connect to a remote listener.
- </summary>
-	<param name="lip">The remote listener IP Address</param>
-	<param name="lport">The remote listener Port</param>
-	<returns>If the remote listener accepted the connection</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.disconnect(System.String,System.String)">
-	<summary>
- Disconnect's a Connected Client.
- </summary>
-	<param name="rip">The remote IP Address</param>
-	<param name="rport">The remote Port</param>
-	<returns>If the client was disconnected</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.beatTimeout">
-	<summary>
- Gets or sets the timeout of beat messages to test sockets.
- </summary>
-	<value>Integer</value>
-	<returns>The timeout of beat messages to test sockets</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready(System.String,System.Int32)">
-	<summary>
- States whether a contained marshal is ready.
- </summary>
-	<param name="rip">The Remote IP Address</param>
-	<param name="rport">The Remote Port</param>
-	<value>Boolean</value>
-	<returns>Whether a contained marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.client(System.String,System.Int32)">
-	<summary>
- Retrieves the client specified by the remote IP Address and remote Port.
- </summary>
-	<param name="rip">The remote IP Address</param>
-	<param name="rport">The remote Port</param>
-	<value>NetMarshalTCPClient</value>
-	<returns>The specified NetMarshalTCPClient</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.bufferSize">
-	<summary>
- Sets the buffer size of the net marshal.
- </summary>
-	<value>Integer</value>
-	<returns>The buffer size of the net marshal</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCP">
-	<summary>
- This class provides a TCP Socket Marshal.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
-	<summary>
- Constructs a new instance of NetMarshalUDP.
- </summary>
-	<param name="iptb">The IP Address to bind to</param>
-	<param name="ptb">The Port to bind to</param>
-	<param name="bufsiz">The buffer size for the sockets</param>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.ready">
-	<summary>
- States whether the marshal is ready.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the marshal is ready</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
-	<summary>
- Send a message via the marshal.
- </summary>
-	<param name="msg">The message</param>
-	<returns>Whether the message sending succeeded</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.start">
-	<summary>
- Starts the Marshal and Opens the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.close">
-	<summary>
- Stops the Marshal and Closes the Connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.bufferSize">
-	<summary>
- Sets the buffer size of the net marshal.
- </summary>
-	<value>Integer</value>
-	<returns>The buffer size of the net marshal</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.NetMarshalUDP">
-	<summary>
- This class provides a UDP Socket Marshal.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor">
-	<summary>
- Constructs an Empty ByteInt16ArrayEncapsualtion.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor(System.Int32)">
-	<summary>
- Constructs an Empty ByteInt16ArrayEncapsualtion with the specified capacity.
- <param name="length">Capacity</param>
-	</summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor(System.Byte[])">
-	<summary>
- Constructs a ByteInt16ArrayEncapsualtion with the specified byte array.
- <param name="bytes">Inital Byte Array</param>
-	</summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.Length">
-	<summary>
- Returns the length of the Encapsulated Array.
- </summary>
-	<value>Long</value>
-	<returns>The Length of The Array</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.dataType">
-	<summary>
- Returns the Data type of the Pure Encapsulation.
- </summary>
-	<value>Type</value>
-	<returns>The data type of the pure encapsulation</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.data">
-	<summary>
- Returns the data of the object.
- </summary>
-	<value>Object</value>
-	<returns>Pure Encapsulated Object Data</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.data(System.Int64)">
-	<summary>
- Returns the data of the object at a specified index.
- </summary>
-	<param name="index">The Index as a Long Value</param>
-	<value>Object</value>
-	<returns>Pure Encapsulated Object data at the specified index</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.valid">
-	<summary>
- Returns whether the contained data is valid.
- </summary>
-	<value>Boolean</value>
-	<returns>The contained data is valid.</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.splitParts(System.Int64)">
-	<summary>
- Splits the Encapsulated Object into an array of an array of bytes.
- </summary>
-	<param name="size">The size of each split array</param>
-	<returns>The Array of Array of Bytes of the Encapsulated Object</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.combineParts(System.Byte[][])">
-	<summary>
- Combines the split parts into the Encapsulated Object.
- </summary>
-	<param name="parts">The Array of Array of Bytes of the Encapsulated Object</param>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation">
-	<summary>
- 16-Bit Indexed Byte Array Encapsulation.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.CALMNetMarshal.Message.header">
-	<summary>
- The header of the message.
- </summary>
-	<remarks></remarks>
-</member><member name="F:captainalm.CALMNetMarshal.Message.message">
-	<summary>
- The message.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.data">
-	<summary>
- Allows to get or set the internally held packet data generically.
- </summary>
-	<value>Object</value>
-	<returns>Held Packet Data.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.dataType">
-	<summary>
- Gets the Type of the internally held packet data.
- </summary>
-	<value>Type</value>
-	<returns>Type Of Internal Data</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.getData">
-	<summary>
- Allows data to be taken from the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<returns>Packet Interface Data</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.setData">
-	<summary>
- Allows data to be written to the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.receiverIP">
-	<summary>
- The receiver's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The receiver's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.receiverPort">
-	<summary>
- The receiver's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The receiver's Port.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.senderIP">
-	<summary>
- The sender's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The sender's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.Message.senderPort">
-	<summary>
- The sender's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The sender's Port.</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.Message">
-	<summary>
- A Message Class that Implements IPacket.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.sendBufferSize">
-	<summary>
- Gets or Sets the size of the Send Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the send buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.receiveBufferSize">
-	<summary>
- Gets or Sets the size of the receive Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the receive buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.noDelay">
-	<summary>
- Gets or Sets the Disablement of Nagle's Algorithm.
- </summary>
-	<value>Boolean</value>
-	<returns>The Disablement of Nagle's Algorithm.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.receiveTimeout">
-	<summary>
- Gets or Sets the receive Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The receive timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.sendTimeout">
-	<summary>
- Gets or Sets the send Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The send timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.remoteIPAddress">
-	<summary>
- Returns the remote IP Address.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.remotePort">
-	<summary>
- Returns the remote IP Port.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.localIPAddress">
-	<summary>
- Returns the local IP Address.
- </summary>
-	<value>String</value>
-	<returns>The local IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.localPort">
-	<summary>
- Returns the local IP Port.
- </summary>
-	<value>String</value>
-	<returns>The local IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.exclusiveAddressUse">
-	<summary>
- Gets or Sets whether address use is exclusive.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the address use is exclusive</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetConfig.connectionBacklog">
-	<summary>
- Gets or sets the backlog of connections.
- </summary>
-	<value>Integer</value>
-	<returns>Backlog of Connections</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.INetConfig">
-	<summary>
- Defines The Socket Configuration Interface.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetSocket.connected">
-	<summary>
- Returns whether the Socket is Connected.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Connected</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetSocket.listening">
-	<summary>
- Returns whether the Socket is Listening.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Listening</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.sendBytes(System.Byte[])">
-	<summary>
- Sends a byte array over the network.
- </summary>
-	<param name="bytes">The byte array to send</param>
-	<returns>Whether the send was successful</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.receiveBytes">
-	<summary>
- Receives a byte array from the network.
- </summary>
+	<param name="remoteIP">The remote IP</param>
+	<param name="remotePort">The remote Port</param>
 	<returns>The Received Byte Array</returns>
 	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetSocket.clientWaiting">
+</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.reconnect(System.String,System.Int32)">
 	<summary>
- Returns whether a client is waiting to connect.
+ Reassociates a dedicated connectionless connection.
  </summary>
-	<value>Boolean</value>
-	<returns>If a client is waiting to connect</returns>
+	<param name="remoteIP">The remote IP</param>
+	<param name="remotePort">The remote Port</param>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.acceptClient">
+</member><member name="M:captainalm.CALMNetLib.INetSocketConnectionless.sendBytesTo(System.Byte[],System.String,System.Int32)">
 	<summary>
- Accepts a client that is waiting to connect.
- </summary>
-	<returns>The Accepted Client's Socket</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.open">
-	<summary>
- Opens the socket for network connection.
- </summary>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.INetSocket.close">
-	<summary>
- Close the socket stopping network connections.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.INetSocket.hasData">
-	<summary>
- Returns whether data is ready to be read from the network.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether there is data on the network</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.INetSocket">
-	<summary>
- Defines a Socket Interface.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderIP">
-	<summary>
- The sender's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The sender's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderPort">
-	<summary>
- The sender's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The sender's Port.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverIP">
-	<summary>
- The receiver's IP Address.
- </summary>
-	<value>String</value>
-	<returns>The receiver's IP Address.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverPort">
-	<summary>
- The receiver's Port.
- </summary>
-	<value>Integer</value>
-	<returns>The receiver's Port.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.getData">
-	<summary>
- Allows data to be taken from the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<returns>Packet Interface Data</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.setData">
-	<summary>
- Allows data to be written to the packet interface.
- </summary>
-	<value>Byte Array</value>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.data">
-	<summary>
- Allows to get or set the internally held packet data generically.
- </summary>
-	<value>Object</value>
-	<returns>Held Packet Data.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetMarshal.IPacket.dataType">
-	<summary>
- Gets the Type of the internally held packet data.
- </summary>
-	<value>Type</value>
-	<returns>Type Of Internal Data</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.IPacket">
-	<summary>
- The Packet Interface.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.My.Resources.Resources.ResourceManager">
-	<summary>
-  Returns the cached ResourceManager instance used by this class.
-</summary>
-</member><member name="P:captainalm.My.Resources.Resources.Culture">
-	<summary>
-  Overrides the current thread's CurrentUICulture property for all
-  resource lookups using this strongly typed resource class.
-</summary>
-</member><member name="T:captainalm.My.Resources.Resources">
-	<summary>
-  A strongly-typed resource class, for looking up localized strings, etc.
-</summary>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.#ctor(System.Net.IPAddress,System.Int32)">
-	<summary>
- Constructs a New NetTCPClient Instance connecting to the specified IP Address and port.
- </summary>
-	<param name="ip">The IP Address to connect to</param>
-	<param name="port">The port to connect to</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.open">
-	<summary>
- Opens the socket for network connection.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.connected">
-	<summary>
- Returns whether the Socket is Connected.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Connected</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listening">
-	<summary>
- Returns whether the Socket is Listening.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the Socket is Listening</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.hasData">
-	<summary>
- Returns whether data is ready to be read from the network.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether there is data on the network</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.sendBytes(System.Byte[])">
-	<summary>
- Sends a byte array over the network.
+ Sends a byte array over the network to the specified address and port.
  </summary>
 	<param name="bytes">The byte array to send</param>
+	<param name="remoteIP">The remote IP</param>
+	<param name="remotePort">The remote Port</param>
 	<returns>Whether the send was successful</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.receiveBytes">
+</member><member name="T:captainalm.CALMNetLib.INetSocketConnectionless">
 	<summary>
- Receives a byte array from the network.
- </summary>
-	<returns>The Received Byte Array</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.clientWaiting">
-	<summary>
- Returns whether a client is waiting to connect.
- </summary>
-	<value>Boolean</value>
-	<returns>If a client is waiting to connect</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.acceptClient">
-	<summary>
- Accepts a client that is waiting to connect.
- </summary>
-	<returns>The Accepted Client's Socket</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetTCPClient.close">
-	<summary>
- Close the socket stopping network connections.
- </summary>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.sendBufferSize">
-	<summary>
- Gets or Sets the size of the Send Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the send buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.receiveBufferSize">
-	<summary>
- Gets or Sets the size of the receive Buffer.
- </summary>
-	<value>Integer</value>
-	<returns>The size of the receive buffer</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.noDelay">
-	<summary>
- Gets or Sets the Disablement of Nagle's Algorithm.
- </summary>
-	<value>Boolean</value>
-	<returns>The Disablement of Nagle's Algorithm.</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.receiveTimeout">
-	<summary>
- Gets or Sets the receive Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The receive timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.sendTimeout">
-	<summary>
- Gets or Sets the send Timeout.
- </summary>
-	<value>Integer</value>
-	<returns>The send timeout</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerIPAddress">
-	<summary>
- Returns the IP Address of the listener.
- This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
- </summary>
-	<value>String</value>
-	<returns>The listener IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerPort">
-	<summary>
- Returns the listener IP Port.
- This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
- </summary>
-	<value>String</value>
-	<returns>The listener IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.remoteIPAddress">
-	<summary>
- Returns the remote IP Address.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.remotePort">
-	<summary>
- Returns the remote IP Port.
- </summary>
-	<value>String</value>
-	<returns>The remote IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.localIPAddress">
-	<summary>
- Returns the local IP Address.
- </summary>
-	<value>String</value>
-	<returns>The local IP Address</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.localPort">
-	<summary>
- Returns the local IP Port.
- </summary>
-	<value>String</value>
-	<returns>The local IP Port</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.exclusiveAddressUse">
-	<summary>
- Gets or Sets whether address use is exclusive.
- </summary>
-	<value>Boolean</value>
-	<returns>Whether the address use is exclusive</returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.NetTCPClient.connectionBacklog">
-	<summary>
- Gets or sets the backlog of connections.
- </summary>
-	<value>Integer</value>
-	<returns>Backlog of Connections</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetLib.NetTCPClient">
-	<summary>
- This is a NetTCPClient socket.
+ Defines a Connectionless Socket Interface.
  </summary>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.NetUDPClient.#ctor(System.Net.IPAddress,System.Int32,captainalm.CALMNetLib.UDPIPPortSpecification)">
@@ -2514,6 +434,558 @@ calmclientandserver
  Specifies the Selector for UDP Address and Port specification.
  </summary>
 	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientConnected">
+	<summary>
+ This event is raised when a client connects.
+ </summary>
+	<param name="ip">The IP Address</param>
+	<param name="port">The Port</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalTCP.clientDisconnected">
+	<summary>
+ This event is raised when a client disconnects.
+ </summary>
+	<param name="ip">The IP Address</param>
+	<param name="port">The Port</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean,System.Int32)">
+	<summary>
+ Constructs a new instance of NetMarshalTCP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="cbl">The connection backlog</param>
+	<param name="del">Whether nagle's algorithm is enabled</param>
+	<param name="bufsiz">The buffer size for the sockets</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Constructs a new instance of NetMarshalTCP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="conf">The Net Socket configuration to use</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.connect(System.String,System.String)">
+	<summary>
+ Connect to a remote listener.
+ </summary>
+	<param name="lip">The remote listener IP Address</param>
+	<param name="lport">The remote listener Port</param>
+	<returns>If the remote listener accepted the connection</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.disconnect(System.String,System.String)">
+	<summary>
+ Disconnect's a Connected Client.
+ </summary>
+	<param name="rip">The remote IP Address</param>
+	<param name="rport">The remote Port</param>
+	<returns>If the client was disconnected</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.beatTimeout">
+	<summary>
+ Gets or sets the timeout of beat messages to test sockets.
+ </summary>
+	<value>Integer</value>
+	<returns>The timeout of beat messages to test sockets</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.ready(System.String,System.Int32)">
+	<summary>
+ States whether a contained marshal is ready.
+ </summary>
+	<param name="rip">The Remote IP Address</param>
+	<param name="rport">The Remote Port</param>
+	<value>Boolean</value>
+	<returns>Whether a contained marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.client(System.String,System.Int32)">
+	<summary>
+ Retrieves the client specified by the remote IP Address and remote Port.
+ </summary>
+	<param name="rip">The remote IP Address</param>
+	<param name="rport">The remote Port</param>
+	<value>NetMarshalTCPClient</value>
+	<returns>The specified NetMarshalTCPClient</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.bufferSize">
+	<summary>
+ Sets the buffer size of the net marshal.
+ </summary>
+	<value>Integer</value>
+	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCP">
+	<summary>
+ This class provides a TCP Socket Marshal.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
+	<summary>
+ Constructs a new instance of NetMarshalUDP.
+ </summary>
+	<param name="iptb">The IP Address to bind to</param>
+	<param name="ptb">The Port to bind to</param>
+	<param name="bufsiz">The buffer size for the sockets</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.bufferSize">
+	<summary>
+ Sets the buffer size of the net marshal.
+ </summary>
+	<value>Integer</value>
+	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalUDP">
+	<summary>
+ This class provides a UDP Socket Marshal.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.start">
+	<summary>
+ Starts the Marshal and Opens the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.close">
+	<summary>
+ Stops the Marshal and Closes the Connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.bufferSize">
+	<summary>
+ Sets the buffer size of the net marshal.
+ </summary>
+	<value>Integer</value>
+	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCPClient">
+	<summary>
+ This class can be retrieved from the NetMarshalTCP and represents a separate client.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor">
+	<summary>
+ Constructs a new instance of a NetLibException.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.String)">
+	<summary>
+ Constructs a new instance of a NetLibException with the specified message.
+ </summary>
+	<param name="message">The message to store</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.String,System.Exception)">
+	<summary>
+ Constructs a new instance of a NetLibException with the specified message and inner Exception.
+ </summary>
+	<param name="message">The message to store</param>
+	<param name="innerException">The inner Exception to store</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetLibException.#ctor(System.Exception)">
+	<summary>
+ Constructs a new instance of a NetLibException with an inner Exception.
+ </summary>
+	<param name="innerException">The inner Exception to store</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetLibException.innerExceptionName">
+	<summary>
+ Returns the Name of the InnerException.
+ </summary>
+	<value>String</value>
+	<returns>The Name of the inner Exception</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.NetLibException">
+	<summary>
+ The CALMNetLib NetLibException.
+ </summary>
+</member><member name="M:captainalm.CALMNetLib.Utilities.Int16ToBytes(System.Int16)">
+	<summary>
+ Converts a 16 Bit Integer to a byte array.
+ </summary>
+	<param name="intIn">The 16 Bit Integer</param>
+	<returns>A Byte Array</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt16(System.Byte[])">
+	<summary>
+ Converts a byte array to a 16 Bit Integer.
+ </summary>
+	<param name="bytesIn">A Byte Array</param>
+	<returns>The 16 Bit Integer it Represents</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.Int32ToBytes(System.Int32)">
+	<summary>
+ Converts a 32 Bit Integer to a byte array.
+ </summary>
+	<param name="intIn">The 32 Bit Integer</param>
+	<returns>A Byte Array</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt32(System.Byte[])">
+	<summary>
+ Converts a byte array to a 32 Bit Integer.
+ </summary>
+	<param name="bytesIn">A Byte Array</param>
+	<returns>The 32 Bit Integer it Represents</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.Int64ToBytes(System.Int64)">
+	<summary>
+ Converts a 64 Bit Integer to a byte array.
+ </summary>
+	<param name="intIn">The 64 Bit Integer</param>
+	<returns>A Byte Array</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.BytesToInt64(System.Byte[])">
+	<summary>
+ Converts a byte array to a 64 Bit Integer.
+ </summary>
+	<param name="bytesIn">A Byte Array</param>
+	<returns>The 64 Bit Integer it Represents</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.TCPPortOpen(System.Net.IPAddress,System.Int32)">
+	<summary>
+ Checks if a TCP Port on the specified IP Address is accepting connections.
+ </summary>
+	<param name="IPAddressIn">The IP Address to check</param>
+	<param name="portIn">The Port to check</param>
+	<returns>If the specified endpoint can be connected to</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.GetIPInterfaces">
+	<summary>
+ Returns the IP Addresses of all the Network Interfaces on the machine.
+ </summary>
+	<returns>An array of the IP Addresses of all the Network Interfaces</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.GetIPInterfacesAndNames">
+	<summary>
+ Returns the IP Address and the Name of the Network Interface of all the Network Interfaces on the machine.
+ </summary>
+	<returns>An array of a Two Type (Pair) Tuple containing the Name of the Network Interface and the IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.Utilities.logInternallyHandledNetLibExceptions">
+	<summary>
+ Gets or sets whether internally handled NetLibExceptions are to be logged by this class.
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.Utilities.getInternallyHandledNetLibExceptions">
+	<summary>
+ Returns the Log array of the Internally Handled NetLibExceptions.
+ </summary>
+	<value>An array of NetLibExceptions</value>
+	<returns>The Log of Internally Handled NetLibExceptions</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Utilities.clearInternallyHandledNetLibExceptions">
+	<summary>
+ Clears the Internally Handled NetLibException Log.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.Utilities">
+	<summary>
+ Defines a set of shared utility functions.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor">
+	<summary>
+ Constructs a new instance of the Serializer Class.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor(System.Runtime.Serialization.ISurrogateSelector,System.Runtime.Serialization.StreamingContext)">
+	<summary>
+ Constructs a new instance of the Serializer Class, with a Surrogate Selector and streaming context.
+ </summary>
+	<param name="selector">The Surrogate Selector</param>
+	<param name="context">The Streaming Context</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)">
+	<summary>
+ Constructs a new instance of the Serializer Class, with a Binary Formatter Instance.
+ </summary>
+	<param name="format"></param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.serializeObject(System.Object)">
+	<summary>
+ Serializes an Object to a Byte Array.
+ </summary>
+	<param name="obj">The object to serialize</param>
+	<returns>A byte array</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.serializeObject``1(``0)">
+	<summary>
+ Serializes an Object to a Byte Array.
+ </summary>
+	<param name="obj">The object to serialize</param>
+	<returns>A byte array</returns>
+	<typeparam name="t">The Type of Object to Accept as a parameter</typeparam>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.serialize(System.Object)">
+	<summary>
+ Serializes an Object to a String.
+ </summary>
+	<param name="obj">The object to serialize</param>
+	<returns>A string</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.serialize``1(``0)">
+	<summary>
+ Serializes an Object to a String.
+ </summary>
+	<param name="obj">The object to serialize</param>
+	<returns>A string</returns>
+	<typeparam name="t">The Type of Object to Accept as a parameter</typeparam>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.deSerializeObject(System.Byte[])">
+	<summary>
+ Deserializes an Object from a byte array.
+ </summary>
+	<param name="bts">The Byte Array</param>
+	<returns>The Object</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.deSerializeObject``1(System.Byte[])">
+	<summary>
+ Deserializes an Object from a byte array.
+ </summary>
+	<param name="bts">The Byte Array</param>
+	<returns>The Object</returns>
+	<remarks></remarks>
+	<typeparam name="t">The Type of Object to Accept as a Return Value</typeparam>
+</member><member name="M:captainalm.CALMNetLib.Serializer.deSerialize(System.String)">
+	<summary>
+ Deserializes an Object from a string.
+ </summary>
+	<param name="str">A String</param>
+	<returns>The Object</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.Serializer.deSerialize``1(System.String)">
+	<summary>
+ Deserializes an Object from a string.
+ </summary>
+	<param name="str">A String</param>
+	<returns>The Object</returns>
+	<remarks></remarks>
+	<typeparam name="t">The Type of Object to Accept as a Return Value</typeparam>
+</member><member name="M:captainalm.CALMNetLib.Serializer.Dispose">
+	<summary>
+ Clears class instance resources.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.Serializer">
+	<summary>
+ Defines the Serialization Class.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(System.String,System.Int32,System.String,System.Int32)">
+	<summary>
+ Constructs a New NetSocketConfig Structure with the Specified addresses and ports.
+ </summary>
+	<param name="local_IPAddress">The Local IP Address</param>
+	<param name="local_Port">The Local Port</param>
+	<param name="remote_IPAddress">The Remote IP Address</param>
+	<param name="remote_Port">The Remote Port</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
+ </summary>
+	<param name="conf">The INetConfig Configuration</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig,System.Boolean)">
+	<summary>
+ Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation and whether thrown NetLibExceptions are to be caught.
+ </summary>
+	<param name="conf">The INetConfig Configuration</param>
+	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be caught</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.sendBufferSize">
+	<summary>
+ Gets or Sets the size of the Send Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the send buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.receiveBufferSize">
+	<summary>
+ Gets or Sets the size of the receive Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the receive buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.noDelay">
+	<summary>
+ Gets or Sets the Disablement of Nagle's Algorithm.
+ </summary>
+	<value>Boolean</value>
+	<returns>The Disablement of Nagle's Algorithm.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.receiveTimeout">
+	<summary>
+ Gets or Sets the receive Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The receive timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.sendTimeout">
+	<summary>
+ Gets or Sets the send Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The send timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.localIPAddress">
+	<summary>
+ Returns the local IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.localPort">
+	<summary>
+ Returns the local IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.remoteIPAddress">
+	<summary>
+ Returns the remote IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.remotePort">
+	<summary>
+ Returns the remote IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.exclusiveAddressUse">
+	<summary>
+ Gets or Sets whether address use is exclusive.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the address use is exclusive</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.connectionBacklog">
+	<summary>
+ Gets or sets the backlog of connections.
+ </summary>
+	<value>Integer</value>
+	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@)">
+	<summary>
+ Duplicates the Structure's Configuration to another INetConfig interface implementation.
+ </summary>
+	<param name="conf">The INetConfig configuration implementation</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@,System.Boolean)">
+	<summary>
+ Duplicates the Structure's Configuration to another INetConfig interface implementation and whether thrown NetLibExceptions are to be caught.
+ </summary>
+	<param name="conf">The INetConfig configuration implementation</param>
+	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be thrown</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setLocalIPAddress(System.String)">
+	<summary>
+ Sets the Local IP Address.
+ </summary>
+	<param name="local_IPAddress">The Local IP Address</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setRemoteIPAddress(System.String)">
+	<summary>
+ Sets the Remote IP Address.
+ </summary>
+	<param name="remote_IPAddress">The Remote IP Address</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setLocalPort(System.Int32)">
+	<summary>
+ Sets the Local Port.
+ </summary>
+	<param name="local_Port">The Local Port</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setRemotePort(System.Int32)">
+	<summary>
+ Sets the Remote Port.
+ </summary>
+	<param name="remote_Port">The Remote Port</param>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.NetSocketConfig">
+	<summary>
+ Defines the NetSocketConfig Structure.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:captainalm.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:captainalm.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
 </member><member name="M:captainalm.CALMNetLib.EncapsulatedObject`1.#ctor(`0)">
 	<summary>
  Constructs a EncapsulatedObject with the specified object to be encapsulated.
@@ -2581,6 +1053,739 @@ calmclientandserver
  Represents a Generic Encapsulated Object.
  </summary>
 	<typeparam name="t">The Generic Type to Hold (Should Serialize)</typeparam>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor">
+	<summary>
+ Constructs an Empty ByteInt16ArrayEncapsualtion.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor(System.Int32)">
+	<summary>
+ Constructs an Empty ByteInt16ArrayEncapsualtion with the specified capacity.
+ <param name="length">Capacity</param>
+	</summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.#ctor(System.Byte[])">
+	<summary>
+ Constructs a ByteInt16ArrayEncapsualtion with the specified byte array.
+ <param name="bytes">Inital Byte Array</param>
+	</summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.Length">
+	<summary>
+ Returns the length of the Encapsulated Array.
+ </summary>
+	<value>Long</value>
+	<returns>The Length of The Array</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.dataType">
+	<summary>
+ Returns the Data type of the Pure Encapsulation.
+ </summary>
+	<value>Type</value>
+	<returns>The data type of the pure encapsulation</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.data">
+	<summary>
+ Returns the data of the object.
+ </summary>
+	<value>Object</value>
+	<returns>Pure Encapsulated Object Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.data(System.Int64)">
+	<summary>
+ Returns the data of the object at a specified index.
+ </summary>
+	<param name="index">The Index as a Long Value</param>
+	<value>Object</value>
+	<returns>Pure Encapsulated Object data at the specified index</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.valid">
+	<summary>
+ Returns whether the contained data is valid.
+ </summary>
+	<value>Boolean</value>
+	<returns>The contained data is valid.</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.splitParts(System.Int64)">
+	<summary>
+ Splits the Encapsulated Object into an array of an array of bytes.
+ </summary>
+	<param name="size">The size of each split array</param>
+	<returns>The Array of Array of Bytes of the Encapsulated Object</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation.combineParts(System.Byte[][])">
+	<summary>
+ Combines the split parts into the Encapsulated Object.
+ </summary>
+	<param name="parts">The Array of Array of Bytes of the Encapsulated Object</param>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.ByteInt16ArrayEncapsulation">
+	<summary>
+ 16-Bit Indexed Byte Array Encapsulation.
+ </summary>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.exceptionRaised">
+	<summary>
+ This event is raised when an exception is thrown.
+ </summary>
+	<param name="ex">The exception thrown</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.MessageReceived">
+	<summary>
+ This event is raised when a message is received.
+ </summary>
+	<param name="msg">The message received</param>
+	<remarks></remarks>
+</member><member name="E:captainalm.CALMNetMarshal.NetMarshalBase.beatTimedOut">
+	<summary>
+ This event is raised when the beat times out.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.#ctor(captainalm.CALMNetLib.INetSocket)">
+	<summary>
+ Public constructor to create the base class.
+ </summary>
+	<param name="cl">The INetSocket to use</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.start">
+	<summary>
+ Starts the Marshal's main Thread.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.close">
+	<summary>
+ Stops the Marshal's main Thread.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.ready">
+	<summary>
+ States whether the marshal is ready.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the marshal is ready</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.beatTimeout">
+	<summary>
+ Gets or sets the timeout of beat messages to test sockets.
+ </summary>
+	<value>Integer</value>
+	<returns>The timeout of beat messages to test sockets</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.internalSocket">
+	<summary>
+ Gets the internal socket.
+ </summary>
+	<value>INetSocket</value>
+	<returns>The internal socket</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.duplicatedInternalSocketConfig">
+	<summary>
+ Gets the internal socket's duplicated static configuration.
+ </summary>
+	<value>NetSocketConfig</value>
+	<returns>The duplicated static configuration</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.sendMessage(captainalm.CALMNetMarshal.IPacket)">
+	<summary>
+ Send a message via the marshal.
+ </summary>
+	<param name="msg">The message</param>
+	<returns>Whether the message sending succeeded</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.bufferSize">
+	<summary>
+ Sets the buffer size of the net marshal.
+ </summary>
+	<value>Integer</value>
+	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalBase">
+	<summary>
+ The Net Marshal Base Class.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.sendBufferSize">
+	<summary>
+ Gets or Sets the size of the Send Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the send buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.receiveBufferSize">
+	<summary>
+ Gets or Sets the size of the receive Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the receive buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.noDelay">
+	<summary>
+ Gets or Sets the Disablement of Nagle's Algorithm.
+ </summary>
+	<value>Boolean</value>
+	<returns>The Disablement of Nagle's Algorithm.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.receiveTimeout">
+	<summary>
+ Gets or Sets the receive Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The receive timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.sendTimeout">
+	<summary>
+ Gets or Sets the send Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The send timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.remoteIPAddress">
+	<summary>
+ Returns the remote IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.remotePort">
+	<summary>
+ Returns the remote IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.localIPAddress">
+	<summary>
+ Returns the local IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.localPort">
+	<summary>
+ Returns the local IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.exclusiveAddressUse">
+	<summary>
+ Gets or Sets whether address use is exclusive.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the address use is exclusive</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.connectionBacklog">
+	<summary>
+ Gets or sets the backlog of connections.
+ </summary>
+	<value>Integer</value>
+	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.INetConfig">
+	<summary>
+ Defines The Socket Configuration Interface.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetSocket.connected">
+	<summary>
+ Returns whether the Socket is Connected.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Connected</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetSocket.listening">
+	<summary>
+ Returns whether the Socket is Listening.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Listening</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetSocket.sendBytes(System.Byte[])">
+	<summary>
+ Sends a byte array over the network.
+ </summary>
+	<param name="bytes">The byte array to send</param>
+	<returns>Whether the send was successful</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetSocket.receiveBytes">
+	<summary>
+ Receives a byte array from the network.
+ </summary>
+	<returns>The Received Byte Array</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetSocket.clientWaiting">
+	<summary>
+ Returns whether a client is waiting to connect.
+ </summary>
+	<value>Boolean</value>
+	<returns>If a client is waiting to connect</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetSocket.acceptClient">
+	<summary>
+ Accepts a client that is waiting to connect.
+ </summary>
+	<returns>The Accepted Client's Socket</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetSocket.open">
+	<summary>
+ Opens the socket for network connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetSocket.close">
+	<summary>
+ Close the socket stopping network connections.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetSocket.hasData">
+	<summary>
+ Returns whether data is ready to be read from the network.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether there is data on the network</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.INetSocket">
+	<summary>
+ Defines a Socket Interface.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.CALMNetMarshal.Message.header">
+	<summary>
+ The header of the message.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.CALMNetMarshal.Message.message">
+	<summary>
+ The message.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.data">
+	<summary>
+ Allows to get or set the internally held packet data generically.
+ </summary>
+	<value>Object</value>
+	<returns>Held Packet Data.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.dataType">
+	<summary>
+ Gets the Type of the internally held packet data.
+ </summary>
+	<value>Type</value>
+	<returns>Type Of Internal Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.getData">
+	<summary>
+ Allows data to be taken from the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<returns>Packet Interface Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.setData">
+	<summary>
+ Allows data to be written to the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.receiverIP">
+	<summary>
+ The receiver's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The receiver's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.receiverPort">
+	<summary>
+ The receiver's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The receiver's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.senderIP">
+	<summary>
+ The sender's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The sender's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.Message.senderPort">
+	<summary>
+ The sender's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The sender's Port.</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.Message">
+	<summary>
+ A Message Class that Implements IPacket.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.#ctor(System.Net.IPAddress,System.Int32)">
+	<summary>
+ Constructs a New NetTCPListener Instance bound to the specified IP Address interface and port.
+ </summary>
+	<param name="ip">The IP Address to bind to</param>
+	<param name="port">The port to bind to</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.open">
+	<summary>
+ Opens the socket for network connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.connected">
+	<summary>
+ Returns whether the Socket is Connected.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Connected</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.listening">
+	<summary>
+ Returns whether the Socket is Listening.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Listening</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.hasData">
+	<summary>
+ Returns whether data is ready to be read from the network.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether there is data on the network</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.sendBytes(System.Byte[])">
+	<summary>
+ Sends a byte array over the network.
+ </summary>
+	<param name="bytes">The byte array to send</param>
+	<returns>Whether the send was successful</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.receiveBytes">
+	<summary>
+ Receives a byte array from the network.
+ </summary>
+	<returns>The Received Byte Array</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.clientWaiting">
+	<summary>
+ Returns whether a client is waiting to connect.
+ </summary>
+	<value>Boolean</value>
+	<returns>If a client is waiting to connect</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.acceptClient">
+	<summary>
+ Accepts a client that is waiting to connect.
+ </summary>
+	<returns>The Accepted Client's Socket</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.close">
+	<summary>
+ Close the socket stopping network connections.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.sendBufferSize">
+	<summary>
+ Gets or Sets the size of the Send Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the send buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.receiveBufferSize">
+	<summary>
+ Gets or Sets the size of the receive Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the receive buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.noDelay">
+	<summary>
+ Gets or Sets the Disablement of Nagle's Algorithm.
+ </summary>
+	<value>Boolean</value>
+	<returns>The Disablement of Nagle's Algorithm.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.receiveTimeout">
+	<summary>
+ Gets or Sets the receive Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The receive timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.sendTimeout">
+	<summary>
+ Gets or Sets the send Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The send timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.localIPAddress">
+	<summary>
+ Returns the local IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.localPort">
+	<summary>
+ Returns the local IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.remoteIPAddress">
+	<summary>
+ Returns the remote IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.remotePort">
+	<summary>
+ Returns the remote IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.exclusiveAddressUse">
+	<summary>
+ Gets or Sets whether address use is exclusive.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the address use is exclusive</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.connectionBacklog">
+	<summary>
+ Gets or sets the backlog of connections.
+ </summary>
+	<value>Integer</value>
+	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.NetTCPListener">
+	<summary>
+ This is a NetTCPListener socket.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderIP">
+	<summary>
+ The sender's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The sender's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.senderPort">
+	<summary>
+ The sender's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The sender's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverIP">
+	<summary>
+ The receiver's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The receiver's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.receiverPort">
+	<summary>
+ The receiver's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The receiver's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.getData">
+	<summary>
+ Allows data to be taken from the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<returns>Packet Interface Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.setData">
+	<summary>
+ Allows data to be written to the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.data">
+	<summary>
+ Allows to get or set the internally held packet data generically.
+ </summary>
+	<value>Object</value>
+	<returns>Held Packet Data.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.IPacket.dataType">
+	<summary>
+ Gets the Type of the internally held packet data.
+ </summary>
+	<value>Type</value>
+	<returns>Type Of Internal Data</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.IPacket">
+	<summary>
+ The Packet Interface.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.#ctor(System.Net.IPAddress,System.Int32)">
+	<summary>
+ Constructs a New NetTCPClient Instance connecting to the specified IP Address and port.
+ </summary>
+	<param name="ip">The IP Address to connect to</param>
+	<param name="port">The port to connect to</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.open">
+	<summary>
+ Opens the socket for network connection.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.connected">
+	<summary>
+ Returns whether the Socket is Connected.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Connected</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listening">
+	<summary>
+ Returns whether the Socket is Listening.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the Socket is Listening</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.hasData">
+	<summary>
+ Returns whether data is ready to be read from the network.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether there is data on the network</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.sendBytes(System.Byte[])">
+	<summary>
+ Sends a byte array over the network.
+ </summary>
+	<param name="bytes">The byte array to send</param>
+	<returns>Whether the send was successful</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.receiveBytes">
+	<summary>
+ Receives a byte array from the network.
+ </summary>
+	<returns>The Received Byte Array</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.clientWaiting">
+	<summary>
+ Returns whether a client is waiting to connect.
+ </summary>
+	<value>Boolean</value>
+	<returns>If a client is waiting to connect</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.acceptClient">
+	<summary>
+ Accepts a client that is waiting to connect.
+ </summary>
+	<returns>The Accepted Client's Socket</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.close">
+	<summary>
+ Close the socket stopping network connections.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.sendBufferSize">
+	<summary>
+ Gets or Sets the size of the Send Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the send buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.receiveBufferSize">
+	<summary>
+ Gets or Sets the size of the receive Buffer.
+ </summary>
+	<value>Integer</value>
+	<returns>The size of the receive buffer</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.noDelay">
+	<summary>
+ Gets or Sets the Disablement of Nagle's Algorithm.
+ </summary>
+	<value>Boolean</value>
+	<returns>The Disablement of Nagle's Algorithm.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.receiveTimeout">
+	<summary>
+ Gets or Sets the receive Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The receive timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.sendTimeout">
+	<summary>
+ Gets or Sets the send Timeout.
+ </summary>
+	<value>Integer</value>
+	<returns>The send timeout</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerIPAddress">
+	<summary>
+ Returns the IP Address of the listener.
+ This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+ </summary>
+	<value>String</value>
+	<returns>The listener IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.listenerPort">
+	<summary>
+ Returns the listener IP Port.
+ This is a local listener if the connection was accepted by a connection listener or it is a remote listener if the socket was connected to a connection listener.
+ </summary>
+	<value>String</value>
+	<returns>The listener IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.remoteIPAddress">
+	<summary>
+ Returns the remote IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.remotePort">
+	<summary>
+ Returns the remote IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The remote IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.localIPAddress">
+	<summary>
+ Returns the local IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Address</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.localPort">
+	<summary>
+ Returns the local IP Port.
+ </summary>
+	<value>String</value>
+	<returns>The local IP Port</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.exclusiveAddressUse">
+	<summary>
+ Gets or Sets whether address use is exclusive.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the address use is exclusive</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.connectionBacklog">
+	<summary>
+ Gets or sets the backlog of connections.
+ </summary>
+	<value>Integer</value>
+	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetLib.NetTCPClient">
+	<summary>
+ This is a NetTCPClient socket.
+ </summary>
 	<remarks></remarks>
 </member>
 </members>
