@@ -219,9 +219,9 @@ Namespace CALMNetLib
                             Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
                         End If
                     Else
-                        Dim lentr As Integer = _sock.Available
-                        ReDim bts(lentr - 1)
-                        _sock.Receive(bts, lentr, SocketFlags.None)
+                        Dim lentr As Integer = _sock.Receive(bts, _sock.ReceiveBufferSize - 1, SocketFlags.None)
+                        ReDim btstr(lentr - 1)
+                        Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
@@ -290,9 +290,9 @@ Namespace CALMNetLib
                             Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
                         End If
                     Else
-                        Dim lentr As Integer = _sock.Available
-                        ReDim bts(lentr - 1)
-                        _sock.ReceiveFrom(bts, lentr, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                        Dim lentr As Integer = _sock.ReceiveFrom(bts, _sock.ReceiveBufferSize - 1, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                        ReDim btstr(lentr - 1)
+                        Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))

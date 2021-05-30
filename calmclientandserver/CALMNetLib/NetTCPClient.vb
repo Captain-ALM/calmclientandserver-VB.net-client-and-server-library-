@@ -177,9 +177,10 @@ Namespace CALMNetLib
                             End While
                         End If
                     Else
-                        Dim lentr As Integer = _sock.Available
+                        Dim btsb(_sock.ReceiveBufferSize - 1) As Byte
+                        Dim lentr As Integer = _sock.Receive(btsb, _sock.ReceiveBufferSize - 1, SocketFlags.None)
                         ReDim bts(lentr - 1)
-                        _sock.Receive(bts, lentr, SocketFlags.None)
+                        Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
