@@ -69,13 +69,13 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CALMNetMarshall\IPacket.vb" />
-    <Compile Include="CALMNetMarshall\Message.vb" />
-    <Compile Include="CALMNetMarshall\NetMarshalBase.vb" />
-    <Compile Include="CALMNetMarshall\NetMarshalTCP.vb" />
-    <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
-    <Compile Include="CALMNetMarshall\NetMarshalUDP.vb" />
-    <Compile Include="CALMNetMarshall\XMessage.vb" />
+    <Compile Include="CALMNetMarshal\IPacket.vb" />
+    <Compile Include="CALMNetMarshal\Message.vb" />
+    <Compile Include="CALMNetMarshal\NetMarshalBase.vb" />
+    <Compile Include="CALMNetMarshal\NetMarshalTCP.vb" />
+    <Compile Include="CALMNetMarshal\NetMarshalTCPClient.vb" />
+    <Compile Include="CALMNetMarshal\NetMarshalUDP.vb" />
+    <Compile Include="CALMNetMarshal\XMessage.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
