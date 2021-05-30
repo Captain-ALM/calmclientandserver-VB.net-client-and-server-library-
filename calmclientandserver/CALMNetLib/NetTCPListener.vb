@@ -415,6 +415,20 @@ Namespace CALMNetLib
                 _bl = value
             End Set
         End Property
+        ''' <summary>
+        ''' Gets or sets whether the socket sends and receives data using the length header.
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether the socket uses a length header</returns>
+        ''' <remarks></remarks>
+        Public Property hasLengthHeader As Boolean Implements INetConfig.hasLengthHeader
+            Get
+                Throw New NetLibException(New InvalidOperationException("Not a TCP or UDP Client."))
+            End Get
+            Set(value As Boolean)
+                Throw New NetLibException(New InvalidOperationException("Not a TCP or UDP Client."))
+            End Set
+        End Property
     End Class
 
 End Namespace

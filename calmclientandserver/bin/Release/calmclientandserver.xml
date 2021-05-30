@@ -620,6 +620,13 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>Backlog of Connections</returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetUDPClient.hasLengthHeader">
+	<summary>
+ Gets or sets whether the socket sends and receives data using the length header.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the socket uses a length header</returns>
+	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetUDPClient">
 	<summary>
  This is a NetUDPClient socket.
@@ -901,6 +908,13 @@ calmclientandserver
  Sets the Remote Port.
  </summary>
 	<param name="remote_Port">The Remote Port</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetSocketConfig.hasLengthHeader">
+	<summary>
+ Gets or sets whether the socket sends and receives data using the length header.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the socket uses a length header</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetSocketConfig">
 	<summary>
@@ -1455,6 +1469,13 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>Backlog of Connections</returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.INetConfig.hasLengthHeader">
+	<summary>
+ Gets or sets whether the socket sends and receives data using the length header.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the socket uses a length header</returns>
+	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.INetConfig">
 	<summary>
  Defines The Socket Configuration Interface.
@@ -1662,6 +1683,13 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPListener.hasLengthHeader">
+	<summary>
+ Gets or sets whether the socket sends and receives data using the length header.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the socket uses a length header</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetTCPListener">
 	<summary>
@@ -2019,6 +2047,13 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>Backlog of Connections</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetLib.NetTCPClient.hasLengthHeader">
+	<summary>
+ Gets or sets whether the socket sends and receives data using the length header.
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether the socket uses a length header</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetTCPClient">
 	<summary>

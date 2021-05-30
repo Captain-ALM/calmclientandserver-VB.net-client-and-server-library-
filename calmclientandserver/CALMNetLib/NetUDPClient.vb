@@ -26,7 +26,8 @@ Namespace CALMNetLib
 		Protected _c As Boolean = False
 		Protected slocksend As New Object()
 		Protected slockreceive As New Object()
-		Protected slocksockman As New Object()
+        Protected slocksockman As New Object()
+        Protected _hlh As Boolean = False
         ''' <summary>
         ''' Constructs a new NetUDPClient Instance on the specified IP Address, port and specification.
         ''' </summary>
@@ -169,51 +170,65 @@ Namespace CALMNetLib
         ''' <param name="bytes">The byte array to send</param>
         ''' <returns>Whether the send was successful</returns>
         ''' <remarks></remarks>
-		Public Overridable Function sendBytes(bytes As Byte()) As Boolean Implements INetSocketConnectionless.sendBytes
-			If Not _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client does not have a dedicated connection."))
-			Dim ret As Integer = 0
-			If bytes.Length > _sock.SendBufferSize - 4 Then Throw New NetLibException( New ArgumentOutOfRangeException("The Byte Array is too big."))
-			SyncLock slocksend
-				Try
-					Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                    Dim ts(_sock.SendBufferSize - 1) As Byte
-					System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-					System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
-					ret = _sock.Send(ts, ts.Length, SocketFlags.None)
+        Public Overridable Function sendBytes(bytes As Byte()) As Boolean Implements INetSocketConnectionless.sendBytes
+            If Not _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client does not have a dedicated connection."))
+            Dim ret As Integer = 0
+            Dim limit As Integer = _sock.SendBufferSize
+            If _hlh Then limit -= 4
+            If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
+            SyncLock slocksend
+                Try
+                    Dim arrlen As Integer = bytes.Length - 1
+                    If _hlh Then arrlen += 4
+                    Dim ts(arrlen) As Byte
+                    If _hlh Then
+                        Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
+                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
+                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                    Else
+                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                    End If
+                    ret = _sock.Send(ts, ts.Length, SocketFlags.None)
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
                     Return False
-				End Try
-			End SyncLock
-			Return ret > 0
-		End Function
+                End Try
+            End SyncLock
+            Return ret > 0
+        End Function
         ''' <summary>
         ''' Receives a byte array from the network.
         ''' </summary>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-		Public Overridable Function receiveBytes() As Byte() Implements INetSocketConnectionless.receiveBytes
-			If Not _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client does not have a dedicated connection."))
+        Public Overridable Function receiveBytes() As Byte() Implements INetSocketConnectionless.receiveBytes
+            If Not _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client does not have a dedicated connection."))
             Dim bts(_sock.ReceiveBufferSize - 1) As Byte
             Dim btstr(-1) As Byte
             SyncLock slockreceive
                 Try
-                    Dim len(3) As Byte
-                    _sock.Receive(bts, bts.Length, SocketFlags.None)
-                    Buffer.BlockCopy(bts, 0, len, 0, 4)
-                    Dim lengthflen As Integer = Utilities.BytesToInt32(len)
-                    ReDim btstr(lengthflen - 1)
-                    If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                        Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
+                    If _hlh Then
+                        Dim len(3) As Byte
+                        _sock.Receive(bts, bts.Length, SocketFlags.None)
+                        Buffer.BlockCopy(bts, 0, len, 0, 4)
+                        Dim lengthflen As Integer = Utilities.BytesToInt32(len)
+                        ReDim btstr(lengthflen - 1)
+                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
+                            Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
+                        Else
+                            Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
+                        End If
                     Else
-                        Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
+                        Dim lentr As Integer = _sock.Available
+                        ReDim bts(lentr - 1)
+                        _sock.Receive(bts, lentr, SocketFlags.None)
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
                 End Try
             End SyncLock
             Return btstr
-		End Function
+        End Function
         ''' <summary>
         ''' Sends a byte array over the network to the specified address and port.
         ''' </summary>
@@ -222,25 +237,33 @@ Namespace CALMNetLib
         ''' <param name="remotePort">The remote Port</param>
         ''' <returns>Whether the send was successful</returns>
         ''' <remarks></remarks>
-		Public Overridable Function sendBytesTo(bytes As Byte(), remoteIP As String, remotePort As Integer) As Boolean Implements INetSocketConnectionless.sendBytesTo
-			If _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client has a dedicated connection."))
-			Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
-			Dim ret As Integer = 0
-			If bytes.Length > _sock.SendBufferSize - 4 Then Throw New NetLibException( New ArgumentOutOfRangeException("The Byte Array is too big."))
-			SyncLock slocksend
-				Try
-					Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                    Dim ts(_sock.SendBufferSize - 1) As Byte
-					System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-					System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
-					ret = _sock.SendTo(ts, ts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+        Public Overridable Function sendBytesTo(bytes As Byte(), remoteIP As String, remotePort As Integer) As Boolean Implements INetSocketConnectionless.sendBytesTo
+            If _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client has a dedicated connection."))
+            Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
+            Dim ret As Integer = 0
+            Dim limit As Integer = _sock.SendBufferSize
+            If _hlh Then limit -= 4
+            If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
+            SyncLock slocksend
+                Try
+                    Dim arrlen As Integer = bytes.Length - 1
+                    If _hlh Then arrlen += 4
+                    Dim ts(arrlen) As Byte
+                    If _hlh Then
+                        Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
+                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
+                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                    Else
+                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                    End If
+                    ret = _sock.SendTo(ts, ts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
                     Return False
-				End Try
-			End SyncLock
-			Return ret > 0
-		End Function
+                End Try
+            End SyncLock
+            Return ret > 0
+        End Function
         ''' <summary>
         ''' Receives a byte array from the specified address and port on the network.
         ''' </summary>
@@ -248,29 +271,35 @@ Namespace CALMNetLib
         ''' <param name="remotePort">The remote Port</param>
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
-		Public Overridable Function receiveBytesFrom(remoteIP As String, remotePort As Integer) As Byte() Implements INetSocketConnectionless.receiveBytesFrom
-			If _uc Then Throw New NetLibException( New InvalidOperationException("This UDP Client has a dedicated connection."))
-			Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
+        Public Overridable Function receiveBytesFrom(remoteIP As String, remotePort As Integer) As Byte() Implements INetSocketConnectionless.receiveBytesFrom
+            If _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client has a dedicated connection."))
+            Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
             Dim bts(_sock.ReceiveBufferSize - 1) As Byte
             Dim btstr(-1) As Byte
             SyncLock slockreceive
                 Try
-                    Dim len(3) As Byte
-                    _sock.ReceiveFrom(bts, bts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
-                    Buffer.BlockCopy(bts, 0, len, 0, 4)
-                    Dim lengthflen As Integer = Utilities.BytesToInt32(len)
-                    ReDim btstr(lengthflen - 1)
-                    If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                        Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
+                    If _hlh Then
+                        Dim len(3) As Byte
+                        _sock.ReceiveFrom(bts, bts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                        Buffer.BlockCopy(bts, 0, len, 0, 4)
+                        Dim lengthflen As Integer = Utilities.BytesToInt32(len)
+                        ReDim btstr(lengthflen - 1)
+                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
+                            Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
+                        Else
+                            Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
+                        End If
                     Else
-                        Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
+                        Dim lentr As Integer = _sock.Available
+                        ReDim bts(lentr - 1)
+                        _sock.ReceiveFrom(bts, lentr, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
                 End Try
             End SyncLock
             Return btstr
-		End Function
+        End Function
         ''' <summary>
         ''' Reassociates a dedicated connectionless connection.
         ''' </summary>
@@ -579,7 +608,21 @@ Namespace CALMNetLib
 			Set(value As Integer)
 				Throw New NetLibException( New InvalidOperationException("Not a TCP Listener."))
 			End Set
-		End Property
+        End Property
+        ''' <summary>
+        ''' Gets or sets whether the socket sends and receives data using the length header.
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether the socket uses a length header</returns>
+        ''' <remarks></remarks>
+        Public Property hasLengthHeader As Boolean Implements INetConfig.hasLengthHeader
+            Get
+                Return _hlh
+            End Get
+            Set(value As Boolean)
+                _hlh = value
+            End Set
+        End Property
 	End Class
     ''' <summary>
     ''' Specifies the Selector for UDP Address and Port specification.

@@ -23,6 +23,7 @@ Namespace CALMNetLib
         Protected _port As Integer = 0
         Protected slocksend As New Object()
         Protected slockreceive As New Object()
+        Protected _hlh As Boolean = False
         ''' <summary>
         ''' Constructs a New NetTCPClient Instance connecting to the specified IP Address and port.
         ''' </summary>
@@ -116,13 +117,21 @@ Namespace CALMNetLib
         Public Overridable Function sendBytes(bytes As Byte()) As Boolean Implements INetSocket.sendBytes
             Dim ret As Integer = 0
             If Not pollConnection() Then Return False
-            If bytes.Length > _sock.SendBufferSize - 4 Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
+            Dim limit As Integer = _sock.SendBufferSize
+            If _hlh Then limit -= 4
+            If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
             SyncLock slocksend
                 Try
-                    Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                    Dim ts((3 + bytes.Length)) As Byte
-                    System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-                    System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                    Dim arrlen As Integer = bytes.Length - 1
+                    If _hlh Then arrlen += 4
+                    Dim ts(arrlen) As Byte
+                    If _hlh Then
+                        Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
+                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
+                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                    Else
+                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                    End If
                     ret = _sock.Send(ts, ts.Length, SocketFlags.None)
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
@@ -141,30 +150,36 @@ Namespace CALMNetLib
             If Not pollConnection() Then Return bts
             SyncLock slockreceive
                 Try
-                    Dim len(3) As Byte
-                    _sock.Receive(len, 4, SocketFlags.None)
-                    Dim lengthflen As Integer = Utilities.BytesToInt32(len)
-                    ReDim bts(lengthflen - 1)
-                    If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                        _sock.Receive(bts, bts.Length, SocketFlags.None)
+                    If _hlh Then
+                        Dim len(3) As Byte
+                        _sock.Receive(len, 4, SocketFlags.None)
+                        Dim lengthflen As Integer = Utilities.BytesToInt32(len)
+                        ReDim bts(lengthflen - 1)
+                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
+                            _sock.Receive(bts, bts.Length, SocketFlags.None)
+                        Else
+                            Dim btsrem As Integer = lengthflen
+                            Dim btsind As Integer = 0
+                            While btsrem > 0
+                                If btsrem < _sock.ReceiveBufferSize - 4 Then
+                                    Dim rec(btsrem - 1) As Byte
+                                    _sock.Receive(rec, btsrem, SocketFlags.None)
+                                    Buffer.BlockCopy(rec, 0, bts, btsind, btsrem)
+                                    btsind += btsrem
+                                    btsrem -= btsrem
+                                Else
+                                    Dim rec(_sock.ReceiveBufferSize - 5) As Byte
+                                    _sock.Receive(rec, _sock.ReceiveBufferSize - 5, SocketFlags.None)
+                                    Buffer.BlockCopy(rec, 0, bts, btsind, _sock.ReceiveBufferSize - 5)
+                                    btsrem -= (_sock.ReceiveBufferSize - 5)
+                                    btsind += (_sock.ReceiveBufferSize - 5)
+                                End If
+                            End While
+                        End If
                     Else
-                        Dim btsrem As Integer = lengthflen
-                        Dim btsind As Integer = 0
-                        While btsrem > 0
-                            If btsrem < _sock.ReceiveBufferSize - 4 Then
-                                Dim rec(btsrem - 1) As Byte
-                                _sock.Receive(rec, btsrem, SocketFlags.None)
-                                Buffer.BlockCopy(rec, 0, bts, btsind, btsrem)
-                                btsind += btsrem
-                                btsrem -= btsrem
-                            Else
-                                Dim rec(_sock.ReceiveBufferSize - 5) As Byte
-                                _sock.Receive(rec, _sock.ReceiveBufferSize - 5, SocketFlags.None)
-                                Buffer.BlockCopy(rec, 0, bts, btsind, _sock.ReceiveBufferSize - 5)
-                                btsrem -= (_sock.ReceiveBufferSize - 5)
-                                btsind += (_sock.ReceiveBufferSize - 5)
-                            End If
-                        End While
+                        Dim lentr As Integer = _sock.Available
+                        ReDim bts(lentr - 1)
+                        _sock.Receive(bts, lentr, SocketFlags.None)
                     End If
                 Catch ex As SocketException
                     Utilities.addException(New NetLibException(ex))
@@ -569,6 +584,20 @@ Namespace CALMNetLib
             End Get
             Set(value As Integer)
                 Throw New NetLibException(New InvalidOperationException("Not a TCP Listener."))
+            End Set
+        End Property
+        ''' <summary>
+        ''' Gets or sets whether the socket sends and receives data using the length header.
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether the socket uses a length header</returns>
+        ''' <remarks></remarks>
+        Public Property hasLengthHeader As Boolean Implements INetConfig.hasLengthHeader
+            Get
+                Return _hlh
+            End Get
+            Set(value As Boolean)
+                _hlh = value
             End Set
         End Property
     End Class
