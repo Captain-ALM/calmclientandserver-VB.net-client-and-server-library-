@@ -75,6 +75,7 @@
     <Compile Include="CALMNetMarshall\NetMarshalTCP.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalTCPClient.vb" />
     <Compile Include="CALMNetMarshall\NetMarshalUDP.vb" />
+    <Compile Include="CALMNetMarshall\XMessage.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -104,6 +105,9 @@
     <Compile Include="CALMNetLib\NetTCPListener.vb" />
     <Compile Include="CALMNetLib\NetUDPClient.vb" />
     <Compile Include="CALMNetLib\Utilities.vb" />
+    <Compile Include="Serialize\ISerialize.vb" />
+    <Compile Include="Serialize\Serializer.vb" />
+    <Compile Include="Serialize\XSerializer.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

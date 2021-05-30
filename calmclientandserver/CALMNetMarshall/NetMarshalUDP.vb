@@ -2,6 +2,7 @@
 Imports captainalm.CALMNetLib
 Imports System.Net.Sockets
 Imports System.Threading
+Imports captainalm.Serialize
 
 Namespace CALMNetMarshal
     ''' <summary>

@@ -1,4 +1,6 @@
-﻿Namespace CALMNetLib
+﻿Imports captainalm.Serialize
+
+Namespace CALMNetLib
     ''' <summary>
     ''' Represents a Generic Encapsulated Object.
     ''' </summary>
