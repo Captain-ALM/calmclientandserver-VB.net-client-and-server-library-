@@ -17,7 +17,7 @@ Namespace CALMNetLib
         '[...+1-...+9] Check Sum (8 Bytes) [Always 8 bytes]
 
         Protected intobj As Object
-        Protected ser As Serializer
+        Protected _ser As ISerialize
         ''' <summary>
         ''' Constructs a EncapsulatedObject with the specified object to be encapsulated.
         ''' </summary>
@@ -25,7 +25,7 @@ Namespace CALMNetLib
         ''' <remarks></remarks>
         Public Sub New(obj As t)
             intobj = obj
-            ser = New Serializer()
+            _ser = New Serializer()
         End Sub
         ''' <summary>
         ''' Constructs a EncapsulatedObject with the specified object to be encapsulated and the serializer to use.
@@ -33,9 +33,9 @@ Namespace CALMNetLib
         ''' <param name="obj">The Object to Encapsulate</param>
         ''' <param name="ser">The Serializer to Use</param>
         ''' <remarks></remarks>
-        Public Sub New(obj As t, ser As Serializer)
+        Public Sub New(obj As t, ser As ISerialize)
             intobj = obj
-            ser = ser
+            _ser = ser
         End Sub
         ''' <summary>
         ''' Combines the split parts into the Encapsulated Object.
@@ -59,7 +59,7 @@ Namespace CALMNetLib
                 Buffer.BlockCopy(cpp, 0, bts, pos, cpp.Length)
                 pos += cpp.Length
             Next
-            intobj = ser.deSerializeObject(Of t)(bts)
+            intobj = _ser.deSerializeObject(Of t)(bts)
         End Sub
         ''' <summary>
         ''' Returns the data of the object.
@@ -171,7 +171,7 @@ Namespace CALMNetLib
         ''' <returns>The Array of Array of Bytes of the Encapsulated Object</returns>
         ''' <remarks></remarks>
         Public Overridable Function splitParts(size As Long) As Byte()() Implements IEncapsulation.splitParts
-            Dim bts As Byte() = ser.serializeObject(Of t)(CType(intobj, t))
+            Dim bts As Byte() = _ser.serializeObject(Of t)(CType(intobj, t))
             If (size - 20) > bts.Length Then Throw New NetLibException(New ArgumentOutOfRangeException("The size is larger than the length of the data."))
             Dim cntp As Long = bts.Length \ size
             If bts.Length Mod size <> 0 Then cntp += 1

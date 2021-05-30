@@ -59,38 +59,7 @@ Namespace CALMNetLib
 
         Protected Overridable Function pollConnection() As Boolean
             Try
-                If _sock.SendTimeout > 0 And _sock.ReceiveTimeout > 0 Then
-                    Try
-                        Dim toret As Boolean = False
-                        SyncLock slocksend
-                            _sock.Send(New Byte() {0}, 0, SocketFlags.None)
-                            toret = _sock.Poll((1000 * (_sock.SendTimeout + 1)), SelectMode.SelectWrite) And _sock.Connected And Not ((_sock.Available = 0 And _sock.Poll((1000 * (_sock.ReceiveTimeout + 1)), SelectMode.SelectRead)))
-                            Dim ce As Boolean = False
-                            Dim tcpConnections As TcpConnectionInformation() = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections()
-                            For Each c As TcpConnectionInformation In tcpConnections
-                                Dim stateOfConnection As TcpState = c.State
-                                If c.LocalEndPoint.Equals(_sock.LocalEndPoint) AndAlso c.RemoteEndPoint.Equals(_sock.RemoteEndPoint) Then
-                                    ce = True
-                                    If stateOfConnection = TcpState.Established Then
-                                        toret = True
-                                    Else
-                                        toret = False
-                                    End If
-                                End If
-                            Next
-                            If Not ce Then toret = False
-                        End SyncLock
-                        Return toret
-                    Catch ex As NetworkInformationException
-                        Utilities.addException(New NetLibException(ex))
-                    Catch ex As ObjectDisposedException
-                        Utilities.addException(New NetLibException(ex))
-                    Catch ex As SocketException
-                        Utilities.addException(New NetLibException(ex))
-                    End Try
-                Else
-                    Return _sock.Connected
-                End If
+                Return _sock.Connected
             Catch ex As ObjectDisposedException
                 Utilities.addException(New NetLibException(ex))
             End Try
