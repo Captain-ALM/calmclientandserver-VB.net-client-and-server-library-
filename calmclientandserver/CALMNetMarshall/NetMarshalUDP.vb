@@ -100,9 +100,9 @@ Namespace CALMNetMarshal
                         End If
                         Dim bts As Byte() = CType(_cl, INetSocketConnectionless).receiveBytesFrom(ip, 0)
                         If bts.Length > 0 Then
-                            Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
+                            Dim tbeat As Beat = _serializer.deSerializeObject(Of Beat)(bts)
                             If Not tbeat.valid Then
-                                Dim tmsg As IPacket = New Serializer().deSerializeObject(Of IPacket)(bts)
+                                Dim tmsg As IPacket = _serializer.deSerializeObject(Of IPacket)(bts)
                                 If Not (TypeOf tmsg Is Beat) Then
                                     raiseMessageReceived(tmsg)
                                 End If

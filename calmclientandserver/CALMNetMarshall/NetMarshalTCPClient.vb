@@ -46,14 +46,14 @@ Namespace CALMNetMarshal
                     While _cl IsNot Nothing AndAlso _cl.connected
                         Dim bts As Byte() = _cl.receiveBytes()
                         If bts.Length > 0 Then
-                            Dim tbeat As Beat = New Serializer().deSerializeObject(Of Beat)(bts)
+                            Dim tbeat As Beat = _serializer.deSerializeObject(Of Beat)(bts)
                             If Not tbeat.valid Then
-                                Dim tmsg As IPacket = New Serializer().deSerializeObject(Of IPacket)(bts)
+                                Dim tmsg As IPacket = _serializer.deSerializeObject(Of IPacket)(bts)
                                 If Not (TypeOf tmsg Is Beat) Then
                                     raiseMessageReceived(tmsg)
                                 End If
                             Else
-                                throbbed()
+                                throbbed(tbeat.isBeat)
                             End If
                         End If
                         Thread.Sleep(125)

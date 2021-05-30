@@ -1,6 +1,7 @@
 ﻿Imports captainalm.CALMNetLib
 Imports System.Threading
 Imports captainalm.Serialize
+Imports System.Xml.Serialization
 
 Namespace CALMNetMarshal
     ''' <summary>
@@ -12,9 +13,9 @@ Namespace CALMNetMarshal
         Protected _t As Thread = New Thread(AddressOf t_exec)
         Protected _bout As Integer = 0
         Protected _beated As Boolean = False
-        Protected _awaitbeat As Boolean = False
         Protected _buffer As Integer = 0
         Protected _configdup As NetSocketConfig
+        Protected _serializer As ISerialize = New Serializer()
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -60,7 +61,7 @@ Namespace CALMNetMarshal
         Public Overridable Sub close()
             If _t IsNot Nothing Then
                 If _t.IsAlive Then
-                    _t.Join(500)
+                    _t.Join(250)
                 End If
                 If _t.IsAlive Then
                     _t.Abort()
@@ -68,6 +69,21 @@ Namespace CALMNetMarshal
                 _t = Nothing
             End If
         End Sub
+        ''' <summary>
+        ''' Provides the serializer for the packets to use
+        ''' </summary>
+        ''' <value>ISerialize</value>
+        ''' <returns>The Serializer in use</returns>
+        ''' <remarks></remarks>
+        Public Overridable Property serializer As ISerialize
+            Get
+                Return _serializer
+            End Get
+            Set(value As ISerialize)
+                If value Is Nothing Then Return
+                _serializer = value
+            End Set
+        End Property
         ''' <summary>
         ''' States whether the marshal is ready.
         ''' </summary>
@@ -144,46 +160,33 @@ Namespace CALMNetMarshal
 
         Protected MustOverride Sub t_exec()
 
-        Protected _slockthrob As New Object()
+        Protected _slockbeat As New Object()
         Protected Overridable Function throb() As Boolean
-            Dim toret As Boolean = False
-            SyncLock _slockthrob
+            SyncLock _slockbeat
                 If (Not _cl Is Nothing) And (_bout > 0) Then
-                    _awaitbeat = True
-                    Dim b As New Beat(True)
-                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
-                    toret = Me.sendMessage(b)
-                    b = Nothing
+                    Dim toret As Boolean = False
+                    toret = Me.sendMessage(New Beat(1, _serializer))
                     If toret Then
                         Dim blft As Integer = _bout
                         While blft > 0
                             Thread.Sleep(125)
                             blft -= 125
                         End While
-                        _awaitbeat = False
                         toret = _beated
                         If _beated Then _beated = False Else raiseBeatTimedOut()
                     Else
                         raiseBeatTimedOut()
                     End If
-                Else
-                    toret = True
+                    Return toret
+                ElseIf Not _cl Is Nothing Then
+                    Return True
                 End If
+                Return False
             End SyncLock
-            Return toret
         End Function
-        Protected Overridable Sub throbbed()
-            SyncLock _slockthrob
-                If _awaitbeat Then
-                    _beated = True
-                    _awaitbeat = False
-                Else
-                    Dim b As New Beat(True)
-                    'WARNING: - This calls sendMessage, If you use throb in sendMessage, make sure you do not call throb if the Message is Beat.
-                    Me.sendMessage(b)
-                    b = Nothing
-                End If
-            End SyncLock
+
+        Protected Overridable Sub throbbed(sendback As Boolean)
+            If sendback Then Me.sendMessage(New Beat(2, _serializer)) Else _beated = True
         End Sub
 
         Protected Sub raiseExceptionRaised(ex As Exception)
@@ -197,16 +200,33 @@ Namespace CALMNetMarshal
         Protected Sub raiseBeatTimedOut()
             RaiseEvent beatTimedOut()
         End Sub
+        ''' <summary>
+        ''' Provides the beat message structure
+        ''' </summary>
+        ''' <remarks></remarks>
         <Serializable>
-        Protected Structure Beat
+        Public Structure Beat
             Implements IPacket
 
-            Public valid As Boolean
-
-            Public Sub New(val As Boolean)
+            Public valid As Integer
+            Private _serializer As ISerialize
+            ''' <summary>
+            ''' Constructs a new beat packet with a value and the serializer to use
+            ''' </summary>
+            ''' <param name="val">The value to store</param>
+            ''' <param name="ser">The serializer to use</param>
+            ''' <remarks></remarks>
+            Public Sub New(val As Integer, ser As ISerialize)
                 valid = val
+                _serializer = ser
             End Sub
-
+            ''' <summary>
+            ''' Allows to get or set the internally held packet data generically.
+            ''' </summary>
+            ''' <value>Object</value>
+            ''' <returns>Held Packet Data.</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
             Public Property data As Object Implements IPacket.data
                 Get
                     Return valid
@@ -215,27 +235,65 @@ Namespace CALMNetMarshal
                     valid = value
                 End Set
             End Property
-
+            ''' <summary>
+            ''' Provides the serializer for the packet to use
+            ''' </summary>
+            ''' <value>ISerialize</value>
+            ''' <returns>The Serializer in use</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
+            Public Property serializer As ISerialize
+                Get
+                    Return _serializer
+                End Get
+                Set(value As ISerialize)
+                    If value Is Nothing Then Return
+                    _serializer = value
+                End Set
+            End Property
+            ''' <summary>
+            ''' Gets the Type of the internally held packet data.
+            ''' </summary>
+            ''' <value>Type</value>
+            ''' <returns>Type Of Internal Data</returns>
+            ''' <remarks></remarks>
             Public ReadOnly Property dataType As Type Implements IPacket.dataType
                 Get
-                    Return GetType(Boolean)
+                    Return GetType(Integer)
                 End Get
             End Property
-
+            ''' <summary>
+            ''' Allows data to be taken from the packet interface.
+            ''' </summary>
+            ''' <value>Byte Array</value>
+            ''' <returns>Packet Interface Data</returns>
+            ''' <remarks></remarks>
             Public ReadOnly Property getData As Byte() Implements IPacket.getData
                 Get
-                    Return New Serializer().serializeObject(Of Beat)(Me)
+                    If _serializer Is Nothing Then _serializer = New Serializer()
+                    Return _serializer.serializeObject(Of Beat)(Me)
                 End Get
             End Property
-
+            ''' <summary>
+            ''' Allows data to be written to the packet interface.
+            ''' </summary>
+            ''' <value>Byte Array</value>
+            ''' <remarks></remarks>
             Public WriteOnly Property setData As Byte() Implements IPacket.setData
                 Set(value As Byte())
-                    Dim b As Beat = New Serializer().deSerializeObject(Of Beat)(value)
+                    If _serializer Is Nothing Then _serializer = New Serializer()
+                    Dim b As Beat = _serializer.deSerializeObject(Of Beat)(value)
                     Me.valid = b.valid
                     b = Nothing
                 End Set
             End Property
-
+            ''' <summary>
+            ''' The receiver's IP Address.
+            ''' </summary>
+            ''' <value>String</value>
+            ''' <returns>The receiver's IP Address.</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
             Public Property receiverIP As String Implements IPacket.receiverIP
                 Get
                     Return Nothing
@@ -243,7 +301,13 @@ Namespace CALMNetMarshal
                 Set(value As String)
                 End Set
             End Property
-
+            ''' <summary>
+            ''' The receiver's Port.
+            ''' </summary>
+            ''' <value>Integer</value>
+            ''' <returns>The receiver's Port.</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
             Public Property receiverPort As Integer Implements IPacket.receiverPort
                 Get
                     Return Nothing
@@ -251,7 +315,13 @@ Namespace CALMNetMarshal
                 Set(value As Integer)
                 End Set
             End Property
-
+            ''' <summary>
+            ''' The sender's IP Address.
+            ''' </summary>
+            ''' <value>String</value>
+            ''' <returns>The sender's IP Address.</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
             Public Property senderIP As String Implements IPacket.senderIP
                 Get
                     Return Nothing
@@ -259,13 +329,41 @@ Namespace CALMNetMarshal
                 Set(value As String)
                 End Set
             End Property
-
+            ''' <summary>
+            ''' The sender's Port.
+            ''' </summary>
+            ''' <value>Integer</value>
+            ''' <returns>The sender's Port.</returns>
+            ''' <remarks></remarks>
+            <XmlIgnore>
             Public Property senderPort As Integer Implements IPacket.senderPort
                 Get
                     Return Nothing
                 End Get
                 Set(value As Integer)
                 End Set
+            End Property
+            ''' <summary>
+            ''' Returns whether this is a beat
+            ''' </summary>
+            ''' <value>Boolean</value>
+            ''' <returns>If this is a beat</returns>
+            ''' <remarks></remarks>
+            Public ReadOnly Property isBeat() As Boolean
+                Get
+                    Return Me.valid = 1
+                End Get
+            End Property
+            ''' <summary>
+            ''' Returns whether this is a throb
+            ''' </summary>
+            ''' <value>Boolean</value>
+            ''' <returns>If this is a throb</returns>
+            ''' <remarks></remarks>
+            Public ReadOnly Property isThrob() As Boolean
+                Get
+                    Return Me.valid = 2
+                End Get
             End Property
         End Structure
     End Class

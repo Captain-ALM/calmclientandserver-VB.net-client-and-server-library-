@@ -159,14 +159,14 @@ Namespace CALMNetMarshal
                 Try
                     Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = _buffer, .sendBufferSize = _buffer, .noDelay = Not _delay}
                     Dim ct As New NetMarshalTCPClient(cs)
-                    AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
-                    AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                     ct.beatTimeout = _bout
-                    ct.start()
                     SyncLock _slockcolman
                         _clcol.Add(ct)
                     End SyncLock
                     raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
+                    AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
+                    AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
+                    ct.start()
                     toret = True
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
@@ -327,14 +327,14 @@ Namespace CALMNetMarshal
                         If _cl.clientWaiting Then
                             Dim [as] As INetSocket = _cl.acceptClient()
                             Dim ct As New NetMarshalTCPClient([as])
-                            AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
-                            AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                             ct.beatTimeout = _bout
-                            ct.start()
                             SyncLock _slockcolman
                                 _clcol.Add(ct)
                             End SyncLock
                             raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
+                            AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
+                            AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
+                            ct.start()
                         End If
                         For i As Integer = _clcol.Count - 1 To 0 Step -1
                             Try

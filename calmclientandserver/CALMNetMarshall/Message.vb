@@ -3,7 +3,7 @@
 Namespace CALMNetMarshal
 
     ''' <summary>
-    ''' A Message Class that Implements IPacket.
+    ''' A Message Structure that Implements IPacket.
     ''' </summary>
     ''' <remarks></remarks>
     <Serializable>

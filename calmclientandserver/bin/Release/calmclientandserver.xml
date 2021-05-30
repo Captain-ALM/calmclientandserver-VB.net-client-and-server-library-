@@ -1149,6 +1149,13 @@ calmclientandserver
  Stops the Marshal's main Thread.
  </summary>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.serializer">
+	<summary>
+ Provides the serializer for the packets to use
+ </summary>
+	<value>ISerialize</value>
+	<returns>The Serializer in use</returns>
+	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.ready">
 	<summary>
  States whether the marshal is ready.
@@ -1190,6 +1197,94 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.Beat.#ctor(System.Int32,captainalm.Serialize.ISerialize)">
+	<summary>
+ Constructs a new beat packet with a value and the serializer to use
+ </summary>
+	<param name="val">The value to store</param>
+	<param name="ser">The serializer to use</param>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.data">
+	<summary>
+ Allows to get or set the internally held packet data generically.
+ </summary>
+	<value>Object</value>
+	<returns>Held Packet Data.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.serializer">
+	<summary>
+ Provides the serializer for the packet to use
+ </summary>
+	<value>ISerialize</value>
+	<returns>The Serializer in use</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.dataType">
+	<summary>
+ Gets the Type of the internally held packet data.
+ </summary>
+	<value>Type</value>
+	<returns>Type Of Internal Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.getData">
+	<summary>
+ Allows data to be taken from the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<returns>Packet Interface Data</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.setData">
+	<summary>
+ Allows data to be written to the packet interface.
+ </summary>
+	<value>Byte Array</value>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.receiverIP">
+	<summary>
+ The receiver's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The receiver's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.receiverPort">
+	<summary>
+ The receiver's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The receiver's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.senderIP">
+	<summary>
+ The sender's IP Address.
+ </summary>
+	<value>String</value>
+	<returns>The sender's IP Address.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.senderPort">
+	<summary>
+ The sender's Port.
+ </summary>
+	<value>Integer</value>
+	<returns>The sender's Port.</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.isBeat">
+	<summary>
+ Returns whether this is a beat
+ </summary>
+	<value>Boolean</value>
+	<returns>If this is a beat</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.Beat.isThrob">
+	<summary>
+ Returns whether this is a throb
+ </summary>
+	<value>Boolean</value>
+	<returns>If this is a throb</returns>
+	<remarks></remarks>
+</member><member name="T:captainalm.CALMNetMarshal.NetMarshalBase.Beat">
+	<summary>
+ Provides the beat message structure
+ </summary>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.NetMarshalBase">
 	<summary>
@@ -1280,7 +1375,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.XMessage">
 	<summary>
- A Message Class that Implements IPacket using XML serialization.
+ A Message Structure that Implements IPacket using XML serialization.
  </summary>
 	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetLib.INetConfig.sendBufferSize">
@@ -1494,7 +1589,7 @@ calmclientandserver
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.Message">
 	<summary>
- A Message Class that Implements IPacket.
+ A Message Structure that Implements IPacket.
  </summary>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.NetTCPListener.#ctor(System.Net.IPAddress,System.Int32)">

@@ -1,11 +1,13 @@
 ﻿Imports captainalm.Serialize
 
 Namespace CALMNetMarshal
+
     ''' <summary>
-    ''' A Message Class that Implements IPacket using XML serialization.
+    ''' A Message Structure that Implements IPacket using XML serialization.
     ''' </summary>
     ''' <remarks></remarks>
-    Public Class XMessage
+    <Serializable>
+    Public Structure XMessage
         Implements IPacket
 
         Private senderIP_ As String
@@ -166,6 +168,6 @@ Namespace CALMNetMarshal
                 Return New XMessage() With {.header = Me.header, .message = Me.message, .senderIP = Me.senderIP, .senderPort = Me.senderPort, .receiverIP = Me.receiverIP, .receiverPort = Me.receiverPort}
             End Function
         End Structure
-    End Class
+    End Structure
 
 End Namespace
