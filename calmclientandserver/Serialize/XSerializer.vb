@@ -38,19 +38,22 @@ Namespace Serialize
         Public Function deSerialize(Of t)(str As String) As t Implements ISerialize.deSerialize
             If Me.disposedValue Then Throw New ObjectDisposedException("XSerializer")
             SyncLock slock
-                Dim xformatter As New XmlSerializer(GetType(t))
-                Using ms As New MemoryStream()
-                    Using sw As New StreamWriter(ms)
-                        sw.AutoFlush = True
-                        For i As Integer = 0 To str.Length - 1 Step 1
-                            sw.Write(str(i))
-                        Next
-                        If (Not sw.AutoFlush) Then sw.Flush()
-                        sw.AutoFlush = False
-                        ms.Position = 0
-                        Return CType(xformatter.Deserialize(ms), t)
+                Try
+                    Dim xformatter As New XmlSerializer(GetType(t))
+                    Using ms As New MemoryStream()
+                        Using sw As New StreamWriter(ms)
+                            sw.AutoFlush = True
+                            For i As Integer = 0 To str.Length - 1 Step 1
+                                sw.Write(str(i))
+                            Next
+                            If (Not sw.AutoFlush) Then sw.Flush()
+                            sw.AutoFlush = False
+                            ms.Position = 0
+                            Return CType(xformatter.Deserialize(ms), t)
+                        End Using
                     End Using
-                End Using
+                Catch ex As Exception When (TypeOf ex Is System.Text.EncoderFallbackException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is IOException Or TypeOf ex Is NotSupportedException Or TypeOf ex Is ArgumentException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is FormatException Or TypeOf ex Is OverflowException)
+                End Try
                 Return Nothing
             End SyncLock
         End Function
@@ -75,13 +78,13 @@ Namespace Serialize
         Public Function deSerializeObject(Of t)(bts() As Byte) As t Implements ISerialize.deSerializeObject
             If Me.disposedValue Then Throw New ObjectDisposedException("XSerializer")
             SyncLock slock
-                Dim xformatter As New XmlSerializer(GetType(t))
                 Try
+                    Dim xformatter As New XmlSerializer(GetType(t))
                     Using ms As New MemoryStream(bts)
                         ms.Flush()
                         Return CType(xformatter.Deserialize(ms), t)
                     End Using
-                Catch ex As ArgumentNullException
+                Catch ex As Exception When (TypeOf ex Is System.Text.EncoderFallbackException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is IOException Or TypeOf ex Is NotSupportedException Or TypeOf ex Is ArgumentException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is FormatException Or TypeOf ex Is OverflowException)
                 End Try
                 Return Nothing
             End SyncLock
@@ -107,14 +110,17 @@ Namespace Serialize
         Public Function serialize(Of t)(obj As t) As String Implements ISerialize.serialize
             If Me.disposedValue Then Throw New ObjectDisposedException("XSerializer")
             SyncLock slock
-                Dim xformatter As New XmlSerializer(GetType(t))
-                Using ms As New MemoryStream()
-                    Using sw As New StreamWriter(ms), sr As New StreamReader(ms)
-                        xformatter.Serialize(sw, obj)
-                        ms.Position = 0
-                        Return sr.ReadToEnd()
+                Try
+                    Dim xformatter As New XmlSerializer(GetType(t))
+                    Using ms As New MemoryStream()
+                        Using sw As New StreamWriter(ms), sr As New StreamReader(ms)
+                            xformatter.Serialize(sw, obj)
+                            ms.Position = 0
+                            Return sr.ReadToEnd()
+                        End Using
                     End Using
-                End Using
+                Catch ex As Exception When (TypeOf ex Is ObjectDisposedException Or TypeOf ex Is IOException Or TypeOf ex Is OutOfMemoryException Or TypeOf ex Is ArgumentException)
+                End Try
                 Return ""
             End SyncLock
         End Function
@@ -139,13 +145,16 @@ Namespace Serialize
         Public Function serializeObject(Of t)(obj As t) As Byte() Implements ISerialize.serializeObject
             If Me.disposedValue Then Throw New ObjectDisposedException("XSerializer")
             SyncLock slock
-                Dim xformatter As New XmlSerializer(GetType(t))
-                Using ms As New MemoryStream()
-                    Using sw As New StreamWriter(ms)
-                        xformatter.Serialize(sw, obj)
-                        Return ms.ToArray()
+                Try
+                    Dim xformatter As New XmlSerializer(GetType(t))
+                    Using ms As New MemoryStream()
+                        Using sw As New StreamWriter(ms)
+                            xformatter.Serialize(sw, obj)
+                            Return ms.ToArray()
+                        End Using
                     End Using
-                End Using
+                Catch ex As Exception When (TypeOf ex Is ObjectDisposedException Or TypeOf ex Is IOException Or TypeOf ex Is OutOfMemoryException Or TypeOf ex Is ArgumentException)
+                End Try
                 Return New Byte() {}
             End SyncLock
         End Function

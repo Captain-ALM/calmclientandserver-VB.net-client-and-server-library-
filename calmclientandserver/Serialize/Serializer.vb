@@ -50,11 +50,14 @@ Namespace Serialize
         Public Function serializeObject(obj As Object) As Byte() Implements ISerialize.serializeObject
             If Me.disposedValue Then Throw New ObjectDisposedException("Serializer")
             SyncLock slock
-                Using ms As New MemoryStream()
-                    formatter.Serialize(ms, obj)
-                    ms.Flush()
-                    Return ms.ToArray()
-                End Using
+                Try
+                    Using ms As New MemoryStream()
+                        formatter.Serialize(ms, obj)
+                        ms.Flush()
+                        Return ms.ToArray()
+                    End Using
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException)
+                End Try
                 Return New Byte() {}
             End SyncLock
         End Function
@@ -68,11 +71,14 @@ Namespace Serialize
         Public Function serializeObject(Of t)(obj As t) As Byte() Implements ISerialize.serializeObject
             If Me.disposedValue Then Throw New ObjectDisposedException("Serializer")
             SyncLock slock
-                Using ms As New MemoryStream()
-                    formatter.Serialize(ms, obj)
-                    ms.Flush()
-                    Return ms.ToArray()
-                End Using
+                Try
+                    Using ms As New MemoryStream()
+                        formatter.Serialize(ms, obj)
+                        ms.Flush()
+                        Return ms.ToArray()
+                    End Using
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException)
+                End Try
                 Return New Byte() {}
             End SyncLock
         End Function
@@ -85,11 +91,14 @@ Namespace Serialize
         Public Function serialize(obj As Object) As String Implements ISerialize.serialize
             If Me.disposedValue Then Throw New ObjectDisposedException("Serializer")
             SyncLock slock
-                Using ms As New MemoryStream()
-                    formatter.Serialize(ms, obj)
-                    ms.Flush()
-                    Return Convert.ToBase64String(ms.ToArray())
-                End Using
+                Try
+                    Using ms As New MemoryStream()
+                        formatter.Serialize(ms, obj)
+                        ms.Flush()
+                        Return Convert.ToBase64String(ms.ToArray())
+                    End Using
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException)
+                End Try
                 Return ""
             End SyncLock
         End Function
@@ -103,11 +112,14 @@ Namespace Serialize
         Public Function serialize(Of t)(obj As t) As String Implements ISerialize.serialize
             If Me.disposedValue Then Throw New ObjectDisposedException("Serializer")
             SyncLock slock
-                Using ms As New MemoryStream()
-                    formatter.Serialize(ms, obj)
-                    ms.Flush()
-                    Return Convert.ToBase64String(ms.ToArray())
-                End Using
+                Try
+                    Using ms As New MemoryStream()
+                        formatter.Serialize(ms, obj)
+                        ms.Flush()
+                        Return Convert.ToBase64String(ms.ToArray())
+                    End Using
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException)
+                End Try
                 Return ""
             End SyncLock
         End Function
@@ -125,7 +137,7 @@ Namespace Serialize
                         ms.Flush()
                         Return formatter.Deserialize(ms)
                     End Using
-                Catch ex As ArgumentNullException
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is OverflowException)
                 End Try
                 Return Nothing
             End SyncLock
@@ -145,7 +157,7 @@ Namespace Serialize
                         ms.Flush()
                         Return CType(formatter.Deserialize(ms), t)
                     End Using
-                Catch ex As ArgumentNullException
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is OverflowException)
                 End Try
                 Return Nothing
             End SyncLock
@@ -164,7 +176,7 @@ Namespace Serialize
                         ms.Flush()
                         Return formatter.Deserialize(ms)
                     End Using
-                Catch ex As Exception When (TypeOf ex Is ArgumentNullException Or TypeOf ex Is FormatException)
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is OverflowException)
                 End Try
                 Return Nothing
             End SyncLock
@@ -184,7 +196,7 @@ Namespace Serialize
                         ms.Flush()
                         Return CType(formatter.Deserialize(ms), t)
                     End Using
-                Catch ex As Exception When (TypeOf ex Is ArgumentNullException Or TypeOf ex Is FormatException)
+                Catch ex As Exception When (TypeOf ex Is IOException Or TypeOf ex Is SerializationException Or TypeOf ex Is ArgumentException Or TypeOf ex Is FormatException Or TypeOf ex Is SecurityException Or TypeOf ex Is InvalidCastException Or TypeOf ex Is OverflowException)
                 End Try
                 Return Nothing
             End SyncLock
