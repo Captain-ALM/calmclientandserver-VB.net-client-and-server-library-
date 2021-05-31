@@ -293,10 +293,9 @@ Namespace CALMNetMarshal
             ''' <value>String</value>
             ''' <returns>The receiver's IP Address.</returns>
             ''' <remarks></remarks>
-            <XmlIgnore>
             Public Property receiverIP As String Implements IPacket.receiverIP
                 Get
-                    Return Nothing
+                    Return " "
                 End Get
                 Set(value As String)
                 End Set
@@ -307,10 +306,9 @@ Namespace CALMNetMarshal
             ''' <value>Integer</value>
             ''' <returns>The receiver's Port.</returns>
             ''' <remarks></remarks>
-            <XmlIgnore>
             Public Property receiverPort As Integer Implements IPacket.receiverPort
                 Get
-                    Return Nothing
+                    Return 0
                 End Get
                 Set(value As Integer)
                 End Set
@@ -321,10 +319,9 @@ Namespace CALMNetMarshal
             ''' <value>String</value>
             ''' <returns>The sender's IP Address.</returns>
             ''' <remarks></remarks>
-            <XmlIgnore>
             Public Property senderIP As String Implements IPacket.senderIP
                 Get
-                    Return Nothing
+                    Return " "
                 End Get
                 Set(value As String)
                 End Set
@@ -335,10 +332,9 @@ Namespace CALMNetMarshal
             ''' <value>Integer</value>
             ''' <returns>The sender's Port.</returns>
             ''' <remarks></remarks>
-            <XmlIgnore>
             Public Property senderPort As Integer Implements IPacket.senderPort
                 Get
-                    Return Nothing
+                    Return 0
                 End Get
                 Set(value As Integer)
                 End Set

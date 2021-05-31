@@ -79,29 +79,7 @@ Namespace CALMNetMarshal
                 _cl.close()
                 _cl = Nothing
             End If
-            While _clcol.Count > 0
-                For i As Integer = _clcol.Count - 1 To 0 Step -1
-                    Try
-                        Dim ct As NetMarshalTCPClient = Nothing
-                        SyncLock _slockcolman
-                            ct = _clcol(i)
-                        End SyncLock
-                        Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
-                        Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
-                        RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
-                        RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
-                        ct.close()
-                        SyncLock _slockcolman
-                            _clcol.Remove(ct)
-                        End SyncLock
-                        raiseClientDisconnected(rip, rp)
-                        ct = Nothing
-                    Catch ex As Exception When (TypeOf ex Is ArgumentOutOfRangeException Or TypeOf ex Is IndexOutOfRangeException)
-                        raiseExceptionRaised(ex)
-                    End Try
-                Next
-                Thread.Sleep(125)
-            End While
+            disconnectAll()
             SyncLock _slockcolman
                 _clcol.Clear()
                 _clcol = Nothing
@@ -158,15 +136,15 @@ Namespace CALMNetMarshal
             If Not Me.ready(lip, lport) Then
                 Try
                     Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = _buffer, .sendBufferSize = _buffer, .noDelay = Not _delay}
-                    Dim ct As New NetMarshalTCPClient(cs)
+                    Dim ct As New NetMarshalTCPClient(cs) With {.serializer = _serializer}
                     ct.beatTimeout = _bout
                     SyncLock _slockcolman
                         _clcol.Add(ct)
                     End SyncLock
-                    raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                     AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                     AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                     ct.start()
+                    raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                     toret = True
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
@@ -210,7 +188,37 @@ Namespace CALMNetMarshal
             Return toret
         End Function
         ''' <summary>
+        ''' Disconnects all currently Connected Clients.
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Overridable Sub disconnectAll()
+            While _clcol.Count > 0
+                For i As Integer = _clcol.Count - 1 To 0 Step -1
+                    Try
+                        Dim ct As NetMarshalTCPClient = Nothing
+                        SyncLock _slockcolman
+                            ct = _clcol(i)
+                        End SyncLock
+                        Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                        Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
+                        RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
+                        RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
+                        ct.close()
+                        SyncLock _slockcolman
+                            _clcol.Remove(ct)
+                        End SyncLock
+                        raiseClientDisconnected(rip, rp)
+                        ct = Nothing
+                    Catch ex As Exception When (TypeOf ex Is ArgumentOutOfRangeException Or TypeOf ex Is IndexOutOfRangeException)
+                        raiseExceptionRaised(ex)
+                    End Try
+                Next
+                Thread.Sleep(125)
+            End While
+        End Sub
+        ''' <summary>
         ''' Gets or sets the timeout of beat messages to test sockets.
+        ''' A value of 0 disables beat checks.
         ''' </summary>
         ''' <value>Integer</value>
         ''' <returns>The timeout of beat messages to test sockets</returns>
@@ -326,15 +334,15 @@ Namespace CALMNetMarshal
                     While _cl IsNot Nothing AndAlso _cl.listening
                         If _cl.clientWaiting Then
                             Dim [as] As INetSocket = _cl.acceptClient()
-                            Dim ct As New NetMarshalTCPClient([as])
+                            Dim ct As New NetMarshalTCPClient([as]) With {.serializer = _serializer}
                             ct.beatTimeout = _bout
                             SyncLock _slockcolman
                                 _clcol.Add(ct)
                             End SyncLock
-                            raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                             AddHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                             AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                             ct.start()
+                            raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
                         End If
                         For i As Integer = _clcol.Count - 1 To 0 Step -1
                             Try

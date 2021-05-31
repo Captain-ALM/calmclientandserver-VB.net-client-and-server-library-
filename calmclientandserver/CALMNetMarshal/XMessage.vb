@@ -1,4 +1,5 @@
 ﻿Imports captainalm.Serialize
+Imports System.Xml.Serialization
 
 Namespace CALMNetMarshal
 
@@ -30,6 +31,7 @@ Namespace CALMNetMarshal
         ''' <value>Object</value>
         ''' <returns>Held Packet Data.</returns>
         ''' <remarks></remarks>
+        <XmlIgnore>
         Public Property data As Object Implements IPacket.data
             Get
                 Return New Tuple(Of String, String)(header, message)
@@ -59,7 +61,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public ReadOnly Property getData As Byte() Implements IPacket.getData
             Get
-                Return New XSerializer().serializeObject(Of XMLPayload)(New XMLPayload(Me))
+                Return New XSerializer().serializeObject(Of XMessage)(Me)
             End Get
         End Property
         ''' <summary>
@@ -69,7 +71,7 @@ Namespace CALMNetMarshal
         ''' <remarks></remarks>
         Public WriteOnly Property setData As Byte() Implements IPacket.setData
             Set(value As Byte())
-                Dim msg As XMessage = New XSerializer().deSerializeObject(Of XMLPayload)(value).getXMessage()
+                Dim msg As XMessage = New XSerializer().deSerializeObject(Of XMessage)(value)
                 Me.receiverIP_ = msg.receiverIP_
                 Me.receiverPort_ = msg.receiverPort_
                 Me.senderIP_ = msg.senderIP_
@@ -135,39 +137,6 @@ Namespace CALMNetMarshal
                 senderPort_ = value
             End Set
         End Property
-        ''' <summary>
-        ''' The XML Serializable Payload
-        ''' </summary>
-        ''' <remarks></remarks>
-        Public Structure XMLPayload
-            Public header As String
-            Public message As String
-            Public senderIP As String
-            Public senderPort As Integer
-            Public receiverIP As String
-            Public receiverPort As Integer
-            ''' <summary>
-            ''' Constructs an XML payload given the XMessage
-            ''' </summary>
-            ''' <param name="xmsgIn">The XMessage to serialize</param>
-            ''' <remarks></remarks>
-            Public Sub New(xmsgIn As XMessage)
-                Me.header = xmsgIn.header
-                Me.message = xmsgIn.message
-                Me.senderIP = xmsgIn.senderIP
-                Me.senderPort = xmsgIn.senderPort
-                Me.receiverIP = xmsgIn.receiverIP
-                Me.receiverPort = xmsgIn.receiverPort
-            End Sub
-            ''' <summary>
-            ''' Returns the XMessage to payload holds
-            ''' </summary>
-            ''' <returns>The XMessage</returns>
-            ''' <remarks></remarks>
-            Public Function getXMessage() As XMessage
-                Return New XMessage() With {.header = Me.header, .message = Me.message, .senderIP = Me.senderIP, .senderPort = Me.senderPort, .receiverIP = Me.receiverIP, .receiverPort = Me.receiverPort}
-            End Function
-        End Structure
     End Structure
 
 End Namespace

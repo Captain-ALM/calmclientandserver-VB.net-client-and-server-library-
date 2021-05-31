@@ -999,23 +999,6 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>The sender's Port.</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.XMessage.XMLPayload.#ctor(captainalm.CALMNetMarshal.XMessage)">
-	<summary>
- Constructs an XML payload given the XMessage
- </summary>
-	<param name="xmsgIn">The XMessage to serialize</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.XMessage.XMLPayload.getXMessage">
-	<summary>
- Returns the XMessage to payload holds
- </summary>
-	<returns>The XMessage</returns>
-	<remarks></remarks>
-</member><member name="T:captainalm.CALMNetMarshal.XMessage.XMLPayload">
-	<summary>
- The XML Serializable Payload
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.XMessage">
 	<summary>
  A Message Structure that Implements IPacket using XML serialization.
@@ -1168,7 +1151,6 @@ calmclientandserver
 </member><member name="M:captainalm.Serialize.XSerializer.deSerialize(System.String)">
 	<summary>
  Deserializes an Object from a string.
- No type provided is not supported.
  </summary>
 	<param name="str">A String</param>
 	<returns>The Object</returns>
@@ -1184,7 +1166,6 @@ calmclientandserver
 </member><member name="M:captainalm.Serialize.XSerializer.deSerializeObject(System.Byte[])">
 	<summary>
  Deserializes an Object from a byte array.
- No type provided is not supported.
  </summary>
 	<param name="bts">The Byte Array</param>
 	<returns>The Object</returns>
@@ -1200,7 +1181,6 @@ calmclientandserver
 </member><member name="M:captainalm.Serialize.XSerializer.serialize(System.Object)">
 	<summary>
  Serializes an Object to a String.
- No type provided is not supported.
  </summary>
 	<param name="obj">The object to serialize</param>
 	<returns>A string</returns>
@@ -1223,7 +1203,6 @@ calmclientandserver
 </member><member name="M:captainalm.Serialize.XSerializer.serializeObject``1(``0)">
 	<summary>
  Serializes an Object to a Byte Array.
- No type provided is not supported.
  </summary>
 	<param name="obj">The object to serialize</param>
 	<returns>A byte array</returns>
@@ -1311,9 +1290,15 @@ calmclientandserver
 	<param name="rport">The remote Port</param>
 	<returns>If the client was disconnected</returns>
 	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.disconnectAll">
+	<summary>
+ Disconnects all currently Connected Clients.
+ </summary>
+	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.beatTimeout">
 	<summary>
  Gets or sets the timeout of beat messages to test sockets.
+ A value of 0 disables beat checks.
  </summary>
 	<value>Integer</value>
 	<returns>The timeout of beat messages to test sockets</returns>
