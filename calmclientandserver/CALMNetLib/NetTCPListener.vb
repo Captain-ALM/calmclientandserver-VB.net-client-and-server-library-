@@ -1,5 +1,7 @@
 ﻿Imports System.Net
 Imports System.Net.Sockets
+Imports System.Security
+
 '
 ' Created by SharpDevelop.
 ' User: Alfred
@@ -22,6 +24,7 @@ Namespace CALMNetLib
         Protected _bl As Integer = 1
         Protected _l As Boolean = False
         Protected slockaccept As New Object()
+        Protected slockman As New Object()
         ''' <summary>
         ''' Constructs a New NetTCPListener Instance bound to the specified IP Address interface and port.
         ''' </summary>
@@ -41,17 +44,17 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <remarks></remarks>
         Public Overridable Sub open() Implements INetSocket.open
-            Try
-                If Not _sock.IsBound Then
-                    _sock.Bind(New IPEndPoint(_ip, _port))
-                    _sock.Listen(_bl)
-                    _l = True
-                End If
-            Catch ex As ObjectDisposedException
-                Utilities.addException(New NetLibException(ex))
-            Catch ex As SocketException
-                Utilities.addException(New NetLibException(ex))
-            End Try
+            SyncLock slockman
+                Try
+                    If Not _sock.IsBound Then
+                        _sock.Bind(New IPEndPoint(_ip, _port))
+                        _sock.Listen(_bl)
+                        _l = True
+                    End If
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+            End SyncLock
         End Sub
         ''' <summary>
         ''' Returns whether the Socket is Connected.
@@ -59,7 +62,7 @@ Namespace CALMNetLib
         ''' <value>Boolean</value>
         ''' <returns>Whether the Socket is Connected</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property connected As Boolean Implements INetSocket.connected
+        Public Overridable ReadOnly Property connected As Boolean Implements INetSocket.connected
             Get
                 Return False
             End Get
@@ -70,7 +73,7 @@ Namespace CALMNetLib
         ''' <value>Boolean</value>
         ''' <returns>Whether the Socket is Listening</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property listening As Boolean Implements INetSocket.listening
+        Public Overridable ReadOnly Property listening As Boolean Implements INetSocket.listening
             Get
                 Return _l
             End Get
@@ -81,9 +84,9 @@ Namespace CALMNetLib
         ''' <value>Boolean</value>
         ''' <returns>Whether there is data on the network</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property hasData As Boolean Implements INetSocket.hasData
+        Public Overridable ReadOnly Property hasData As Boolean Implements INetSocket.hasData
             Get
-                Throw New NetLibException( New InvalidOperationException("Not a TCP Client."))
+                Throw New NetLibException(New InvalidOperationException("Not a TCP Client."))
             End Get
         End Property
         ''' <summary>
@@ -93,7 +96,7 @@ Namespace CALMNetLib
         ''' <returns>Whether the send was successful</returns>
         ''' <remarks></remarks>
         Public Overridable Function sendBytes(bytes As Byte()) As Boolean Implements INetSocket.sendBytes
-            Throw New NetLibException( New InvalidOperationException("Not a TCP Client."))
+            Throw New NetLibException(New InvalidOperationException("Not a TCP Client."))
         End Function
         ''' <summary>
         ''' Receives a byte array from the network.
@@ -101,7 +104,7 @@ Namespace CALMNetLib
         ''' <returns>The Received Byte Array</returns>
         ''' <remarks></remarks>
         Public Overridable Function receiveBytes() As Byte() Implements INetSocket.receiveBytes
-            Throw New NetLibException( New InvalidOperationException("Not a TCP Client."))
+            Throw New NetLibException(New InvalidOperationException("Not a TCP Client."))
         End Function
         ''' <summary>
         ''' Returns whether a client is waiting to connect.
@@ -109,13 +112,13 @@ Namespace CALMNetLib
         ''' <value>Boolean</value>
         ''' <returns>If a client is waiting to connect</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property clientWaiting As Boolean Implements INetSocket.clientWaiting
+        Public Overridable ReadOnly Property clientWaiting As Boolean Implements INetSocket.clientWaiting
             Get
                 Dim toret As Boolean = False
                 SyncLock slockaccept
                     Try
                         toret = _sock.Poll(((_sock.ReceiveTimeout + 1) * 1000), SelectMode.SelectRead)
-                    Catch ex As SocketException
+                    Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                         Utilities.addException(New NetLibException(ex))
                     End Try
                 End SyncLock
@@ -132,7 +135,7 @@ Namespace CALMNetLib
             SyncLock slockaccept
                 Try
                     toret = New NetTCPClient(_sock.Accept(), _ip, _port)
-                Catch ex As SocketException
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                     Utilities.addException(New NetLibException(ex))
                 End Try
             End SyncLock
@@ -143,14 +146,14 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <remarks></remarks>
         Public Overridable Sub close() Implements INetSocket.close, IDisposable.Dispose
-            Try
-                _l = False
-                _sock.Close()
-            Catch ex As ObjectDisposedException
-                Utilities.addException(New NetLibException(ex))
-            Catch ex As SocketException
-                Utilities.addException(New NetLibException(ex))
-            End Try
+            SyncLock slockman
+                Try
+                    _l = False
+                    _sock.Close()
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+            End SyncLock
         End Sub
         ''' <summary>
         ''' Gets or Sets the size of the Send Buffer.
@@ -328,7 +331,7 @@ Namespace CALMNetLib
         ''' <value>String</value>
         ''' <returns>The local IP Address</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property localIPAddress As String Implements INetConfig.localIPAddress
+        Public Overridable ReadOnly Property localIPAddress As String Implements INetConfig.localIPAddress
             Get
                 Return _ip.ToString()
             End Get
@@ -339,7 +342,7 @@ Namespace CALMNetLib
         ''' <value>String</value>
         ''' <returns>The local IP Port</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property localPort As Integer Implements INetConfig.localPort
+        Public Overridable ReadOnly Property localPort As Integer Implements INetConfig.localPort
             Get
                 Return _port
             End Get
@@ -350,9 +353,9 @@ Namespace CALMNetLib
         ''' <value>String</value>
         ''' <returns>The remote IP Address</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property remoteIPAddress As String Implements INetConfig.remoteIPAddress
+        Public Overridable ReadOnly Property remoteIPAddress As String Implements INetConfig.remoteIPAddress
             Get
-                Throw New NetLibException( New InvalidOperationException("Not a TCP or UDP Client."))
+                Throw New NetLibException(New InvalidOperationException("Not a TCP or UDP Client."))
             End Get
         End Property
         ''' <summary>
@@ -361,9 +364,9 @@ Namespace CALMNetLib
         ''' <value>String</value>
         ''' <returns>The remote IP Port</returns>
         ''' <remarks></remarks>
-        Public ReadOnly Overridable Property remotePort As Integer Implements INetConfig.remotePort
+        Public Overridable ReadOnly Property remotePort As Integer Implements INetConfig.remotePort
             Get
-                Throw New NetLibException( New InvalidOperationException("Not a TCP or UDP Client."))
+                Throw New NetLibException(New InvalidOperationException("Not a TCP or UDP Client."))
             End Get
         End Property
         ''' <summary>
@@ -411,7 +414,7 @@ Namespace CALMNetLib
                 Return _bl
             End Get
             Set(value As Integer)
-            	If _l Then Throw New NetLibException( New InvalidOperationException("The TCP Listener is listening."))
+                If _l Then Throw New NetLibException(New InvalidOperationException("The TCP Listener is listening."))
                 _bl = value
             End Set
         End Property

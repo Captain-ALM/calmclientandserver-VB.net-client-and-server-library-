@@ -1,6 +1,7 @@
 ﻿Imports System.Net
 Imports System.Net.Sockets
 Imports System.Net.NetworkInformation
+Imports System.Security
 
 '
 ' Created by SharpDevelop.
@@ -23,6 +24,7 @@ Namespace CALMNetLib
         Protected _port As Integer = 0
         Protected slocksend As New Object()
         Protected slockreceive As New Object()
+        Protected slockman As New Object()
         Protected _hlh As Boolean = False
         ''' <summary>
         ''' Constructs a New NetTCPClient Instance connecting to the specified IP Address and port.
@@ -40,28 +42,31 @@ Namespace CALMNetLib
         End Sub
 
         Friend Sub New(sock As Socket, lip As IPAddress, lport As Integer)
-            _sock = sock
-            _ip = lip
-            _port = lport
+            slockman = New Object()
+            SyncLock slockman
+                _sock = sock
+                _ip = lip
+                _port = lport
+            End SyncLock
         End Sub
         ''' <summary>
         ''' Opens the socket for network connection.
         ''' </summary>
         ''' <remarks></remarks>
         Public Overridable Sub open() Implements INetSocket.open
-            Try
-                If Not _sock.Connected Then _sock.Connect(New IPEndPoint(_ip, _port))
-            Catch ex As ObjectDisposedException
-                Utilities.addException(New NetLibException(ex))
-            Catch ex As SocketException
-                Utilities.addException(New NetLibException(ex))
-            End Try
+            SyncLock slockman
+                Try
+                    If Not _sock.Connected Then _sock.Connect(New IPEndPoint(_ip, _port))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
+                    Utilities.addException(New NetLibException(ex))
+                End Try
+            End SyncLock
         End Sub
 
         Protected Overridable Function pollConnection() As Boolean
             Try
                 Return _sock.Connected
-            Catch ex As ObjectDisposedException
+            Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                 Utilities.addException(New NetLibException(ex))
             End Try
             Return False
@@ -101,7 +106,7 @@ Namespace CALMNetLib
                 SyncLock slockreceive
                     Try
                         toret = _sock.Available > 0
-                    Catch ex As SocketException
+                    Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                         Utilities.addException(New NetLibException(ex))
                     End Try
                 End SyncLock
@@ -133,7 +138,7 @@ Namespace CALMNetLib
                         System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
                     End If
                     ret = _sock.Send(ts, ts.Length, SocketFlags.None)
-                Catch ex As SocketException
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                     Utilities.addException(New NetLibException(ex))
                     Return False
                 End Try
@@ -182,7 +187,7 @@ Namespace CALMNetLib
                         ReDim bts(lentr - 1)
                         Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If
-                Catch ex As SocketException
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
                     Utilities.addException(New NetLibException(ex))
                 End Try
             End SyncLock
@@ -212,22 +217,20 @@ Namespace CALMNetLib
         ''' </summary>
         ''' <remarks></remarks>
         Public Overridable Sub close() Implements INetSocket.close, IDisposable.Dispose
-            If pollConnection() Then
-                Try
-                    _sock.Shutdown(SocketShutdown.Both)
-                Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
-                Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
-                End Try
-                Try
-                    _sock.Close()
-                Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
-                Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
-                End Try
-            End If
+            SyncLock slockman
+                If pollConnection() Then
+                    Try
+                        _sock.Shutdown(SocketShutdown.Both)
+                    Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
+                        Utilities.addException(New NetLibException(ex))
+                    End Try
+                    Try
+                        _sock.Close()
+                    Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
+                        Utilities.addException(New NetLibException(ex))
+                    End Try
+                End If
+            End SyncLock
         End Sub
         ''' <summary>
         ''' Gets or Sets the size of the Send Buffer.
