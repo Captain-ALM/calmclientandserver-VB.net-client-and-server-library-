@@ -627,6 +627,18 @@ calmclientandserver
 	<value>Boolean</value>
 	<returns>Whether the socket uses a length header</returns>
 	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetUDPClient.copyConfigFrom(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Allows for supported source settings to be copied to the current INetConfig instance.
+ </summary>
+	<param name="source">The source to copy</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetUDPClient.getSafeSocketConfig">
+	<summary>
+ Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+ </summary>
+	<returns>The safe NetSocketConfig with duplicated supported configuration</returns>
+	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetUDPClient">
 	<summary>
  This is a NetUDPClient socket.
@@ -749,25 +761,6 @@ calmclientandserver
  </summary>
 	<returns>An array of a Two Type (Pair) Tuple containing the Name of the Network Interface and the IP Address</returns>
 	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.Utilities.logInternallyHandledNetLibExceptions">
-	<summary>
- Gets or sets whether internally handled NetLibExceptions are to be logged by this class.
- </summary>
-	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="P:captainalm.CALMNetLib.Utilities.getInternallyHandledNetLibExceptions">
-	<summary>
- Returns the Log array of the Internally Handled NetLibExceptions.
- </summary>
-	<value>An array of NetLibExceptions</value>
-	<returns>The Log of Internally Handled NetLibExceptions</returns>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.Utilities.clearInternallyHandledNetLibExceptions">
-	<summary>
- Clears the Internally Handled NetLibException Log.
- </summary>
-	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.Utilities">
 	<summary>
  Defines a set of shared utility functions.
@@ -785,15 +778,16 @@ calmclientandserver
 </member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig)">
 	<summary>
  Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
+ This will not throw exceptions if unsupported configuration exists.
  </summary>
-	<param name="conf">The INetConfig Configuration</param>
+	<param name="source">The INetConfig Configuration</param>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.NetSocketConfig.#ctor(captainalm.CALMNetLib.INetConfig,System.Boolean)">
 	<summary>
- Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation and whether thrown NetLibExceptions are to be caught.
+ Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
  </summary>
-	<param name="conf">The INetConfig Configuration</param>
-	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be caught</param>
+	<param name="source">The INetConfig Configuration</param>
+	<param name="throwExceptions">Whether to throw exceptions for unsupported configuration</param>
 	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetLib.NetSocketConfig.sendBufferSize">
 	<summary>
@@ -872,19 +866,6 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>Backlog of Connections</returns>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@)">
-	<summary>
- Duplicates the Structure's Configuration to another INetConfig interface implementation.
- </summary>
-	<param name="conf">The INetConfig configuration implementation</param>
-	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.DuplicateConfigTo(captainalm.CALMNetLib.INetConfig@,System.Boolean)">
-	<summary>
- Duplicates the Structure's Configuration to another INetConfig interface implementation and whether thrown NetLibExceptions are to be caught.
- </summary>
-	<param name="conf">The INetConfig configuration implementation</param>
-	<param name="catchNetLibExceptions">Whether NetLibExceptions are to be thrown</param>
-	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.NetSocketConfig.setLocalIPAddress(System.String)">
 	<summary>
  Sets the Local IP Address.
@@ -915,6 +896,18 @@ calmclientandserver
  </summary>
 	<value>Boolean</value>
 	<returns>Whether the socket uses a length header</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.copyConfigFrom(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Allows for supported source settings to be copied to the current INetConfig instance.
+ </summary>
+	<param name="source">The source to copy</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetSocketConfig.getSafeSocketConfig">
+	<summary>
+ Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+ </summary>
+	<returns>The safe NetSocketConfig with duplicated supported configuration</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetSocketConfig">
 	<summary>
@@ -1248,7 +1241,10 @@ calmclientandserver
  </summary>
 	<param name="iptb">The IP Address to bind to</param>
 	<param name="ptb">The Port to bind to</param>
-	<param name="conf">The Net Socket configuration to use</param>
+	<param name="conf">
+ The Net Socket configuration to use,
+ the buffer size is set to the largest of the send and receive buffer sizes.
+ </param>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.start">
 	<summary>
@@ -1461,6 +1457,18 @@ calmclientandserver
 	<value>Boolean</value>
 	<returns>Whether the socket uses a length header</returns>
 	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetConfig.copyConfigFrom(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Allows for supported source settings to be copied to the current INetConfig instance.
+ </summary>
+	<param name="source">The source to copy</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.INetConfig.getSafeSocketConfig">
+	<summary>
+ Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+ </summary>
+	<returns>The safe NetSocketConfig with duplicated supported configuration</returns>
+	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.INetConfig">
 	<summary>
  Defines The Socket Configuration Interface.
@@ -1526,6 +1534,11 @@ calmclientandserver
 </member><member name="T:captainalm.CALMNetLib.INetSocket">
 	<summary>
  Defines a Socket Interface.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:captainalm.CALMNetLib.NetTCPListener.ClientConfig">
+	<summary>
+ Provides the config to be copied to each accepted client.
  </summary>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetLib.NetTCPListener.#ctor(System.Net.IPAddress,System.Int32)">
@@ -1675,6 +1688,18 @@ calmclientandserver
  </summary>
 	<value>Boolean</value>
 	<returns>Whether the socket uses a length header</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.copyConfigFrom(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Allows for supported source settings to be copied to the current INetConfig instance.
+ </summary>
+	<param name="source">The source to copy</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPListener.getSafeSocketConfig">
+	<summary>
+ Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+ </summary>
+	<returns>The safe NetSocketConfig with duplicated supported configuration</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetTCPListener">
 	<summary>
@@ -2039,6 +2064,18 @@ calmclientandserver
  </summary>
 	<value>Boolean</value>
 	<returns>Whether the socket uses a length header</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.copyConfigFrom(captainalm.CALMNetLib.INetConfig)">
+	<summary>
+ Allows for supported source settings to be copied to the current INetConfig instance.
+ </summary>
+	<param name="source">The source to copy</param>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetLib.NetTCPClient.getSafeSocketConfig">
+	<summary>
+ Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+ </summary>
+	<returns>The safe NetSocketConfig with duplicated supported configuration</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetLib.NetTCPClient">
 	<summary>

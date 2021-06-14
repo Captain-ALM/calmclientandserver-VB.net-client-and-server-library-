@@ -37,7 +37,7 @@ Namespace CALMNetMarshal
         ''' <param name="bufsiz">The buffer size for the sockets</param>
         ''' <remarks></remarks>
         Public Sub New(iptb As IPAddress, ptb As Integer, Optional cbl As Integer = 1, Optional del As Boolean = False, Optional bufsiz As Integer = 16777216)
-            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .connectionBacklog = cbl})
+            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .connectionBacklog = cbl, .ClientConfig = New NetSocketConfig() With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del}})
             _delay = del
             _buffer = bufsiz
         End Sub
@@ -46,19 +46,18 @@ Namespace CALMNetMarshal
         ''' </summary>
         ''' <param name="iptb">The IP Address to bind to</param>
         ''' <param name="ptb">The Port to bind to</param>
-        ''' <param name="conf">The Net Socket configuration to use</param>
+        ''' <param name="conf">
+        ''' The Net Socket configuration to use,
+        ''' the buffer size is set to the largest of the send and receive buffer sizes.
+        ''' </param>
         ''' <remarks></remarks>
         Public Sub New(iptb As IPAddress, ptb As Integer, conf As INetConfig)
-            MyBase.New(New NetTCPListener(iptb, ptb))
-            Dim confs As New NetSocketConfig(conf)
-            confs.setLocalIPAddress(iptb.ToString())
-            confs.setLocalPort(ptb)
-            confs.setRemoteIPAddress("")
-            confs.setRemotePort(0)
-            confs.sendBufferSize = confs.receiveBufferSize
-            confs.DuplicateConfigTo(_cl)
+            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = conf.sendBufferSize, .receiveBufferSize = conf.receiveBufferSize, .noDelay = conf.noDelay, .connectionBacklog = conf.connectionBacklog, .ClientConfig = New NetSocketConfig(conf)})
+            If conf.sendBufferSize >= conf.receiveBufferSize Then CType(_cl, INetConfig).receiveBufferSize = conf.sendBufferSize Else CType(_cl, INetConfig).sendBufferSize = conf.receiveBufferSize
             _delay = Not conf.noDelay
-            _buffer = confs.receiveBufferSize
+            _buffer = CType(_cl, INetConfig).receiveBufferSize
+            CType(_cl, NetTCPListener).ClientConfig.receiveBufferSize = _buffer
+            CType(_cl, NetTCPListener).ClientConfig.sendBufferSize = _buffer
         End Sub
         ''' <summary>
         ''' Starts the Marshal and Opens the Connection.
@@ -350,16 +349,16 @@ Namespace CALMNetMarshal
                                 SyncLock _slockcolman
                                     ct = _clcol(i)
                                 End SyncLock
-                                Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
-                                Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                                 If Not ct.ready Then
+                                    Dim rip As String = ct.duplicatedInternalSocketConfig.remoteIPAddress
+                                    Dim rp As Integer = ct.duplicatedInternalSocketConfig.remotePort
                                     RemoveHandler ct.exceptionRaised, AddressOf raiseExceptionRaised
                                     RemoveHandler ct.MessageReceived, AddressOf raiseMessageReceived
                                     ct.close()
                                     SyncLock _slockcolman
                                         _clcol.Remove(ct)
                                     End SyncLock
-                                    raiseClientDisconnected(rip, rp)
+                                    If Not (rip Is Nothing Or rp = 0) Then raiseClientDisconnected(rip, rp)
                                     ct = Nothing
                                 End If
                             Catch ex As Exception When (TypeOf ex Is ArgumentOutOfRangeException Or TypeOf ex Is IndexOutOfRangeException)

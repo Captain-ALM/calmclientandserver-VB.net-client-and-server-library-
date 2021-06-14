@@ -17,10 +17,6 @@ Namespace CALMNetLib
     ''' </summary>
     ''' <remarks></remarks>
     Public Class Utilities
-
-        Protected Shared logexc As Boolean = False
-        Protected Shared exclog As List(Of NetLibException)
-        Protected Shared slockexclog As New Object()
         ''' <summary>
         ''' Converts a 16 Bit Integer to a byte array.
         ''' </summary>
@@ -176,50 +172,6 @@ Namespace CALMNetLib
             Next
             Return list.ToArray()
         End Function
-        ''' <summary>
-        ''' Gets or sets whether internally handled NetLibExceptions are to be logged by this class.
-        ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Shared Property logInternallyHandledNetLibExceptions As Boolean
-            Get
-                Return logexc
-            End Get
-            Set(value As Boolean)
-                logexc = value
-            End Set
-        End Property
-        ''' <summary>
-        ''' Returns the Log array of the Internally Handled NetLibExceptions.
-        ''' </summary>
-        ''' <value>An array of NetLibExceptions</value>
-        ''' <returns>The Log of Internally Handled NetLibExceptions</returns>
-        ''' <remarks></remarks>
-        Public Shared ReadOnly Property getInternallyHandledNetLibExceptions As NetLibException()
-            Get
-                Dim toret As NetLibException() = Nothing
-                SyncLock slockexclog
-                    toret = exclog.ToArray()
-                End SyncLock
-                Return toret
-            End Get
-        End Property
-
-        Friend Shared Sub addException(ex As NetLibException)
-            SyncLock slockexclog
-                If logexc Then exclog.Add(ex)
-            End SyncLock
-        End Sub
-        ''' <summary>
-        ''' Clears the Internally Handled NetLibException Log.
-        ''' </summary>
-        ''' <remarks></remarks>
-        Public Shared Sub clearInternallyHandledNetLibExceptions()
-            SyncLock slockexclog
-                exclog.Clear()
-            End SyncLock
-        End Sub
     End Class
 
 End Namespace

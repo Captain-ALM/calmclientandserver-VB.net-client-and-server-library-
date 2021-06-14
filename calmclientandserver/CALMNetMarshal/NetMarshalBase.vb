@@ -153,7 +153,7 @@ Namespace CALMNetMarshal
         Protected Overridable Sub updateDupConf()
             If Not _cl Is Nothing Then
                 If TypeOf _cl Is INetConfig Then
-                    _configdup = New NetSocketConfig(CType(_cl, INetConfig))
+                    _configdup.copyConfigFrom(CType(_cl, INetConfig).getSafeSocketConfig())
                 End If
             End If
         End Sub

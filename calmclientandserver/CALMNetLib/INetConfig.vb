@@ -96,6 +96,18 @@ Namespace CALMNetLib
         ''' <returns>Whether the socket uses a length header</returns>
         ''' <remarks></remarks>
         Property hasLengthHeader As Boolean
+        ''' <summary>
+        ''' Allows for supported source settings to be copied to the current INetConfig instance.
+        ''' </summary>
+        ''' <param name="source">The source to copy</param>
+        ''' <remarks></remarks>
+        Sub copyConfigFrom(source As INetConfig)
+        ''' <summary>
+        ''' Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+        ''' </summary>
+        ''' <returns>The safe NetSocketConfig with duplicated supported configuration</returns>
+        ''' <remarks></remarks>
+        Function getSafeSocketConfig() As NetSocketConfig
     End Interface
 
 End Namespace

@@ -12,7 +12,7 @@ Namespace CALMNetLib
     ''' </summary>
     ''' <remarks></remarks>
     <Serializable>
-       Public Structure NetSocketConfig
+    Public Structure NetSocketConfig
         Implements INetConfig
 
         Private _SendBufferSize As Integer
@@ -43,94 +43,34 @@ Namespace CALMNetLib
         End Sub
         ''' <summary>
         ''' Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
+        ''' This will not throw exceptions if unsupported configuration exists.
         ''' </summary>
-        ''' <param name="conf">The INetConfig Configuration</param>
+        ''' <param name="source">The INetConfig Configuration</param>
         ''' <remarks></remarks>
-        Public Sub New(conf As INetConfig)
-            Me.New(conf, True)
+        Public Sub New(source As INetConfig)
+            Me.New(source, False)
         End Sub
         ''' <summary>
-        ''' Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation and whether thrown NetLibExceptions are to be caught.
+        ''' Constructs a New NetSocketConfig Structure copying the configuration of another INetConfig Implementation.
         ''' </summary>
-        ''' <param name="conf">The INetConfig Configuration</param>
-        ''' <param name="catchNetLibExceptions">Whether NetLibExceptions are to be caught</param>
+        ''' <param name="source">The INetConfig Configuration</param>
+        ''' <param name="throwExceptions">Whether to throw exceptions for unsupported configuration</param>
         ''' <remarks></remarks>
-        Public Sub New(conf As INetConfig, catchNetLibExceptions As Boolean)
-            If catchNetLibExceptions Then
-                Try
-                    _SendBufferSize = conf.sendBufferSize
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _ReceiveBufferSize = conf.receiveBufferSize
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _NoDelay = conf.noDelay
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _receiveTimeout = conf.receiveTimeout
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _sendTimeout = conf.sendTimeout
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _ExclusiveAddressUse = conf.exclusiveAddressUse
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _bl = conf.connectionBacklog
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _rip = conf.remoteIPAddress
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _rport = conf.remotePort
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _lip = conf.localIPAddress
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _lport = conf.localPort
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    _hlh = conf.hasLengthHeader
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-            Else
-                _SendBufferSize = conf.sendBufferSize
-                _ReceiveBufferSize = conf.receiveBufferSize
-                _NoDelay = conf.noDelay
-                _receiveTimeout = conf.receiveTimeout
-                _sendTimeout = conf.sendTimeout
-                _ExclusiveAddressUse = conf.exclusiveAddressUse
-                _bl = conf.connectionBacklog
-                _rip = conf.remoteIPAddress
-                _rport = conf.remotePort
-                _lip = conf.localIPAddress
-                _lport = conf.localPort
-                _hlh = conf.hasLengthHeader
-            End If
+        Public Sub New(source As INetConfig, throwExceptions As Boolean)
+            Dim asrc As NetSocketConfig
+            If throwExceptions Then asrc = source Else asrc = source.getSafeSocketConfig()
+            _SendBufferSize = asrc.sendBufferSize
+            _ReceiveBufferSize = asrc.receiveBufferSize
+            _NoDelay = asrc.noDelay
+            _receiveTimeout = asrc.receiveTimeout
+            _sendTimeout = asrc.sendTimeout
+            _ExclusiveAddressUse = asrc.exclusiveAddressUse
+            _bl = asrc.connectionBacklog
+            _rip = asrc.remoteIPAddress
+            _rport = asrc.remotePort
+            _lip = asrc.localIPAddress
+            _lport = asrc.localPort
+            _hlh = asrc.hasLengthHeader
         End Sub
         ''' <summary>
         ''' Gets or Sets the size of the Send Buffer.
@@ -275,73 +215,6 @@ Namespace CALMNetLib
             End Set
         End Property
         ''' <summary>
-        ''' Duplicates the Structure's Configuration to another INetConfig interface implementation.
-        ''' </summary>
-        ''' <param name="conf">The INetConfig configuration implementation</param>
-        ''' <remarks></remarks>
-        Public Sub DuplicateConfigTo(ByRef conf As INetConfig)
-            DuplicateConfigTo(conf, True)
-        End Sub
-        ''' <summary>
-        ''' Duplicates the Structure's Configuration to another INetConfig interface implementation and whether thrown NetLibExceptions are to be caught.
-        ''' </summary>
-        ''' <param name="conf">The INetConfig configuration implementation</param>
-        ''' <param name="catchNetLibExceptions">Whether NetLibExceptions are to be thrown</param>
-        ''' <remarks></remarks>
-        Public Sub DuplicateConfigTo(ByRef conf As INetConfig, catchNetLibExceptions As Boolean)
-            If catchNetLibExceptions Then
-                Try
-                    conf.sendBufferSize = _SendBufferSize
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.receiveBufferSize = _ReceiveBufferSize
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.noDelay = _NoDelay
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.receiveTimeout = _receiveTimeout
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.sendTimeout = _sendTimeout
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.exclusiveAddressUse = _ExclusiveAddressUse
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.connectionBacklog = _bl
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-                Try
-                    conf.hasLengthHeader = _hlh
-                Catch ex As NetLibException
-                    Utilities.addException(ex)
-                End Try
-            Else
-                conf.sendBufferSize = _SendBufferSize
-                conf.receiveBufferSize = _ReceiveBufferSize
-                conf.noDelay = _NoDelay
-                conf.receiveTimeout = _receiveTimeout
-                conf.sendTimeout = _sendTimeout
-                conf.exclusiveAddressUse = _ExclusiveAddressUse
-                conf.connectionBacklog = _bl
-                conf.hasLengthHeader = _hlh
-            End If
-        End Sub
-        ''' <summary>
         ''' Sets the Local IP Address.
         ''' </summary>
         ''' <param name="local_IPAddress">The Local IP Address</param>
@@ -387,6 +260,33 @@ Namespace CALMNetLib
                 _hlh = value
             End Set
         End Property
+        ''' <summary>
+        ''' Allows for supported source settings to be copied to the current INetConfig instance.
+        ''' </summary>
+        ''' <param name="source">The source to copy</param>
+        ''' <remarks></remarks>
+        Public Sub copyConfigFrom(source As INetConfig) Implements INetConfig.copyConfigFrom
+            _SendBufferSize = source.sendBufferSize
+            _ReceiveBufferSize = source.receiveBufferSize
+            _NoDelay = source.noDelay
+            _receiveTimeout = source.receiveTimeout
+            _sendTimeout = source.sendTimeout
+            _ExclusiveAddressUse = source.exclusiveAddressUse
+            _bl = source.connectionBacklog
+            _rip = source.remoteIPAddress
+            _rport = source.remotePort
+            _lip = source.localIPAddress
+            _lport = source.localPort
+            _hlh = source.hasLengthHeader
+        End Sub
+        ''' <summary>
+        ''' Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+        ''' </summary>
+        ''' <returns>The safe NetSocketConfig with duplicated supported configuration</returns>
+        ''' <remarks></remarks>
+        Public Function getSafeSocketConfig() As NetSocketConfig Implements INetConfig.getSafeSocketConfig
+            Return Me
+        End Function
     End Structure
-	
+
 End Namespace 

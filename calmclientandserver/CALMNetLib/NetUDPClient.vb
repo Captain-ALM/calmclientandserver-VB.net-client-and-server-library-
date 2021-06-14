@@ -16,7 +16,7 @@ Namespace CALMNetLib
     ''' </summary>
     ''' <remarks></remarks>
     Public Class NetUDPClient
-        Implements INetSocketConnectionless, INetConfig, IDisposable
+        Implements INetSocketConnectionless, IDisposable, INetConfig
 
         Protected _sock As Socket = Nothing
         Protected _rip As IPAddress = Nothing
@@ -90,8 +90,8 @@ Namespace CALMNetLib
                             _c = True
                         End If
                     End If
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
+                    Throw New NetLibException(ex)
                 End Try
             End SyncLock
         End Sub
@@ -158,8 +158,8 @@ Namespace CALMNetLib
                     _l = False
                     _sock.Close()
                 End SyncLock
-            Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                Utilities.addException(New NetLibException(ex))
+            Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
+                Throw New NetLibException(ex)
             End Try
         End Sub
         ''' <summary>
@@ -187,8 +187,7 @@ Namespace CALMNetLib
                         System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
                     End If
                     ret = _sock.Send(ts, ts.Length, SocketFlags.None)
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                     Return False
                 End Try
             End SyncLock
@@ -221,8 +220,7 @@ Namespace CALMNetLib
                         ReDim btstr(lentr - 1)
                         Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
                     End If
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                 End Try
             End SyncLock
             Return btstr
@@ -255,8 +253,7 @@ Namespace CALMNetLib
                         System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
                     End If
                     ret = _sock.SendTo(ts, ts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                     Return False
                 End Try
             End SyncLock
@@ -292,8 +289,7 @@ Namespace CALMNetLib
                         ReDim btstr(lentr - 1)
                         Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
                     End If
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                 End Try
             End SyncLock
             Return btstr
@@ -315,7 +311,7 @@ Namespace CALMNetLib
                     _sock = New Socket(IPAddress.Parse(sconf.localIPAddress).AddressFamily, SocketType.Dgram, ProtocolType.Udp)
                     _sock.ReceiveTimeout = 0
                     _sock.SendTimeout = 0
-                    sconf.DuplicateConfigTo(Me)
+                    Me.copyConfigFrom(sconf)
                     _rip = IPAddress.Parse(sconf.remoteIPAddress)
                     _rport = sconf.remotePort
                     _uc = True
@@ -327,8 +323,8 @@ Namespace CALMNetLib
                             _c = True
                         End If
                     End If
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
+                    Throw New NetLibException(ex)
                 End Try
             End SyncLock
         End Sub
@@ -347,7 +343,7 @@ Namespace CALMNetLib
                     _sock = New Socket(IPAddress.Parse(sconf.localIPAddress).AddressFamily, SocketType.Dgram, ProtocolType.Udp)
                     _sock.ReceiveTimeout = 0
                     _sock.SendTimeout = 0
-                    sconf.DuplicateConfigTo(Me)
+                    Me.copyConfigFrom(sconf)
                     _rip = IPAddress.Any
                     _rport = 0
                     _uc = False
@@ -356,8 +352,8 @@ Namespace CALMNetLib
                         _sock.Bind(New IPEndPoint(_lip, _lport))
                         _l = True
                     End If
-                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException)
-                    Utilities.addException(New NetLibException(ex))
+                Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
+                    Throw New NetLibException(ex)
                 End Try
             End SyncLock
         End Sub
@@ -374,11 +370,11 @@ Namespace CALMNetLib
                 Try
                     toret = _sock.SendBufferSize
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
                 Return toret
             End Get
@@ -387,11 +383,11 @@ Namespace CALMNetLib
                 Try
                     _sock.SendBufferSize = value
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
             End Set
         End Property
@@ -408,11 +404,11 @@ Namespace CALMNetLib
                 Try
                     toret = _sock.ReceiveBufferSize
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
                 Return toret
             End Get
@@ -421,11 +417,11 @@ Namespace CALMNetLib
                 Try
                     _sock.ReceiveBufferSize = value
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
             End Set
         End Property
@@ -456,11 +452,11 @@ Namespace CALMNetLib
                 Try
                     toret = _sock.ReceiveTimeout
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
                 Return toret
             End Get
@@ -469,11 +465,11 @@ Namespace CALMNetLib
                 Try
                     _sock.ReceiveTimeout = value
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
             End Set
         End Property
@@ -490,11 +486,11 @@ Namespace CALMNetLib
                 Try
                     toret = _sock.SendTimeout
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
                 Return toret
             End Get
@@ -503,11 +499,11 @@ Namespace CALMNetLib
                 Try
                     _sock.SendTimeout = value
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
             End Set
         End Property
@@ -568,11 +564,11 @@ Namespace CALMNetLib
                 Try
                     toret = _sock.ExclusiveAddressUse
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
                 Return toret
             End Get
@@ -581,11 +577,11 @@ Namespace CALMNetLib
                 Try
                     _sock.ExclusiveAddressUse = value
                 Catch ex As ObjectDisposedException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As SocketException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 Catch ex As InvalidOperationException
-                    Utilities.addException(New NetLibException(ex))
+                    Throw New NetLibException(ex)
                 End Try
             End Set
         End Property
@@ -617,6 +613,36 @@ Namespace CALMNetLib
                 _hlh = value
             End Set
         End Property
+        ''' <summary>
+        ''' Allows for supported source settings to be copied to the current INetConfig instance.
+        ''' </summary>
+        ''' <param name="source">The source to copy</param>
+        ''' <remarks></remarks>
+        Public Sub copyConfigFrom(source As INetConfig) Implements INetConfig.copyConfigFrom
+            If _sock Is Nothing Then Exit Sub
+            Me.sendBufferSize = source.sendBufferSize
+            Me.receiveBufferSize = source.receiveBufferSize
+            Me.receiveTimeout = source.receiveTimeout
+            Me.sendTimeout = source.sendTimeout
+            If Not _sock.IsBound Then Me.exclusiveAddressUse = source.exclusiveAddressUse
+            Me.hasLengthHeader = source.hasLengthHeader
+        End Sub
+        ''' <summary>
+        ''' Allows for a safe NetSocketConfig containing duplicated supported configuration to be returned without exceptions.
+        ''' </summary>
+        ''' <returns>The safe NetSocketConfig with duplicated supported configuration</returns>
+        ''' <remarks></remarks>
+        Public Function getSafeSocketConfig() As NetSocketConfig Implements INetConfig.getSafeSocketConfig
+            If _sock Is Nothing Then Return New NetSocketConfig()
+            Dim toret As New NetSocketConfig(Me.localIPAddress, Me.localPort, Me.remoteIPAddress, Me.remotePort)
+            toret.sendBufferSize = Me.sendBufferSize
+            toret.receiveBufferSize = Me.receiveBufferSize
+            toret.receiveTimeout = Me.receiveTimeout
+            toret.sendTimeout = Me.sendTimeout
+            toret.exclusiveAddressUse = Me.exclusiveAddressUse
+            toret.hasLengthHeader = Me.hasLengthHeader
+            Return toret
+        End Function
     End Class
     ''' <summary>
     ''' Specifies the Selector for UDP Address and Port specification.
