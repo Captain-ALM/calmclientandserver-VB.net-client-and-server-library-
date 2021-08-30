@@ -19,7 +19,6 @@ C:\Users\Alfred\Documents\GitHub\calmclientandserver\calmclientandserver\obj\Deb
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\bin\Debug\calmclientandserver.dll
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\bin\Debug\calmclientandserver.pdb
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\bin\Debug\calmclientandserver.xml
-F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.vbprojResolveAssemblyReference.cache
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\captainalm.Resources.resources
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.vbproj.GenerateResource.Cache
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.dll

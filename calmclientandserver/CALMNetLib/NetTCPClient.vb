@@ -172,16 +172,16 @@ Namespace CALMNetLib
                                     btsrem -= btsrem
                                 Else
                                     Dim rec(_sock.ReceiveBufferSize - 5) As Byte
-                                    _sock.Receive(rec, _sock.ReceiveBufferSize - 5, SocketFlags.None)
-                                    Buffer.BlockCopy(rec, 0, bts, btsind, _sock.ReceiveBufferSize - 5)
-                                    btsrem -= (_sock.ReceiveBufferSize - 5)
-                                    btsind += (_sock.ReceiveBufferSize - 5)
+                                    _sock.Receive(rec, _sock.ReceiveBufferSize - 4, SocketFlags.None)
+                                    Buffer.BlockCopy(rec, 0, bts, btsind, _sock.ReceiveBufferSize - 4)
+                                    btsrem -= (_sock.ReceiveBufferSize - 4)
+                                    btsind += (_sock.ReceiveBufferSize - 4)
                                 End If
                             End While
                         End If
                     Else
                         Dim btsb(_sock.ReceiveBufferSize - 1) As Byte
-                        Dim lentr As Integer = _sock.Receive(btsb, _sock.ReceiveBufferSize - 1, SocketFlags.None)
+                        Dim lentr As Integer = _sock.Receive(btsb, _sock.ReceiveBufferSize, SocketFlags.None)
                         ReDim bts(lentr - 1)
                         Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If
