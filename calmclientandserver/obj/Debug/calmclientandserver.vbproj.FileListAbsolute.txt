@@ -24,3 +24,4 @@ F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-libra
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.dll
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.xml
 F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.pdb
+F:\Users\alfred\Documents\git\calmclientandserver-VB.net-client-and-server-library-\calmclientandserver\obj\Debug\calmclientandserver.vbprojResolveAssemblyReference.cache

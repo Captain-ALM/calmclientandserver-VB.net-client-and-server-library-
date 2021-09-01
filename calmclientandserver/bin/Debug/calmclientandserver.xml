@@ -88,6 +88,13 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>The buffer size of the net marshal</returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.hasLengthHeader">
+	<summary>
+ Sets if the net marshal uses length headers when passing messages
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether length headers are used when passing messages</returns>
+	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetMarshal.NetMarshalBase.Beat.#ctor(System.Int32,captainalm.Serialize.ISerialize)">
 	<summary>
  Constructs a new beat packet with a value and the serializer to use
@@ -211,6 +218,18 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCPClient.hasLengthHeader">
+	<summary>
+ Sets if the net marshal uses length headers when passing messages
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether length headers are used when passing messages</returns>
+	<remarks></remarks>
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCPClient.releaseCache">
+	<summary>
+ Releases the received message cache to the event
+ </summary>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCPClient">
 	<summary>
@@ -1225,7 +1244,7 @@ calmclientandserver
 	<param name="ip">The IP Address</param>
 	<param name="port">The Port</param>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean,System.Int32)">
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean,System.Int32,System.Boolean)">
 	<summary>
  Constructs a new instance of NetMarshalTCP.
  </summary>
@@ -1234,6 +1253,7 @@ calmclientandserver
 	<param name="cbl">The connection backlog</param>
 	<param name="del">Whether nagle's algorithm is enabled</param>
 	<param name="bufsiz">The buffer size for the sockets</param>
+	<param name="hLengthHeader">Whether a length header is used for message passing</param>
 	<remarks></remarks>
 </member><member name="M:captainalm.CALMNetMarshal.NetMarshalTCP.#ctor(System.Net.IPAddress,System.Int32,captainalm.CALMNetLib.INetConfig)">
 	<summary>
@@ -1324,18 +1344,26 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>The buffer size of the net marshal</returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalTCP.hasLengthHeader">
+	<summary>
+ Sets if the net marshal uses length headers when passing messages
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether length headers are used when passing messages</returns>
+	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.NetMarshalTCP">
 	<summary>
  This class provides a TCP Socket Marshal.
  </summary>
 	<remarks></remarks>
-</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32)">
+</member><member name="M:captainalm.CALMNetMarshal.NetMarshalUDP.#ctor(System.Net.IPAddress,System.Int32,System.Int32,System.Boolean)">
 	<summary>
  Constructs a new instance of NetMarshalUDP.
  </summary>
 	<param name="iptb">The IP Address to bind to</param>
 	<param name="ptb">The Port to bind to</param>
 	<param name="bufsiz">The buffer size for the sockets</param>
+	<param name="hLengthHeader">Whether a length header is used for message passing</param>
 	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.ready">
 	<summary>
@@ -1367,6 +1395,13 @@ calmclientandserver
  </summary>
 	<value>Integer</value>
 	<returns>The buffer size of the net marshal</returns>
+	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalUDP.hasLengthHeader">
+	<summary>
+ Sets if the net marshal uses length headers when passing messages
+ </summary>
+	<value>Boolean</value>
+	<returns>Whether length headers are used when passing messages</returns>
 	<remarks></remarks>
 </member><member name="T:captainalm.CALMNetMarshal.NetMarshalUDP">
 	<summary>

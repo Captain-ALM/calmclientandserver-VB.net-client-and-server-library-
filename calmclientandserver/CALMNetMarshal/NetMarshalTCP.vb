@@ -35,11 +35,13 @@ Namespace CALMNetMarshal
         ''' <param name="cbl">The connection backlog</param>
         ''' <param name="del">Whether nagle's algorithm is enabled</param>
         ''' <param name="bufsiz">The buffer size for the sockets</param>
+        ''' <param name="hLengthHeader">Whether a length header is used for message passing</param>
         ''' <remarks></remarks>
-        Public Sub New(iptb As IPAddress, ptb As Integer, Optional cbl As Integer = 1, Optional del As Boolean = False, Optional bufsiz As Integer = 16777216)
-            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .connectionBacklog = cbl, .ClientConfig = New NetSocketConfig() With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del}})
+        Public Sub New(iptb As IPAddress, ptb As Integer, Optional cbl As Integer = 1, Optional del As Boolean = False, Optional bufsiz As Integer = 16777216, Optional hLengthHeader As Boolean = True)
+            MyBase.New(New NetTCPListener(iptb, ptb) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .connectionBacklog = cbl, .ClientConfig = New NetSocketConfig() With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .noDelay = Not del, .hasLengthHeader = hlengthheader}})
             _delay = del
             _buffer = bufsiz
+            _haslengthheader = hLengthHeader
         End Sub
         ''' <summary>
         ''' Constructs a new instance of NetMarshalTCP.
@@ -56,6 +58,7 @@ Namespace CALMNetMarshal
             If conf.sendBufferSize >= conf.receiveBufferSize Then CType(_cl, INetConfig).receiveBufferSize = conf.sendBufferSize Else CType(_cl, INetConfig).sendBufferSize = conf.receiveBufferSize
             _delay = Not conf.noDelay
             _buffer = CType(_cl, INetConfig).receiveBufferSize
+            _haslengthheader = conf.hasLengthHeader
             CType(_cl, NetTCPListener).ClientConfig.receiveBufferSize = _buffer
             CType(_cl, NetTCPListener).ClientConfig.sendBufferSize = _buffer
         End Sub
@@ -134,7 +137,7 @@ Namespace CALMNetMarshal
             Dim toret As Boolean = False
             If Not Me.ready(lip, lport) Then
                 Try
-                    Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = _buffer, .sendBufferSize = _buffer, .noDelay = Not _delay}
+                    Dim cs As INetSocket = New NetTCPClient(IPAddress.Parse(lip), lport) With {.receiveBufferSize = _buffer, .sendBufferSize = _buffer, .noDelay = Not _delay, .hasLengthHeader = _haslengthheader}
                     Dim ct As New NetMarshalTCPClient(cs) With {.serializer = _serializer}
                     ct.beatTimeout = _bout
                     SyncLock _slockcolman
@@ -144,6 +147,7 @@ Namespace CALMNetMarshal
                     AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                     ct.start()
                     raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
+                    ct.releaseCache()
                     toret = True
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
@@ -326,6 +330,31 @@ Namespace CALMNetMarshal
                 Next
             End Set
         End Property
+        ''' <summary>
+        ''' Sets if the net marshal uses length headers when passing messages
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether length headers are used when passing messages</returns>
+        ''' <remarks></remarks>
+        Public Overrides Property hasLengthHeader As Boolean
+            Get
+                Return MyBase.hasLengthHeader
+            End Get
+            Set(value As Boolean)
+                MyBase.hasLengthHeader = value
+                For i As Integer = _clcol.Count - 1 To 0 Step -1
+                    Try
+                        Dim ct As NetMarshalTCPClient = Nothing
+                        SyncLock _slockcolman
+                            ct = _clcol(i)
+                        End SyncLock
+                        ct.hasLengthHeader = value
+                    Catch ex As Exception When (TypeOf ex Is ArgumentOutOfRangeException Or TypeOf ex Is IndexOutOfRangeException)
+                        raiseExceptionRaised(ex)
+                    End Try
+                Next
+            End Set
+        End Property
 
         Protected Overrides Sub t_exec()
             While _cl IsNot Nothing AndAlso _cl.listening
@@ -342,6 +371,7 @@ Namespace CALMNetMarshal
                             AddHandler ct.MessageReceived, AddressOf raiseMessageReceived
                             ct.start()
                             raiseClientConnected(ct.duplicatedInternalSocketConfig.remoteIPAddress, ct.duplicatedInternalSocketConfig.remotePort)
+                            ct.releaseCache()
                         End If
                         For i As Integer = _clcol.Count - 1 To 0 Step -1
                             Try

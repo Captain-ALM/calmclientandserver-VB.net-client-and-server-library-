@@ -10,9 +10,14 @@ Namespace CALMNetMarshal
     Public Class NetMarshalTCPClient
         Inherits NetMarshalBase
 
+        Protected _msgCache As New Queue(Of IPacket)
+        Protected _releaseCache As Boolean = False
+
         Protected Friend Sub New(asock As INetSocket)
             MyBase.New(asock)
             updateDupConf()
+            _buffer = CType(asock, INetConfig).receiveBufferSize
+            _haslengthheader = CType(asock, INetConfig).hasLengthHeader
         End Sub
         ''' <summary>
         ''' States whether the marshal is ready.
@@ -43,6 +48,23 @@ Namespace CALMNetMarshal
         Protected Overrides Sub t_exec()
             While _cl IsNot Nothing AndAlso _cl.connected
                 Try
+                    While Not _releaseCache AndAlso _cl IsNot Nothing AndAlso _cl.connected
+                        Dim bts As Byte() = _cl.receiveBytes()
+                        If bts.Length > 0 Then
+                            Dim tmsg As IPacket = _serializer.deSerializeObject(Of IPacket)(bts)
+                            If (Not TypeOf tmsg Is Beat) And (Not tmsg Is Nothing) Then
+                                _msgCache.Enqueue(tmsg)
+                                throbbed(False)
+                            ElseIf TypeOf tmsg Is Beat Then
+                                If CType(tmsg, Beat).valid Then throbbed(CType(tmsg, Beat).isBeat) Else throbbed(False)
+                            End If
+                        End If
+                        Thread.Sleep(125)
+                    End While
+                    While _msgCache.Count > 0
+                        raiseMessageReceived(_msgCache.Dequeue())
+                        throbbed(False)
+                    End While
                     While _cl IsNot Nothing AndAlso _cl.connected
                         Dim bts As Byte() = _cl.receiveBytes()
                         If bts.Length > 0 Then
@@ -101,6 +123,30 @@ Namespace CALMNetMarshal
                 End If
             End Set
         End Property
+        ''' <summary>
+        ''' Sets if the net marshal uses length headers when passing messages
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether length headers are used when passing messages</returns>
+        ''' <remarks></remarks>
+        Public Overrides Property hasLengthHeader As Boolean
+            Get
+                Return MyBase.hasLengthHeader
+            End Get
+            Set(value As Boolean)
+                If Not _cl Is Nothing Then
+                    MyBase.hasLengthHeader = value
+                    CType(_cl, INetConfig).hasLengthHeader = value
+                End If
+            End Set
+        End Property
+        ''' <summary>
+        ''' Releases the received message cache to the event
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Overridable Sub releaseCache()
+            _releaseCache = True
+        End Sub
     End Class
 
 End Namespace

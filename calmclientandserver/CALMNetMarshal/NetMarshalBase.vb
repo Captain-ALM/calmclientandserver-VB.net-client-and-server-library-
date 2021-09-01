@@ -14,6 +14,7 @@ Namespace CALMNetMarshal
         Protected _bout As Integer = 0
         Protected _beated As Boolean = False
         Protected _buffer As Integer = 0
+        Protected _haslengthheader As Boolean = True
         Protected _configdup As NetSocketConfig
         Protected _serializer As ISerialize = New Serializer()
         ''' <summary>
@@ -147,6 +148,20 @@ Namespace CALMNetMarshal
             End Get
             Set(value As Integer)
                 _buffer = value
+            End Set
+        End Property
+        ''' <summary>
+        ''' Sets if the net marshal uses length headers when passing messages
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether length headers are used when passing messages</returns>
+        ''' <remarks></remarks>
+        Public Overridable Property hasLengthHeader As Boolean
+            Get
+                Return _haslengthheader
+            End Get
+            Set(value As Boolean)
+                _haslengthheader = value
             End Set
         End Property
 

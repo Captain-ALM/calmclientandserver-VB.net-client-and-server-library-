@@ -19,11 +19,13 @@ Namespace CALMNetMarshal
         ''' <param name="iptb">The IP Address to bind to</param>
         ''' <param name="ptb">The Port to bind to</param>
         ''' <param name="bufsiz">The buffer size for the sockets</param>
+        ''' <param name="hLengthHeader">Whether a length header is used for message passing</param>
         ''' <remarks></remarks>
-        Public Sub New(iptb As IPAddress, ptb As Integer, Optional bufsiz As Integer = 16384)
-            MyBase.New(New NetUDPClient(iptb, ptb, UDPIPPortSpecification.Local) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz})
+        Public Sub New(iptb As IPAddress, ptb As Integer, Optional bufsiz As Integer = 16384, Optional hLengthHeader As Boolean = True)
+            MyBase.New(New NetUDPClient(iptb, ptb, UDPIPPortSpecification.Local) With {.sendBufferSize = bufsiz, .receiveBufferSize = bufsiz, .hasLengthHeader = hLengthHeader})
             _f = iptb.AddressFamily
             _buffer = bufsiz
+            _haslengthheader = hLengthHeader
         End Sub
         ''' <summary>
         ''' States whether the marshal is ready.
@@ -85,6 +87,23 @@ Namespace CALMNetMarshal
                     MyBase.bufferSize = value
                     CType(_cl, INetConfig).receiveBufferSize = value
                     CType(_cl, INetConfig).sendBufferSize = value
+                End If
+            End Set
+        End Property
+        ''' <summary>
+        ''' Sets if the net marshal uses length headers when passing messages
+        ''' </summary>
+        ''' <value>Boolean</value>
+        ''' <returns>Whether length headers are used when passing messages</returns>
+        ''' <remarks></remarks>
+        Public Overrides Property hasLengthHeader As Boolean
+            Get
+                Return MyBase.hasLengthHeader
+            End Get
+            Set(value As Boolean)
+                If Not _cl Is Nothing Then
+                    MyBase.hasLengthHeader = value
+                    CType(_cl, INetConfig).hasLengthHeader = value
                 End If
             End Set
         End Property
