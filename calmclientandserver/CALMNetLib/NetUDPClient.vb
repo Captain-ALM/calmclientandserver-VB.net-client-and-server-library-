@@ -176,22 +176,18 @@ Namespace CALMNetLib
             If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
             SyncLock slocksend
                 Try
-                    Dim arrlen As Integer = bytes.Length - 1
-                    If _hlh Then arrlen += 4
-                    Dim ts(arrlen) As Byte
                     If _hlh Then
                         Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                        ret = _sock.Send(len, len.Length, SocketFlags.None)
+                        If ret = len.Length Then ret = _sock.Send(bytes, bytes.Length, SocketFlags.None) Else ret = 0
                     Else
-                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                        ret = _sock.Send(bytes, bytes.Length, SocketFlags.None)
                     End If
-                    ret = _sock.Send(ts, ts.Length, SocketFlags.None)
                 Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                     Return False
                 End Try
             End SyncLock
-            Return ret > 0
+            Return ret > 0 And ret = bytes.Length
         End Function
         ''' <summary>
         ''' Receives a byte array from the network.
@@ -200,30 +196,35 @@ Namespace CALMNetLib
         ''' <remarks></remarks>
         Public Overridable Function receiveBytes() As Byte() Implements INetSocketConnectionless.receiveBytes
             If Not _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client does not have a dedicated connection."))
-            Dim bts(_sock.ReceiveBufferSize - 1) As Byte
-            Dim btstr(-1) As Byte
+            Dim bts(-1) As Byte
             SyncLock slockreceive
                 Try
                     If _hlh Then
                         Dim len(3) As Byte
-                        _sock.Receive(bts, bts.Length, SocketFlags.None)
-                        Buffer.BlockCopy(bts, 0, len, 0, 4)
+                        _sock.Receive(len, 4, SocketFlags.None)
                         Dim lengthflen As Integer = Utilities.BytesToInt32(len)
-                        ReDim btstr(lengthflen - 1)
-                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                            Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
-                        Else
-                            Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
-                        End If
+                        If lengthflen > _sock.ReceiveBufferSize - 4 Then Return bts
+                        ReDim bts(lengthflen - 1)
+                        Dim btsrem As Integer = lengthflen
+                        Dim btsind As Integer = 0
+                        While btsrem > 0
+                            Dim rec(btsrem - 1) As Byte
+                            Dim ls As Integer = _sock.Receive(rec, btsrem, SocketFlags.None)
+                            Buffer.BlockCopy(rec, 0, bts, btsind, ls)
+                            btsind += ls
+                            btsrem -= ls
+                        End While
                     Else
-                        Dim lentr As Integer = _sock.Receive(bts, _sock.ReceiveBufferSize, SocketFlags.None)
-                        ReDim btstr(lentr - 1)
-                        Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
+                        Dim btsb(_sock.ReceiveBufferSize - 1) As Byte
+                        Dim lentr As Integer = _sock.Receive(btsb, _sock.ReceiveBufferSize, SocketFlags.None)
+                        If lentr < 1 Then Return bts
+                        ReDim bts(lentr - 1)
+                        Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If
                 Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                 End Try
             End SyncLock
-            Return btstr
+            Return bts
         End Function
         ''' <summary>
         ''' Sends a byte array over the network to the specified address and port.
@@ -242,22 +243,18 @@ Namespace CALMNetLib
             If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
             SyncLock slocksend
                 Try
-                    Dim arrlen As Integer = bytes.Length - 1
-                    If _hlh Then arrlen += 4
-                    Dim ts(arrlen) As Byte
                     If _hlh Then
                         Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                        ret = _sock.SendTo(len, len.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                        If ret = len.Length Then ret = _sock.SendTo(bytes, bytes.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort)) Else ret = 0
                     Else
-                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                        ret = _sock.SendTo(bytes, bytes.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
                     End If
-                    ret = _sock.SendTo(ts, ts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
                 Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                     Return False
                 End Try
             End SyncLock
-            Return ret > 0
+            Return ret > 0 And ret = bytes.Length
         End Function
         ''' <summary>
         ''' Receives a byte array from the specified address and port on the network.
@@ -269,30 +266,35 @@ Namespace CALMNetLib
         Public Overridable Function receiveBytesFrom(remoteIP As String, remotePort As Integer) As Byte() Implements INetSocketConnectionless.receiveBytesFrom
             If _uc Then Throw New NetLibException(New InvalidOperationException("This UDP Client has a dedicated connection."))
             Dim remote_IP As IPAddress = IPAddress.Parse(remoteIP)
-            Dim bts(_sock.ReceiveBufferSize - 1) As Byte
-            Dim btstr(-1) As Byte
+            Dim bts(-1) As Byte
             SyncLock slockreceive
                 Try
                     If _hlh Then
                         Dim len(3) As Byte
-                        _sock.ReceiveFrom(bts, bts.Length, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
-                        Buffer.BlockCopy(bts, 0, len, 0, 4)
+                        _sock.ReceiveFrom(len, 4, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
                         Dim lengthflen As Integer = Utilities.BytesToInt32(len)
-                        ReDim btstr(lengthflen - 1)
-                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                            Buffer.BlockCopy(bts, 4, btstr, 0, lengthflen)
-                        Else
-                            Buffer.BlockCopy(bts, 4, btstr, 0, _sock.ReceiveBufferSize - 4)
-                        End If
+                        If lengthflen > _sock.ReceiveBufferSize - 4 Then Return bts
+                        ReDim bts(lengthflen - 1)
+                        Dim btsrem As Integer = lengthflen
+                        Dim btsind As Integer = 0
+                        While btsrem > 0
+                            Dim rec(btsrem - 1) As Byte
+                            Dim ls As Integer = _sock.ReceiveFrom(rec, btsrem, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                            Buffer.BlockCopy(rec, 0, bts, btsind, ls)
+                            btsind += ls
+                            btsrem -= ls
+                        End While
                     Else
-                        Dim lentr As Integer = _sock.ReceiveFrom(bts, _sock.ReceiveBufferSize, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
-                        ReDim btstr(lentr - 1)
-                        Buffer.BlockCopy(bts, 0, btstr, 0, lentr)
+                        Dim btsb(_sock.ReceiveBufferSize - 1) As Byte
+                        Dim lentr As Integer = _sock.ReceiveFrom(btsb, _sock.ReceiveBufferSize, SocketFlags.None, New IPEndPoint(remote_IP, remotePort))
+                        If lentr < 1 Then Return bts
+                        ReDim bts(lentr - 1)
+                        Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If
                 Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                 End Try
             End SyncLock
-            Return btstr
+            Return bts
         End Function
         ''' <summary>
         ''' Reassociates a dedicated connectionless connection.

@@ -124,12 +124,12 @@ Namespace CALMNetMarshal
                                 raiseMessageReceived(tmsg)
                             End If
                         End If
-                        Thread.Sleep(125)
+                        If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(125)
+                If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
             End While
         End Sub
     End Class

@@ -60,6 +60,13 @@ calmclientandserver
 	<value>Integer</value>
 	<returns>The timeout of beat messages to test sockets</returns>
 	<remarks></remarks>
+</member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.threadDelay">
+	<summary>
+ Gets or sets the delay used by thread sleeping for marshals
+ </summary>
+	<value>Integer</value>
+	<returns>The delay used by thread sleeping for marshals</returns>
+	<remarks></remarks>
 </member><member name="P:captainalm.CALMNetMarshal.NetMarshalBase.internalSocket">
 	<summary>
  Gets the internal socket.

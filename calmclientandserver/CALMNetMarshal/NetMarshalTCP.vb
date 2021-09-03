@@ -216,7 +216,7 @@ Namespace CALMNetMarshal
                         raiseExceptionRaised(ex)
                     End Try
                 Next
-                Thread.Sleep(125)
+                If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
             End While
         End Sub
         ''' <summary>
@@ -395,12 +395,12 @@ Namespace CALMNetMarshal
                                 raiseExceptionRaised(ex)
                             End Try
                         Next
-                        Thread.Sleep(125)
+                        If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(125)
+                If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
             End While
         End Sub
 

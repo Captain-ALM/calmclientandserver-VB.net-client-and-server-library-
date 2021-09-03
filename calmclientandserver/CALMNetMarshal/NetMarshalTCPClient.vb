@@ -59,7 +59,7 @@ Namespace CALMNetMarshal
                                 If CType(tmsg, Beat).valid Then throbbed(CType(tmsg, Beat).isBeat) Else throbbed(False)
                             End If
                         End If
-                        Thread.Sleep(125)
+                        If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
                     End While
                     While _msgCache.Count > 0
                         raiseMessageReceived(_msgCache.Dequeue())
@@ -76,12 +76,12 @@ Namespace CALMNetMarshal
                                 If CType(tmsg, Beat).valid Then throbbed(CType(tmsg, Beat).isBeat) Else throbbed(False)
                             End If
                         End If
-                        Thread.Sleep(125)
+                        If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
                     End While
                 Catch ex As NetLibException
                     raiseExceptionRaised(ex)
                 End Try
-                Thread.Sleep(125)
+                If _threaddelay > 0 Then Thread.Sleep(_threaddelay)
             End While
         End Sub
         ''' <summary>

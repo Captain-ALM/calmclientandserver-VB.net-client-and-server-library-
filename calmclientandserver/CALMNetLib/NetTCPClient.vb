@@ -126,22 +126,18 @@ Namespace CALMNetLib
             If bytes.Length > limit Then Throw New NetLibException(New ArgumentOutOfRangeException("The Byte Array is too big."))
             SyncLock slocksend
                 Try
-                    Dim arrlen As Integer = bytes.Length - 1
-                    If _hlh Then arrlen += 4
-                    Dim ts(arrlen) As Byte
                     If _hlh Then
                         Dim len As Byte() = Utilities.Int32ToBytes(bytes.Length)
-                        System.Buffer.BlockCopy(len, 0, ts, 0, 4)
-                        System.Buffer.BlockCopy(bytes, 0, ts, 4, bytes.Length)
+                        ret = _sock.Send(len, len.Length, SocketFlags.None)
+                        If ret = len.Length Then ret = _sock.Send(bytes, bytes.Length, SocketFlags.None) Else ret = 0
                     Else
-                        System.Buffer.BlockCopy(bytes, 0, ts, 0, bytes.Length)
+                        ret = _sock.Send(bytes, bytes.Length, SocketFlags.None)
                     End If
-                    ret = _sock.Send(ts, ts.Length, SocketFlags.None)
                 Catch ex As Exception When (TypeOf ex Is SocketException Or TypeOf ex Is ArgumentException Or TypeOf ex Is SecurityException Or TypeOf ex Is ObjectDisposedException Or TypeOf ex Is InvalidOperationException)
                     Return False
                 End Try
             End SyncLock
-            Return ret > 0
+            Return ret > 0 And ret = bytes.Length
         End Function
         ''' <summary>
         ''' Receives a byte array from the network.
@@ -157,31 +153,21 @@ Namespace CALMNetLib
                         Dim len(3) As Byte
                         _sock.Receive(len, 4, SocketFlags.None)
                         Dim lengthflen As Integer = Utilities.BytesToInt32(len)
+                        If lengthflen > _sock.ReceiveBufferSize - 4 Then Return bts
                         ReDim bts(lengthflen - 1)
-                        If lengthflen <= _sock.ReceiveBufferSize - 4 Then
-                            _sock.Receive(bts, bts.Length, SocketFlags.None)
-                        Else
-                            Dim btsrem As Integer = lengthflen
-                            Dim btsind As Integer = 0
-                            While btsrem > 0
-                                If btsrem < _sock.ReceiveBufferSize - 4 Then
-                                    Dim rec(btsrem - 1) As Byte
-                                    _sock.Receive(rec, btsrem, SocketFlags.None)
-                                    Buffer.BlockCopy(rec, 0, bts, btsind, btsrem)
-                                    btsind += btsrem
-                                    btsrem -= btsrem
-                                Else
-                                    Dim rec(_sock.ReceiveBufferSize - 5) As Byte
-                                    _sock.Receive(rec, _sock.ReceiveBufferSize - 4, SocketFlags.None)
-                                    Buffer.BlockCopy(rec, 0, bts, btsind, _sock.ReceiveBufferSize - 4)
-                                    btsrem -= (_sock.ReceiveBufferSize - 4)
-                                    btsind += (_sock.ReceiveBufferSize - 4)
-                                End If
-                            End While
-                        End If
+                        Dim btsrem As Integer = lengthflen
+                        Dim btsind As Integer = 0
+                        While btsrem > 0
+                            Dim rec(btsrem - 1) As Byte
+                            Dim ls As Integer = _sock.Receive(rec, btsrem, SocketFlags.None)
+                            Buffer.BlockCopy(rec, 0, bts, btsind, ls)
+                            btsind += ls
+                            btsrem -= ls
+                        End While
                     Else
                         Dim btsb(_sock.ReceiveBufferSize - 1) As Byte
                         Dim lentr As Integer = _sock.Receive(btsb, _sock.ReceiveBufferSize, SocketFlags.None)
+                        If lentr < 1 Then Return bts
                         ReDim bts(lentr - 1)
                         Buffer.BlockCopy(btsb, 0, bts, 0, lentr)
                     End If

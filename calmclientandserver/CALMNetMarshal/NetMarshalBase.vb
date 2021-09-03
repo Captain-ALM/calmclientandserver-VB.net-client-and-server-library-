@@ -17,6 +17,7 @@ Namespace CALMNetMarshal
         Protected _haslengthheader As Boolean = True
         Protected _configdup As NetSocketConfig
         Protected _serializer As ISerialize = New Serializer()
+        Protected _threaddelay As Integer = 0
         ''' <summary>
         ''' This event is raised when an exception is thrown.
         ''' </summary>
@@ -104,6 +105,20 @@ Namespace CALMNetMarshal
             End Get
             Set(value As Integer)
                 _bout = value
+            End Set
+        End Property
+        ''' <summary>
+        ''' Gets or sets the delay used by thread sleeping for marshals
+        ''' </summary>
+        ''' <value>Integer</value>
+        ''' <returns>The delay used by thread sleeping for marshals</returns>
+        ''' <remarks></remarks>
+        Public Overridable Property threadDelay As Integer
+            Get
+                Return _threaddelay
+            End Get
+            Set(value As Integer)
+                If value >= 0 Then _threaddelay = value
             End Set
         End Property
         ''' <summary>
